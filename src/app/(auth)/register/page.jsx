@@ -70,9 +70,9 @@ export default function RegisterPage() {
     <div className="h-screen flex flex-col bg-[#07193b] text-slate-100 font-sans overflow-hidden">
       {/* Main Container Split: 50% Left Form / 50% Right Image */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        {/* Left Side: Form Container (50% - Only Left Side Scrolls with Hidden Scrollbar) */}
-        <div className="flex flex-col justify-start lg:justify-center items-center w-full lg:w-1/2 px-6 sm:px-12 lg:px-16 pt-12 sm:pt-16 lg:pt-14 pb-12 h-full overflow-y-auto no-scrollbar relative z-10">
-          <div className="w-full max-w-md my-0 lg:my-auto">
+        {/* Left Side: Form Container (50% - Pushed down with top padding, scrollable left side) */}
+        <div className="flex flex-col justify-start items-center w-full lg:w-1/2 px-6 sm:px-12 lg:px-16 pt-16 sm:pt-24 lg:pt-28 pb-20 h-full overflow-y-auto no-scrollbar relative z-10">
+          <div className="w-full max-w-md my-0">
             {/* Header Title & Copy */}
             <div className="mb-6 text-left space-y-1">
               <h1 className="text-3xl font-extrabold text-white font-righteous tracking-wide">
