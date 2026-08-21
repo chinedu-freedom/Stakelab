@@ -17,6 +17,7 @@ function VerifyOtpContent() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
   const handleChange = (index, value) => {
@@ -41,6 +42,11 @@ function VerifyOtpContent() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
+
+    if (!captchaToken) {
+      setErrorMessage('Please verify the reCAPTCHA checkbox before proceeding.');
+      return;
+    }
     const fullOtp = otp.join('');
 
     if (fullOtp.length < 4) {
@@ -131,7 +137,7 @@ function VerifyOtpContent() {
 
               {/* Official Google reCAPTCHA v2 Component */}
               <div className="pt-1 flex justify-center">
-                <GoogleReCaptcha />
+                <GoogleReCaptcha onVerify={setCaptchaToken} />
               </div>
 
               {/* Submit Button */}

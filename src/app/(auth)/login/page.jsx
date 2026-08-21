@@ -19,6 +19,7 @@ function LoginContent() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
 
   // Check query params for email verification notice
   useEffect(() => {
@@ -40,6 +41,12 @@ function LoginContent() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
+
+    if (!captchaToken) {
+      setErrorMessage('Please verify the reCAPTCHA checkbox before proceeding.');
+      return;
+    }
+
     setSubmitting(true);
 
     if (keepMeLoggedIn) {
@@ -161,7 +168,7 @@ function LoginContent() {
 
               {/* Official Google reCAPTCHA v2 Component */}
               <div className="pt-1">
-                <GoogleReCaptcha />
+                <GoogleReCaptcha onVerify={setCaptchaToken} />
               </div>
 
               {/* Submit Button */}

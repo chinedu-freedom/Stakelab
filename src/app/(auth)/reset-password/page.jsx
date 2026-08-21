@@ -21,11 +21,17 @@ function ResetPasswordContent() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
     setSuccessMessage('');
+
+    if (!captchaToken) {
+      setErrorMessage('Please verify the reCAPTCHA checkbox before proceeding.');
+      return;
+    }
 
     if (newPassword !== confirmPassword) {
       setErrorMessage('Passwords do not match. Please try again.');
@@ -133,7 +139,7 @@ function ResetPasswordContent() {
 
               {/* Official Google reCAPTCHA v2 Component */}
               <div className="pt-1">
-                <GoogleReCaptcha />
+                <GoogleReCaptcha onVerify={setCaptchaToken} />
               </div>
 
               {/* Submit Button */}

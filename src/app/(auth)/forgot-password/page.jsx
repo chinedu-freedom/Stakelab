@@ -13,11 +13,18 @@ export default function ForgotPasswordPage() {
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
     setSuccessMessage('');
+
+    if (!captchaToken) {
+      setErrorMessage('Please verify the reCAPTCHA checkbox before proceeding.');
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -87,7 +94,7 @@ export default function ForgotPasswordPage() {
 
               {/* Official Google reCAPTCHA v2 Component */}
               <div className="pt-1">
-                <GoogleReCaptcha />
+                <GoogleReCaptcha onVerify={setCaptchaToken} />
               </div>
 
               {/* Submit Button */}

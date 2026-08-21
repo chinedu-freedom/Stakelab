@@ -299,7 +299,7 @@ export default function LandingPage() {
                   rel="noopener noreferrer"
                   className="btn-stakelab-outline px-8 py-3.5 text-base w-full sm:w-44 text-center font-bold bg-[#07193b]/60 flex items-center justify-center cursor-pointer"
                 >
-                  Contact Support
+                  Get Support
                 </a>
               </div>
 
