@@ -106,9 +106,9 @@ export default function UserSidebarLayout({ children }) {
   }, [pathname]);
 
   return (
-    <div className="min-h-screen bg-[#061127] text-slate-100 font-sans flex flex-col">
+    <div className="h-screen overflow-hidden bg-[#061127] text-slate-100 font-sans flex flex-col">
       {/* Top Header Navbar */}
-      <header className="h-16 bg-[#07142d] border-b border-[#142343] sticky top-0 z-40 px-4 sm:px-6 flex items-center justify-between">
+      <header className="h-16 bg-[#07142d] border-b border-[#142343] shrink-0 z-40 px-4 sm:px-6 flex items-center justify-between">
         {/* Left Side: Mobile Menu Button & Brand Logo */}
         <div className="flex items-center space-x-3">
           <button
@@ -292,7 +292,7 @@ export default function UserSidebarLayout({ children }) {
         )}
 
         {/* Main Content Area */}
-        <main className="flex-1 bg-[#061127] p-4 sm:p-6 lg:p-8 overflow-y-auto no-scrollbar">
+        <main className="flex-1 bg-[#061127] p-4 sm:p-6 lg:p-8 h-full overflow-y-auto no-scrollbar">
           {children}
         </main>
       </div>
