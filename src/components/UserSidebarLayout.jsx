@@ -153,13 +153,14 @@ export default function UserSidebarLayout({ children }) {
               const isSubOpen = openSubmenu === item.label;
 
               if (hasSubmenu) {
+                const isParentActive = Boolean(item.matchPath) && pathname.startsWith(item.matchPath);
                 return (
                   <div key={item.label} className="space-y-1">
                     <button
                       onClick={() => toggleSubmenu(item.label)}
                       className={`w-full px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-between transition-all ${
-                        pathname.startsWith(item.matchPath || '')
-                          ? 'text-white bg-[#0e1d3e]'
+                        isParentActive
+                          ? 'text-white font-bold'
                           : 'text-slate-300 hover:text-white hover:bg-[#0e1d3e]'
                       }`}
                     >
