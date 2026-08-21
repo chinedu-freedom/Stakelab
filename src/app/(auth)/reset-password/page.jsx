@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
+import { toast } from 'sonner';
 import GoogleReCaptcha from '../../../components/GoogleReCaptcha';
 
 function ResetPasswordContent() {
@@ -19,22 +20,18 @@ function ResetPasswordContent() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [captchaToken, setCaptchaToken] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
-    setSuccessMessage('');
 
     if (!captchaToken) {
-      setErrorMessage('Please verify the reCAPTCHA checkbox before proceeding.');
+      toast.error('Please verify the reCAPTCHA checkbox before proceeding.');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setErrorMessage('Passwords do not match. Please try again.');
+      toast.error('Passwords do not match. Please try again.');
       return;
     }
 
@@ -42,15 +39,15 @@ function ResetPasswordContent() {
     try {
       const res = await submitResetPassword(email, newPassword);
       if (res && res.success) {
-        setSuccessMessage('Password reset successfully! Redirecting to login...');
+        toast.success('Password reset successfully! Redirecting to login...');
         setTimeout(() => {
           router.push('/login?verified=true');
         }, 1200);
       } else {
-        setErrorMessage(res?.message || 'Failed to reset password. Please try again.');
+        toast.error(res?.message || 'Failed to reset password. Please try again.');
       }
     } catch (err) {
-      setErrorMessage(err.message || 'Failed to reset password. Please try again.');
+      toast.error(err.message || 'Failed to reset password. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -72,20 +69,6 @@ function ResetPasswordContent() {
                 Enter your new password and confirm it below.
               </p>
             </div>
-
-            {/* Success Message Notice */}
-            {successMessage && (
-              <div className="mb-6 p-3.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
-                {successMessage}
-              </div>
-            )}
-
-            {/* Error Message Notice */}
-            {errorMessage && (
-              <div className="mb-6 p-3.5 rounded-md bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold">
-                {errorMessage}
-              </div>
-            )}
 
             {/* Reset Password Form */}
             <form onSubmit={handleSubmit} className="space-y-5">

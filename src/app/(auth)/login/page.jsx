@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
 import { Eye, EyeOff, Check, TrendingUp } from 'lucide-react';
+import { toast } from 'sonner';
 import GoogleReCaptcha from '../../../components/GoogleReCaptcha';
 
 function LoginContent() {
@@ -17,14 +18,12 @@ function LoginContent() {
   const [keepMeLoggedIn, setKeepMeLoggedIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [captchaToken, setCaptchaToken] = useState('');
 
   // Check query params for email verification notice
   useEffect(() => {
     if (searchParams.get('verified') === 'true') {
-      setSuccessMessage('Email verified successfully! You can now log in.');
+      toast.success('Email verified successfully! You can now log in.');
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [searchParams]);
@@ -40,10 +39,9 @@ function LoginContent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
 
     if (!captchaToken) {
-      setErrorMessage('Please verify the reCAPTCHA checkbox before proceeding.');
+      toast.error('Please verify the reCAPTCHA checkbox before proceeding.');
       return;
     }
 
@@ -58,9 +56,10 @@ function LoginContent() {
     try {
       const res = await login(email, password, keepMeLoggedIn);
       if (res && res.error) {
-        setErrorMessage(res.error);
+        toast.error(res.error);
         setSubmitting(false);
       } else {
+        toast.success('Logged in successfully!');
         if (res.user && !res.user.profile_complete) {
           router.push('/user-data');
         } else {
@@ -68,7 +67,7 @@ function LoginContent() {
         }
       }
     } catch (err) {
-      setErrorMessage(err.message || 'Failed to login. Please try again.');
+      toast.error(err.message || 'Failed to login. Please try again.');
       setSubmitting(false);
     }
   };
@@ -89,20 +88,6 @@ function LoginContent() {
                 Login to your account to continue
               </p>
             </div>
-
-            {/* Verification Success Toast Notice */}
-            {successMessage && (
-              <div className="mb-6 p-3.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
-                {successMessage}
-              </div>
-            )}
-
-            {/* Error Message Notice */}
-            {errorMessage && (
-              <div className="mb-6 p-3.5 rounded-md bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold">
-                {errorMessage}
-              </div>
-            )}
 
             {/* Login Form */}
             <form onSubmit={handleSubmit} className="space-y-5">

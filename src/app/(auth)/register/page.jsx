@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
+import { toast } from 'sonner';
 import GoogleReCaptcha from '../../../components/GoogleReCaptcha';
 
 export default function RegisterPage() {
@@ -21,24 +22,22 @@ export default function RegisterPage() {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [captchaToken, setCaptchaToken] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
 
     if (password !== confirmPassword) {
-      setErrorMessage('Passwords do not match. Please verify both passwords.');
+      toast.error('Passwords do not match. Please verify both passwords.');
       return;
     }
 
     if (!agreeTerms) {
-      setErrorMessage('You must agree to the Privacy Policy, Terms of Service, and Staking Policy.');
+      toast.error('You must agree to the Privacy Policy, Terms of Service, and Staking Policy.');
       return;
     }
 
     if (!captchaToken) {
-      setErrorMessage('Please verify the reCAPTCHA.');
+      toast.error('Please verify the reCAPTCHA checkbox before proceeding.');
       return;
     }
 
@@ -55,13 +54,14 @@ export default function RegisterPage() {
       });
 
       if (res && res.error) {
-        setErrorMessage(res.error);
+        toast.error(res.error);
         setSubmitting(false);
       } else {
+        toast.success('Account created successfully!');
         router.push('/user-data');
       }
     } catch (err) {
-      setErrorMessage(err.message || 'Failed to create account. Please try again.');
+      toast.error(err.message || 'Failed to create account. Please try again.');
       setSubmitting(false);
     }
   };
@@ -82,13 +82,6 @@ export default function RegisterPage() {
                 Sign up for free and start growing your wealth today
               </p>
             </div>
-
-            {/* Error Message Notice */}
-            {errorMessage && (
-              <div className="mb-4 p-3 rounded-md bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold">
-                {errorMessage}
-              </div>
-            )}
 
             {/* Register Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
