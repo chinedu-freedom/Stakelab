@@ -67,12 +67,12 @@ function LoginContent() {
   };
 
   return (
-    <div className="min-h-screen lg:h-screen flex flex-col bg-[#07193b] text-slate-100 font-sans overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-[#07193b] text-slate-100 font-sans">
       {/* Main Container Split: 50% Left Form / 50% Right Carousel Graphic */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        {/* Left Side: Form Container (50% - Vertically Centered & Hidden Scrollbar) */}
-        <div className="flex flex-col justify-center items-center w-full lg:w-1/2 px-6 sm:px-12 lg:px-16 py-8 h-full overflow-y-auto no-scrollbar relative z-10">
-          <div className="w-full max-w-md my-auto">
+      <div className="flex-1 flex flex-col lg:flex-row">
+        {/* Left Side: Form Container (50% - Pushed down with comfortable top spacing) */}
+        <div className="flex flex-col justify-start lg:justify-center items-center w-full lg:w-1/2 px-6 sm:px-12 lg:px-16 pt-12 sm:pt-16 lg:pt-14 pb-12 overflow-y-auto no-scrollbar relative z-10">
+          <div className="w-full max-w-md my-0 lg:my-auto">
             {/* Header Title */}
             <div className="mb-8 text-left">
               <h1 className="text-3xl font-extrabold text-white mb-2 font-righteous tracking-wide">
