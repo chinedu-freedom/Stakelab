@@ -17,6 +17,7 @@ function VerifyOtpContent() {
   const [otp, setOtp] = useState(['', '', '', '']);
   const [submitting, setSubmitting] = useState(false);
   const [captchaToken, setCaptchaToken] = useState('');
+  const [errors, setErrors] = useState({});
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
   const handleChange = (index, value) => {
@@ -25,6 +26,7 @@ function VerifyOtpContent() {
     const newOtp = [...otp];
     newOtp[index] = value.slice(-1);
     setOtp(newOtp);
+    if (errors.otp) setErrors((prev) => ({ ...prev, otp: '' }));
 
     // Auto-advance to next input digit
     if (value && index < 3) {
@@ -40,15 +42,21 @@ function VerifyOtpContent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
 
-    if (!captchaToken) {
-      toast.error('Please verify the reCAPTCHA checkbox before proceeding.');
-      return;
-    }
+    const newErrors = {};
     const fullOtp = otp.join('');
 
     if (fullOtp.length < 4) {
-      toast.error('Please enter the complete 4-digit code.');
+      newErrors.otp = 'Please enter the complete 4-digit code.';
+    }
+
+    if (!captchaToken) {
+      newErrors.captcha = 'Please verify the reCAPTCHA checkbox before proceeding.';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -61,10 +69,10 @@ function VerifyOtpContent() {
           router.push(`/reset-password?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(fullOtp)}`);
         }, 1000);
       } else {
-        toast.error(res?.message || 'Invalid or expired OTP code.');
+        setErrors({ otp: res?.message || 'Invalid or expired OTP code.' });
       }
     } catch (err) {
-      toast.error(err.message || 'Invalid code. Please try again.');
+      setErrors({ otp: err.message || 'Invalid code. Please try again.' });
     } finally {
       setSubmitting(false);
     }
@@ -101,25 +109,40 @@ function VerifyOtpContent() {
             {/* OTP Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* 4-Digit Input Boxes */}
-              <div className="flex justify-center gap-3 my-4">
-                {otp.map((digit, idx) => (
-                  <input
-                    key={idx}
-                    ref={inputRefs[idx]}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleChange(idx, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(idx, e)}
-                    className="w-14 h-14 text-center text-xl font-bold font-righteous bg-[#0c1424] border-0 outline-none focus:outline-none rounded-xl text-white focus:ring-2 focus:ring-[#ff0044] transition-all shadow-inner"
-                  />
-                ))}
+              <div>
+                <div className="flex justify-center gap-3 my-4">
+                  {otp.map((digit, idx) => (
+                    <input
+                      key={idx}
+                      ref={inputRefs[idx]}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleChange(idx, e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(idx, e)}
+                      className={`w-14 h-14 text-center text-xl font-bold font-righteous bg-[#0c1424] outline-none focus:outline-none rounded-xl text-white transition-all shadow-inner ${
+                        errors.otp ? 'border border-red-500/80 focus:ring-2 focus:ring-red-500' : 'border-0 focus:ring-2 focus:ring-[#ff0044]'
+                      }`}
+                    />
+                  ))}
+                </div>
+                {errors.otp && (
+                  <p className="text-red-400 text-xs mt-1.5 font-medium">{errors.otp}</p>
+                )}
               </div>
 
               {/* Official Google reCAPTCHA v2 Component */}
-              <div className="pt-1 flex justify-center">
-                <GoogleReCaptcha onVerify={setCaptchaToken} />
+              <div className="pt-1 flex flex-col items-center">
+                <GoogleReCaptcha
+                  onVerify={(token) => {
+                    setCaptchaToken(token);
+                    if (errors.captcha) setErrors((prev) => ({ ...prev, captcha: '' }));
+                  }}
+                />
+                {errors.captcha && (
+                  <p className="text-red-400 text-xs mt-1.5 font-medium">{errors.captcha}</p>
+                )}
               </div>
 
               {/* Submit Button */}

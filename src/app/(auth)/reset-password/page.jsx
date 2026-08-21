@@ -21,17 +21,24 @@ function ResetPasswordContent() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [captchaToken, setCaptchaToken] = useState('');
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
 
-    if (!captchaToken) {
-      toast.error('Please verify the reCAPTCHA checkbox before proceeding.');
-      return;
-    }
+    const newErrors = {};
 
     if (newPassword !== confirmPassword) {
-      toast.error('Passwords do not match. Please try again.');
+      newErrors.confirmPassword = 'Passwords do not match. Please verify both passwords.';
+    }
+
+    if (!captchaToken) {
+      newErrors.captcha = 'Please verify the reCAPTCHA checkbox before proceeding.';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -44,10 +51,10 @@ function ResetPasswordContent() {
           router.push('/login?verified=true');
         }, 1200);
       } else {
-        toast.error(res?.message || 'Failed to reset password. Please try again.');
+        setErrors({ form: res?.message || 'Failed to reset password. Please try again.' });
       }
     } catch (err) {
-      toast.error(err.message || 'Failed to reset password. Please try again.');
+      setErrors({ form: err.message || 'Failed to reset password. Please try again.' });
     } finally {
       setSubmitting(false);
     }
@@ -70,6 +77,11 @@ function ResetPasswordContent() {
               </p>
             </div>
 
+            {/* General Form Error */}
+            {errors.form && (
+              <p className="mb-4 text-red-400 text-xs font-medium">{errors.form}</p>
+            )}
+
             {/* Reset Password Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* New Password Input */}
@@ -82,7 +94,10 @@ function ResetPasswordContent() {
                     type={showNewPassword ? 'text' : 'password'}
                     required
                     value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    onChange={(e) => {
+                      setNewPassword(e.target.value);
+                      if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: '' }));
+                    }}
                     placeholder="New Password"
                     className="w-full h-12 bg-[#0c1424] border-0 outline-none focus:outline-none rounded-md px-4 pr-12 text-white placeholder-slate-500 font-sans text-sm focus:ring-1 focus:ring-[#ff0044] transition-all shadow-inner"
                   />
@@ -106,9 +121,14 @@ function ResetPasswordContent() {
                     type={showConfirmPassword ? 'text' : 'password'}
                     required
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: '' }));
+                    }}
                     placeholder="Confirm Password"
-                    className="w-full h-12 bg-[#0c1424] border-0 outline-none focus:outline-none rounded-md px-4 pr-12 text-white placeholder-slate-500 font-sans text-sm focus:ring-1 focus:ring-[#ff0044] transition-all shadow-inner"
+                    className={`w-full h-12 bg-[#0c1424] outline-none focus:outline-none rounded-md px-4 pr-12 text-white placeholder-slate-500 font-sans text-sm transition-all shadow-inner ${
+                      errors.confirmPassword ? 'border border-red-500/80 focus:ring-1 focus:ring-red-500' : 'border-0 focus:ring-1 focus:ring-[#ff0044]'
+                    }`}
                   />
                   <button
                     type="button"
@@ -118,11 +138,22 @@ function ResetPasswordContent() {
                     {showConfirmPassword ? <EyeOff className="w-5 h-5 text-slate-400" /> : <Eye className="w-5 h-5 text-slate-400" />}
                   </button>
                 </div>
+                {errors.confirmPassword && (
+                  <p className="text-red-400 text-xs mt-1.5 font-medium">{errors.confirmPassword}</p>
+                )}
               </div>
 
               {/* Official Google reCAPTCHA v2 Component */}
               <div className="pt-1">
-                <GoogleReCaptcha onVerify={setCaptchaToken} />
+                <GoogleReCaptcha
+                  onVerify={(token) => {
+                    setCaptchaToken(token);
+                    if (errors.captcha) setErrors((prev) => ({ ...prev, captcha: '' }));
+                  }}
+                />
+                {errors.captcha && (
+                  <p className="text-red-400 text-xs mt-1.5 font-medium">{errors.captcha}</p>
+                )}
               </div>
 
               {/* Submit Button */}

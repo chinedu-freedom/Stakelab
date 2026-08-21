@@ -22,22 +22,28 @@ export default function RegisterPage() {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [captchaToken, setCaptchaToken] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
+
+    const newErrors = {};
 
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match. Please verify both passwords.');
-      return;
+      newErrors.confirmPassword = 'Passwords do not match. Please verify both passwords.';
     }
 
     if (!agreeTerms) {
-      toast.error('You must agree to the Privacy Policy, Terms of Service, and Staking Policy.');
-      return;
+      newErrors.terms = 'You must agree to the Privacy Policy, Terms of Service, and Staking Policy.';
     }
 
     if (!captchaToken) {
-      toast.error('Please verify the reCAPTCHA checkbox before proceeding.');
+      newErrors.captcha = 'Please verify the reCAPTCHA checkbox before proceeding.';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -54,14 +60,18 @@ export default function RegisterPage() {
       });
 
       if (res && res.error) {
-        toast.error(res.error);
+        if (res.error.toLowerCase().includes('email')) {
+          setErrors({ email: res.error });
+        } else {
+          setErrors({ form: res.error });
+        }
         setSubmitting(false);
       } else {
         toast.success('Account created successfully!');
         router.push('/user-data');
       }
     } catch (err) {
-      toast.error(err.message || 'Failed to create account. Please try again.');
+      setErrors({ form: err.message || 'Failed to create account. Please try again.' });
       setSubmitting(false);
     }
   };
@@ -82,6 +92,11 @@ export default function RegisterPage() {
                 Sign up for free and start growing your wealth today
               </p>
             </div>
+
+            {/* General Form Error */}
+            {errors.form && (
+              <p className="mb-3 text-red-400 text-xs font-medium">{errors.form}</p>
+            )}
 
             {/* Register Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -124,10 +139,18 @@ export default function RegisterPage() {
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setErrors((prev) => ({ ...prev, email: '' }));
+                  }}
                   placeholder="name@example.com"
-                  className="w-full h-11 bg-[#0c1424] border-0 outline-none focus:outline-none rounded-md px-3.5 text-white placeholder-slate-500 font-sans text-xs sm:text-sm focus:ring-1 focus:ring-[#ff0044] transition-all shadow-inner"
+                  className={`w-full h-11 bg-[#0c1424] outline-none focus:outline-none rounded-md px-3.5 text-white placeholder-slate-500 font-sans text-xs sm:text-sm transition-all shadow-inner ${
+                    errors.email ? 'border border-red-500/80 focus:ring-1 focus:ring-red-500' : 'border-0 focus:ring-1 focus:ring-[#ff0044]'
+                  }`}
                 />
+                {errors.email && (
+                  <p className="text-red-400 text-xs mt-1.5 font-medium">{errors.email}</p>
+                )}
               </div>
 
               {/* Password Input */}
@@ -140,7 +163,10 @@ export default function RegisterPage() {
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: '' }));
+                    }}
                     placeholder="••••••••"
                     className="w-full h-11 bg-[#0c1424] border-0 outline-none focus:outline-none rounded-md px-3.5 pr-10 text-white placeholder-slate-500 font-sans text-xs sm:text-sm focus:ring-1 focus:ring-[#ff0044] transition-all shadow-inner"
                   />
@@ -164,9 +190,14 @@ export default function RegisterPage() {
                     type={showConfirmPassword ? 'text' : 'password'}
                     required
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: '' }));
+                    }}
                     placeholder="••••••••"
-                    className="w-full h-11 bg-[#0c1424] border-0 outline-none focus:outline-none rounded-md px-3.5 pr-10 text-white placeholder-slate-500 font-sans text-xs sm:text-sm focus:ring-1 focus:ring-[#ff0044] transition-all shadow-inner"
+                    className={`w-full h-11 bg-[#0c1424] outline-none focus:outline-none rounded-md px-3.5 pr-10 text-white placeholder-slate-500 font-sans text-xs sm:text-sm transition-all shadow-inner ${
+                      errors.confirmPassword ? 'border border-red-500/80 focus:ring-1 focus:ring-red-500' : 'border-0 focus:ring-1 focus:ring-[#ff0044]'
+                    }`}
                   />
                   <button
                     type="button"
@@ -176,6 +207,9 @@ export default function RegisterPage() {
                     {showConfirmPassword ? <EyeOff className="w-4 h-4 text-slate-400" /> : <Eye className="w-4 h-4 text-slate-400" />}
                   </button>
                 </div>
+                {errors.confirmPassword && (
+                  <p className="text-red-400 text-xs mt-1.5 font-medium">{errors.confirmPassword}</p>
+                )}
               </div>
 
               {/* Terms & Policies Checkbox Row */}
@@ -184,7 +218,10 @@ export default function RegisterPage() {
                   <input
                     type="checkbox"
                     checked={agreeTerms}
-                    onChange={(e) => setAgreeTerms(e.target.checked)}
+                    onChange={(e) => {
+                      setAgreeTerms(e.target.checked);
+                      if (errors.terms) setErrors((prev) => ({ ...prev, terms: '' }));
+                    }}
                     className="w-4 h-4 mt-0.5 rounded border-[#1c2844] bg-[#0c1424] text-[#ff0044] focus:ring-0 accent-[#ff0044] cursor-pointer shrink-0"
                   />
                   <span className="text-slate-200">
@@ -194,11 +231,22 @@ export default function RegisterPage() {
                     <span className="text-[#ff0044] font-bold hover:underline">Staking Policy</span>
                   </span>
                 </label>
+                {errors.terms && (
+                  <p className="text-red-400 text-xs mt-1.5 font-medium">{errors.terms}</p>
+                )}
               </div>
 
               {/* Official Google reCAPTCHA v2 Component */}
               <div className="pt-1">
-                <GoogleReCaptcha onVerify={setCaptchaToken} />
+                <GoogleReCaptcha
+                  onVerify={(token) => {
+                    setCaptchaToken(token);
+                    if (errors.captcha) setErrors((prev) => ({ ...prev, captcha: '' }));
+                  }}
+                />
+                {errors.captcha && (
+                  <p className="text-red-400 text-xs mt-1.5 font-medium">{errors.captcha}</p>
+                )}
               </div>
 
               {/* Submit Button */}

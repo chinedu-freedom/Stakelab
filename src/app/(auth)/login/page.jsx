@@ -19,6 +19,7 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [captchaToken, setCaptchaToken] = useState('');
+  const [errors, setErrors] = useState({});
 
   // Check query params for email verification notice
   useEffect(() => {
@@ -39,9 +40,10 @@ function LoginContent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
 
     if (!captchaToken) {
-      toast.error('Please verify the reCAPTCHA checkbox before proceeding.');
+      setErrors({ captcha: 'Please verify the reCAPTCHA checkbox before proceeding.' });
       return;
     }
 
@@ -56,7 +58,7 @@ function LoginContent() {
     try {
       const res = await login(email, password, keepMeLoggedIn);
       if (res && res.error) {
-        toast.error(res.error);
+        setErrors({ form: res.error });
         setSubmitting(false);
       } else {
         toast.success('Logged in successfully!');
@@ -67,7 +69,7 @@ function LoginContent() {
         }
       }
     } catch (err) {
-      toast.error(err.message || 'Failed to login. Please try again.');
+      setErrors({ form: err.message || 'Failed to login. Please try again.' });
       setSubmitting(false);
     }
   };
@@ -89,6 +91,11 @@ function LoginContent() {
               </p>
             </div>
 
+            {/* General Form Error */}
+            {errors.form && (
+              <p className="mb-4 text-red-400 text-xs font-medium">{errors.form}</p>
+            )}
+
             {/* Login Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Email Input */}
@@ -100,7 +107,10 @@ function LoginContent() {
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.form) setErrors({});
+                  }}
                   placeholder="name@example.com"
                   className="w-full h-12 bg-[#0c1424] border-0 outline-none focus:outline-none rounded-md px-4 text-white placeholder-slate-500 font-sans text-sm focus:ring-1 focus:ring-[#ff0044] transition-all shadow-inner"
                 />
@@ -116,7 +126,10 @@ function LoginContent() {
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (errors.form) setErrors({});
+                    }}
                     placeholder="••••••••"
                     className="w-full h-12 bg-[#0c1424] border-0 outline-none focus:outline-none rounded-md px-4 pr-12 text-white placeholder-slate-500 font-sans text-sm focus:ring-1 focus:ring-[#ff0044] transition-all shadow-inner"
                   />
@@ -153,7 +166,15 @@ function LoginContent() {
 
               {/* Official Google reCAPTCHA v2 Component */}
               <div className="pt-1">
-                <GoogleReCaptcha onVerify={setCaptchaToken} />
+                <GoogleReCaptcha
+                  onVerify={(token) => {
+                    setCaptchaToken(token);
+                    if (errors.captcha) setErrors((prev) => ({ ...prev, captcha: '' }));
+                  }}
+                />
+                {errors.captcha && (
+                  <p className="text-red-400 text-xs mt-1.5 font-medium">{errors.captcha}</p>
+                )}
               </div>
 
               {/* Submit Button */}

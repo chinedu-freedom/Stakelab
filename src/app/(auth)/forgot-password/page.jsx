@@ -13,12 +13,14 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [captchaToken, setCaptchaToken] = useState('');
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
 
     if (!captchaToken) {
-      toast.error('Please verify the reCAPTCHA checkbox before proceeding.');
+      setErrors({ captcha: 'Please verify the reCAPTCHA checkbox before proceeding.' });
       return;
     }
 
@@ -32,10 +34,10 @@ export default function ForgotPasswordPage() {
           router.push(`/verify-otp?email=${encodeURIComponent(email)}`);
         }, 1000);
       } else {
-        toast.error(res?.message || 'Something went wrong. Please try again.');
+        setErrors({ form: res?.message || 'Something went wrong. Please try again.' });
       }
     } catch (err) {
-      toast.error(err.message || 'Something went wrong. Please try again.');
+      setErrors({ form: err.message || 'Something went wrong. Please try again.' });
     } finally {
       setSubmitting(false);
     }
@@ -58,6 +60,11 @@ export default function ForgotPasswordPage() {
               </p>
             </div>
 
+            {/* General Form Error */}
+            {errors.form && (
+              <p className="mb-4 text-red-400 text-xs font-medium">{errors.form}</p>
+            )}
+
             {/* Request OTP Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Email Address Input */}
@@ -69,7 +76,10 @@ export default function ForgotPasswordPage() {
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.form) setErrors({});
+                  }}
                   placeholder="Email Address"
                   className="w-full h-12 bg-[#0c1424] border-0 outline-none focus:outline-none rounded-md px-4 text-white placeholder-slate-500 font-sans text-sm focus:ring-1 focus:ring-[#ff0044] transition-all shadow-inner"
                 />
@@ -77,7 +87,15 @@ export default function ForgotPasswordPage() {
 
               {/* Official Google reCAPTCHA v2 Component */}
               <div className="pt-1">
-                <GoogleReCaptcha onVerify={setCaptchaToken} />
+                <GoogleReCaptcha
+                  onVerify={(token) => {
+                    setCaptchaToken(token);
+                    if (errors.captcha) setErrors((prev) => ({ ...prev, captcha: '' }));
+                  }}
+                />
+                {errors.captcha && (
+                  <p className="text-red-400 text-xs mt-1.5 font-medium">{errors.captcha}</p>
+                )}
               </div>
 
               {/* Submit Button */}
