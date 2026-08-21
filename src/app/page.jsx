@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import api from '../lib/api';
 import HeaderNav from '../components/HeaderNav';
 import RealPersonHero from '../components/RealPersonHero';
 import HandPhoneMockup from '../components/HandPhoneMockup';
