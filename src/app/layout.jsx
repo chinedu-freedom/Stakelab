@@ -28,8 +28,24 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${inter.variable} ${righteous.variable}`}>
       <head>
         <Script src="https://www.google.com/recaptcha/api.js?render=explicit" strategy="afterInteractive" />
+        <Script
+          id="google-translate-script"
+          src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          strategy="afterInteractive"
+        />
+        <Script id="google-translate-init" strategy="afterInteractive">
+          {`
+            function googleTranslateElementInit() {
+              new window.google.translate.TranslateElement(
+                { pageLanguage: 'en', autoDisplay: false },
+                'google_translate_element'
+              );
+            }
+          `}
+        </Script>
       </head>
       <body className={`${inter.className} bg-[#07193b] text-slate-100 antialiased min-h-screen font-sans`}>
+        <div id="google_translate_element" style={{ display: 'none' }}></div>
         <AuthProvider>
           {children}
           <Toaster position="top-right" theme="dark" richColors closeButton />

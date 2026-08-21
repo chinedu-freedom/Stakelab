@@ -73,7 +73,7 @@ export default function HeaderNav() {
     l.name.toLowerCase().includes(searchLang.toLowerCase())
   );
 
-  // Close dropdown on outside click
+  // Close dropdown on outside click & read active translate cookie
   useEffect(() => {
     function handleClickOutside(event) {
       if (langRef.current && !langRef.current.contains(event.target)) {
@@ -81,8 +81,35 @@ export default function HeaderNav() {
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
+
+    // Read existing googtrans cookie
+    if (typeof document !== 'undefined') {
+      const match = document.cookie.match(/googtrans=\/en\/([a-z]{2,3})/i);
+      if (match && match[1]) {
+        setSelectedLang(match[1].toLowerCase());
+      }
+    }
+
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const handleSelectLanguage = (langCode) => {
+    setSelectedLang(langCode);
+    setLangDropdownOpen(false);
+
+    if (typeof window !== 'undefined') {
+      document.cookie = `googtrans=/en/${langCode}; path=/; domain=${window.location.hostname}`;
+      document.cookie = `googtrans=/en/${langCode}; path=/`;
+
+      const selectEl = document.querySelector('.goog-te-combo');
+      if (selectEl) {
+        selectEl.value = langCode;
+        selectEl.dispatchEvent(new Event('change'));
+      } else {
+        window.location.reload();
+      }
+    }
+  };
 
   return (
     <header className="border-b border-white/10 bg-transparent relative z-50">
@@ -172,10 +199,7 @@ export default function HeaderNav() {
                         <button
                           key={lang.code}
                           type="button"
-                          onClick={() => {
-                            setSelectedLang(lang.code);
-                            setLangDropdownOpen(false);
-                          }}
+                          onClick={() => handleSelectLanguage(lang.code)}
                           className={`w-full text-left px-2.5 py-2 text-[11px] font-medium flex items-center justify-between cursor-pointer transition-colors ${
                             isSelected
                               ? 'bg-[#ff0044] text-white font-bold'
