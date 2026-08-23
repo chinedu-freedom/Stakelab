@@ -65,8 +65,9 @@ export default function TicketDetailsPage({ params }) {
   };
 
   const handleCloseTicket = () => {
-    setStatus('Closed');
     toast.info(`Ticket #${ticketId} has been closed.`);
+  };
+
   return (
     <UserSidebarLayout>
       <div className="space-y-6 max-w-5xl mx-auto">
