@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 export default function GoogleReCaptcha({
-  sitekey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LeD_5QtAAAAALP5DoenKhH2EeLwMzpjNe63iQ59',
+  sitekey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LfJC5UtAAAAAPBI2sjac9I6O2S3HHpff4INH6Li',
   onVerify,
 }) {
   const containerRef = useRef(null);
