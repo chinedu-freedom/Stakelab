@@ -73,10 +73,25 @@ export default function LandingPage() {
     fetchReferralRates();
   }, []);
 
-  // Calculator state
+  // Calculator & Staking Plans state
+  const [dbPlans, setDbPlans] = useState([]);
   const [calcAmount, setCalcAmount] = useState(1000);
   const [selectedPlan, setSelectedPlan] = useState('silver');
   const [isCompounding, setIsCompounding] = useState(true);
+
+  useEffect(() => {
+    const fetchDbPlans = async () => {
+      try {
+        const res = await api.get('/staking/plans');
+        if (res.data && res.data.success && res.data.plans?.length > 0) {
+          setDbPlans(res.data.plans);
+        }
+      } catch (err) {
+        // Quiet fallback
+      }
+    };
+    fetchDbPlans();
+  }, []);
 
   // FAQ Accordion state
   const [activeFaq, setActiveFaq] = useState(0);
@@ -200,15 +215,25 @@ export default function LandingPage() {
   const calculateReturn = () => {
     let rate = 0.015; // 1.5% daily
     let days = 30;
-    if (selectedPlan === 'silver') {
-      days = 30;
-      rate = calcAmount >= 251 ? 0.025 : calcAmount >= 101 ? 0.020 : 0.015;
-    } else if (selectedPlan === 'golden') {
-      days = 90;
-      rate = calcAmount >= 2001 ? 0.035 : calcAmount >= 501 ? 0.030 : 0.025;
-    } else if (selectedPlan === 'platinum') {
-      days = 180;
-      rate = calcAmount >= 5001 ? 0.050 : calcAmount >= 1001 ? 0.040 : 0.035;
+
+    const matchedDbPlan = dbPlans.find(
+      (p) => p.name?.toLowerCase() === selectedPlan.toLowerCase() || p.plan_name?.toLowerCase() === selectedPlan.toLowerCase()
+    );
+
+    if (matchedDbPlan) {
+      days = matchedDbPlan.duration_days || matchedDbPlan.duration || 30;
+      rate = parseFloat(matchedDbPlan.daily_rate || matchedDbPlan.daily_return_rate || matchedDbPlan.daily_profit || 1.5) / 100;
+    } else {
+      if (selectedPlan === 'silver') {
+        days = 30;
+        rate = calcAmount >= 251 ? 0.025 : calcAmount >= 101 ? 0.020 : 0.015;
+      } else if (selectedPlan === 'golden') {
+        days = 90;
+        rate = calcAmount >= 2001 ? 0.035 : calcAmount >= 501 ? 0.030 : 0.025;
+      } else if (selectedPlan === 'platinum') {
+        days = 180;
+        rate = calcAmount >= 5001 ? 0.050 : calcAmount >= 1001 ? 0.040 : 0.035;
+      }
     }
 
     if (isCompounding) {
