@@ -3,11 +3,17 @@
 import { useEffect, useRef } from 'react';
 
 export default function GoogleReCaptcha({
-  sitekey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LfJC5UtAAAAAPBI2sjac9I6O2S3HHpff4INH6Li',
+  sitekey,
   onVerify,
 }) {
   const containerRef = useRef(null);
   const widgetIdRef = useRef(null);
+
+  const activeSiteKey = sitekey || (
+    typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+      : (process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LfJC5UtAAAAAPBI2sjac9I6O2S3HHpff4INH6Li')
+  );
 
   useEffect(() => {
     let checkInterval = null;
@@ -17,7 +23,7 @@ export default function GoogleReCaptcha({
         try {
           if (widgetIdRef.current === null && containerRef.current.children.length === 0) {
             widgetIdRef.current = window.grecaptcha.render(containerRef.current, {
-              sitekey: sitekey,
+              sitekey: activeSiteKey,
               callback: (token) => {
                 if (onVerify) onVerify(token);
               },
