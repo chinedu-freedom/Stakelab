@@ -352,8 +352,8 @@ export default function LandingPage() {
 
   const faqs = [
     {
-      q: 'Why should I trust Stakelab?',
-      a: 'At Stakelab, we prioritize transparency, security, and customer satisfaction above all else. All stakers assets are backed by multi-sig cold storage and automated smart contract yield execution.',
+      q: 'Why should I trust EverStake?',
+      a: 'At EverStake, we prioritize transparency, security, and customer satisfaction above all else. All stakers assets are backed by multi-sig cold storage and automated smart contract yield execution.',
     },
     {
       q: 'How do I start staking?',
@@ -365,7 +365,7 @@ export default function LandingPage() {
     },
     {
       q: 'How do I deposit money?',
-      a: 'Start by logging in to your Stakelab account. Navigate to the Deposit section, select your preferred crypto network (USDT BEP20/TRC20, BTC, ETH), enter deposit amount, and confirm transfer.',
+      a: 'Start by logging in to your EverStake account. Navigate to the Deposit section, select your preferred crypto network (USDT BEP20/TRC20, BTC, ETH), enter deposit amount, and confirm transfer.',
     },
   ];
 
@@ -379,14 +379,14 @@ export default function LandingPage() {
     },
     {
       quote:
-        'I started with USDT and Bitcoin staking through StakeLab, and the returns have been solid. Their platform makes crypto yield investing straightforward for beginners.',
+        'I started with USDT and Bitcoin staking through EverStake, and the returns have been solid. Their platform makes crypto yield investing straightforward for beginners.',
       name: 'Sofia Martinez',
       country: 'Spain',
       avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80',
     },
     {
       quote:
-        'StakeLab’s automated withdrawal and daily payout system helped me fund my business opportunities quickly and safely. The process is fast, transparent, and professional.',
+        'EverStake’s automated withdrawal and daily payout system helped me fund my business opportunities quickly and safely. The process is fast, transparent, and professional.',
       name: 'Rahul Kumar',
       country: 'India',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
@@ -400,7 +400,7 @@ export default function LandingPage() {
     },
     {
       quote:
-        'I’ve tried multiple crypto yield platforms, but StakeLab is by far the most reliable. Automated daily compounding increased my monthly staking rewards significantly.',
+        'I’ve tried multiple crypto yield platforms, but EverStake is by far the most reliable. Automated daily compounding increased my monthly staking rewards significantly.',
       name: 'David Chen',
       country: 'Singapore',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
@@ -539,7 +539,7 @@ export default function LandingPage() {
 
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ff0044]/10 text-[#ff0044] text-xs font-bold uppercase">
-                About StakeLab
+                About EverStake
               </div>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
                 About <span className="text-gradient-stakelab">Us</span>

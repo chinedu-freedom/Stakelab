@@ -27,7 +27,7 @@ export default function ReferralsPage() {
   const refCode = user?.username || user?.referral_code || 'Sparko';
   const referralLink = typeof window !== 'undefined'
     ? `${window.location.origin}/register?reference=${refCode}`
-    : `https://script.viserlab.com/stakelab?reference=${refCode}`;
+    : `https://everstake.cx/register?reference=${refCode}`;
 
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(referralLink)}&color=ffffff&bgcolor=060f22`;
 

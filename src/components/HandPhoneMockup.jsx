@@ -123,7 +123,7 @@ export default function HandPhoneMockup() {
                 <input
                   type="text"
                   readOnly
-                  value="https://stakelab.io/ref/usr_9482"
+                  value="https://everstake.cx/register?ref=usr_9482"
                   className="w-full bg-[#060c18] border border-[#162544] text-[10px] text-slate-200 px-2.5 py-1.5 rounded-lg font-mono focus:outline-none"
                 />
                 <button

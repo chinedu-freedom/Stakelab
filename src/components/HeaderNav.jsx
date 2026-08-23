@@ -16,6 +16,8 @@ export default function HeaderNav() {
 
   const langRef = useRef(null);
 
+  const [customLogo, setCustomLogo] = useState(null);
+
   useEffect(() => {
     api
       .get('/public/contact-links')
@@ -25,6 +27,21 @@ export default function HeaderNav() {
         }
       })
       .catch(() => null);
+
+    api
+      .get('/public/logo-favicon')
+      .then((res) => {
+        if (res.data.success && res.data.settings?.logoUrl) {
+          setCustomLogo(res.data.settings.logoUrl);
+        }
+      })
+      .catch(() => null);
+
+    const handleLogoUpdate = (e) => {
+      if (e.detail) setCustomLogo(e.detail);
+    };
+    window.addEventListener('site-logo-updated', handleLogoUpdate);
+    return () => window.removeEventListener('site-logo-updated', handleLogoUpdate);
   }, []);
 
   const [searchLang, setSearchLang] = useState('');
@@ -118,12 +135,18 @@ export default function HeaderNav() {
       <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 h-20 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <div className="w-9 h-9 rounded-md bg-brand-gradient flex items-center justify-center text-white shadow-lg shadow-red-500/20">
-            <TrendingUp className="w-5 h-5 text-white stroke-[2.5]" />
-          </div>
-          <span className="text-2xl font-extrabold tracking-tight text-white">
-            Stake<span className="text-[#ff0044]">Lab</span>
-          </span>
+          {customLogo ? (
+            <img src={customLogo} alt="EverStake Logo" className="h-10 max-w-[180px] object-contain" />
+          ) : (
+            <>
+              <div className="w-9 h-9 rounded-md bg-brand-gradient flex items-center justify-center text-white shadow-lg shadow-red-500/20">
+                <TrendingUp className="w-5 h-5 text-white stroke-[2.5]" />
+              </div>
+              <span className="text-2xl font-extrabold tracking-tight text-white">
+                Ever<span className="text-[#ff0044]">Stake</span>
+              </span>
+            </>
+          )}
         </Link>
 
         {/* Desktop Navigation Menu */}

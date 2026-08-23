@@ -15,7 +15,7 @@ export default function Security2FAPage() {
 
   const setupKey = (user?.id ? 'STK' + user.id.replace(/-/g, '').substring(0, 12).toUpperCase() : 'M5FLLPUDR3336FAG');
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-    `otpauth://totp/StakeLab:${user?.email || 'user@stakelab.io'}?secret=${setupKey}&issuer=StakeLab`
+    `otpauth://totp/EverStake:${user?.email || 'user@everstake.cx'}?secret=${setupKey}&issuer=EverStake`
   )}`;
 
   const handleCopySetupKey = () => {

@@ -61,20 +61,23 @@ export default function UserSidebarLayout({ children }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const [customLogo, setCustomLogo] = useState(null);
+
   useEffect(() => {
-    const fetchUserNotifs = async () => {
-      try {
-        const res = await api.get('/user/notifications');
-        if (res.data && res.data.success) {
-          setNotifications(res.data);
+    api
+      .get('/public/logo-favicon')
+      .then((res) => {
+        if (res.data.success && res.data.settings?.logoUrl) {
+          setCustomLogo(res.data.settings.logoUrl);
         }
-      } catch (err) {
-        console.error('Failed to fetch user notifications:', err);
-      }
+      })
+      .catch(() => null);
+
+    const handleLogoUpdate = (e) => {
+      if (e.detail) setCustomLogo(e.detail);
     };
-    fetchUserNotifs();
-    const interval = setInterval(fetchUserNotifs, 15000);
-    return () => clearInterval(interval);
+    window.addEventListener('site-logo-updated', handleLogoUpdate);
+    return () => window.removeEventListener('site-logo-updated', handleLogoUpdate);
   }, []);
 
   useEffect(() => {
@@ -170,12 +173,18 @@ export default function UserSidebarLayout({ children }) {
         {/* Top Sidebar Brand Logo - FIXED (Does NOT scroll) */}
         <div className="h-16 px-6 flex items-center border-b border-[#142343] shrink-0">
           <Link href="/dashboard" className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded bg-gradient-to-r from-[#ff0044] to-[#fe780b] flex items-center justify-center font-righteous text-white font-bold text-lg shadow-md shadow-red-500/20">
-              S
-            </div>
-            <span className="text-xl font-extrabold text-white font-righteous tracking-wide">
-              Stake<span className="text-gradient-stakelab">Lab</span>
-            </span>
+            {customLogo ? (
+              <img src={customLogo} alt="EverStake Logo" className="h-9 max-w-[170px] object-contain" />
+            ) : (
+              <>
+                <div className="w-8 h-8 rounded bg-gradient-to-r from-[#ff0044] to-[#fe780b] flex items-center justify-center font-righteous text-white font-bold text-lg shadow-md shadow-red-500/20">
+                  E
+                </div>
+                <span className="text-xl font-extrabold text-white font-righteous tracking-wide">
+                  Ever<span className="text-gradient-stakelab">Stake</span>
+                </span>
+              </>
+            )}
           </Link>
         </div>
 
@@ -336,12 +345,18 @@ export default function UserSidebarLayout({ children }) {
 
             {/* Mobile Screen Logo & Brand Name */}
             <Link href="/dashboard" className="flex lg:hidden items-center space-x-2">
-              <div className="w-7 h-7 rounded bg-gradient-to-r from-[#ff0044] to-[#fe780b] flex items-center justify-center text-white font-bold text-sm shadow-md shadow-red-500/20 shrink-0">
-                S
-              </div>
-              <span className="text-base font-extrabold text-white tracking-wide font-sans">
-                Stake<span className="text-gradient-stakelab">Lab</span>
-              </span>
+              {customLogo ? (
+                <img src={customLogo} alt="EverStake Logo" className="h-8 max-w-[140px] object-contain" />
+              ) : (
+                <>
+                  <div className="w-7 h-7 rounded bg-gradient-to-r from-[#ff0044] to-[#fe780b] flex items-center justify-center text-white font-bold text-sm shadow-md shadow-red-500/20 shrink-0">
+                    E
+                  </div>
+                  <span className="text-base font-extrabold text-white tracking-wide font-sans">
+                    Ever<span className="text-gradient-stakelab">Stake</span>
+                  </span>
+                </>
+              )}
             </Link>
           </div>
 

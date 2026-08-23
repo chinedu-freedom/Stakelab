@@ -23,13 +23,14 @@ const righteous = Righteous({
 import Script from 'next/script';
 
 export const metadata = {
-  title: 'StakeLab - Crypto Buy Sell and Staking Platform',
-  description: 'Explore StakeLab – your premier destination for hassle-free crypto buying, selling, and staking. Maximize your investment potential with our seamless platform.',
+  title: 'EverStake - Premier Crypto Staking & Yield Platform',
+  description: 'Explore EverStake – your premier destination for hassle-free crypto buying, selling, and high-yield staking. Maximize your investment potential with our seamless platform at everstake.cx.',
 };
 
 import MaintenanceGuard from '../components/MaintenanceGuard';
 import CookieConsentBanner from '../components/CookieConsentBanner';
 import DailyCheckinModal from '../components/DailyCheckinModal';
+import FaviconGuard from '../components/FaviconGuard';
 
 export default function RootLayout({ children }) {
   return (
@@ -54,6 +55,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${inter.className} bg-[#07193b] text-slate-100 antialiased min-h-screen font-sans`}>
         <div id="google_translate_element" style={{ display: 'none' }}></div>
+        <FaviconGuard />
         <AuthProvider>
           <MaintenanceGuard>
             {children}

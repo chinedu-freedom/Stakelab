@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
         document.cookie = `stakelab_token=${res.data.token}; path=/; max-age=604800; SameSite=Lax`;
         document.cookie = `sec-prd-token=${res.data.token}; path=/; max-age=604800; SameSite=Lax`;
         setUser(res.data.user);
-        toast.success('Welcome back to Stakelab!');
+        toast.success('Welcome back to EverStake!');
         return { success: true, user: res.data.user };
       } else {
         const msg = res.data.message || 'Login failed';
