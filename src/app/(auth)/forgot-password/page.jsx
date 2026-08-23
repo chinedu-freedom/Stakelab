@@ -29,7 +29,6 @@ export default function ForgotPasswordPage() {
     try {
       const res = await requestPasswordReset(email);
       if (res && res.success) {
-        toast.success('Password reset OTP has been sent to your email.');
         setTimeout(() => {
           router.push(`/verify-otp?email=${encodeURIComponent(email)}`);
         }, 1000);

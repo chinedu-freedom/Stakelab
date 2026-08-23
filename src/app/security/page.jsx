@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import UserSidebarLayout from '../../components/UserSidebarLayout';
 import { useAuth } from '../../context/AuthContext';
-import { Copy, Check, Info } from 'lucide-react';
+import { Copy, Check, Info, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Security2FAPage() {
@@ -13,7 +13,7 @@ export default function Security2FAPage() {
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const setupKey = 'M5FLLPUDR3336FAG';
+  const setupKey = (user?.id ? 'STK' + user.id.replace(/-/g, '').substring(0, 12).toUpperCase() : 'M5FLLPUDR3336FAG');
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
     `otpauth://totp/StakeLab:${user?.email || 'user@stakelab.io'}?secret=${setupKey}&issuer=StakeLab`
   )}`;
@@ -157,7 +157,13 @@ export default function Security2FAPage() {
                 disabled={submitting}
                 className="w-full btn-stakelab py-3 rounded-lg text-white font-righteous text-xs uppercase font-bold tracking-wider transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 mt-2"
               >
-                {submitting ? 'Processing...' : 'Submit'}
+                {submitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" /> Processing
+                  </span>
+                ) : (
+                  'Submit'
+                )}
               </button>
             </form>
           </div>

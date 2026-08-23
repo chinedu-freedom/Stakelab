@@ -5,8 +5,9 @@ import Link from 'next/link';
 import UserSidebarLayout from '../../components/UserSidebarLayout';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../lib/api';
-import { ClipboardList, Coins, Check, Zap, ShieldCheck, X } from 'lucide-react';
+import { ClipboardList, Coins, Check, Zap, ShieldCheck, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
 
 export default function StakingPage() {
   const { user, refreshUser } = useAuth();
@@ -17,6 +18,7 @@ export default function StakingPage() {
   // Modal State
   const [showModal, setShowModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [selectedWallet, setSelectedWallet] = useState('main');
   const [stakeAmount, setStakeAmount] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -62,15 +64,35 @@ export default function StakingPage() {
     e.preventDefault();
     if (!selectedPlan || !stakeAmount) return;
 
+    if (!selectedWallet) {
+      toast.error('Please select a wallet.');
+      return;
+    }
+
+    const amountNum = parseFloat(stakeAmount);
+    const mainBal = parseFloat(user?.balance || 0);
+    const profitBal = parseFloat(user?.total_earned || 0);
+
+    if (selectedWallet === 'main' && amountNum > mainBal) {
+      toast.error(`Insufficient balance in Main Wallet ($${mainBal.toFixed(2)})`);
+      return;
+    }
+
+    if (selectedWallet === 'profit' && amountNum > profitBal) {
+      toast.error(`Insufficient balance in Profit Wallet ($${profitBal.toFixed(2)})`);
+      return;
+    }
+
     try {
       setSubmitting(true);
       const res = await api.post('/staking/stake', {
         plan_id: selectedPlan.id,
-        amount: parseFloat(stakeAmount),
+        amount: amountNum,
+        wallet_type: selectedWallet,
       });
 
       if (res.data.success) {
-        toast.success(`Successfully staked ₮${stakeAmount} in ${selectedPlan.title}!`);
+        toast.success(`Successfully staked $${stakeAmount} in ${selectedPlan.title}!`);
         setShowModal(false);
         setSelectedPlan(null);
         setStakeAmount('');
@@ -129,7 +151,7 @@ export default function StakingPage() {
                     <h3 className="text-base font-bold text-white mt-1 font-righteous">{stake.plan.title}</h3>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-black text-white font-righteous">₮{parseFloat(stake.amount).toFixed(2)}</div>
+                    <div className="text-lg font-black text-white font-righteous">${parseFloat(stake.amount).toFixed(2)}</div>
                     <div className="text-xs text-slate-400">Amount Staked</div>
                   </div>
                 </div>
@@ -137,11 +159,11 @@ export default function StakingPage() {
                 <div className="grid grid-cols-2 gap-2 text-xs bg-[#060f22] p-3 rounded-lg border border-[#182848]">
                   <div>
                     <span className="text-slate-400">Daily Return:</span>
-                    <span className="text-emerald-400 font-bold ml-1">₮{parseFloat(stake.daily_profit).toFixed(2)}</span>
+                    <span className="text-emerald-400 font-bold ml-1">${parseFloat(stake.daily_profit).toFixed(2)}</span>
                   </div>
                   <div>
                     <span className="text-slate-400">Total Claimed:</span>
-                    <span className="text-white font-bold ml-1">₮{parseFloat(stake.total_earned).toFixed(2)}</span>
+                    <span className="text-white font-bold ml-1">${parseFloat(stake.total_earned).toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -149,33 +171,40 @@ export default function StakingPage() {
                   onClick={() => handleClaim(stake.id)}
                   className="w-full py-2.5 rounded-lg bg-[#142345] text-[#ff0044] hover:bg-[#ff0044] hover:text-white font-bold text-xs border border-[#ff0044]/30 transition-all flex items-center justify-center gap-2"
                 >
-                  Claim Profit (₮{parseFloat(stake.daily_profit).toFixed(2)})
+                  Claim Profit (${parseFloat(stake.daily_profit).toFixed(2)})
                 </button>
               </div>
             ))}
           </div>
         )}
 
-        {/* Stake Now Modal */}
+        {/* Stake Now Modal (Matching Screenshot Design - Full Height & Click Outside to Close) */}
         {showModal && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-[#0b162c] border border-[#ff0044]/30 p-6 sm:p-8 rounded-2xl max-w-lg w-full space-y-6 relative shadow-2xl">
+          <div
+            onClick={() => setShowModal(false)}
+            className="fixed inset-0 min-h-screen w-full bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#0b162c] border border-[#1a2846] p-6 sm:p-8 rounded-2xl max-w-md w-full space-y-6 relative shadow-2xl my-auto"
+            >
+              {/* Header */}
               <div className="flex justify-between items-center pb-4 border-b border-[#182848]">
-                <h3 className="text-lg font-bold text-white font-righteous">
-                  Crypto Staking Plans
+                <h3 className="text-xl font-extrabold text-white font-sans">
+                  Staking
                 </h3>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-slate-400 hover:text-white transition-colors"
+                  className="w-7 h-7 rounded-full bg-[#142345] hover:bg-[#1e325c] border border-[#233863] flex items-center justify-center text-slate-300 hover:text-white transition-colors"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
               {/* Plan Selection Buttons */}
               <div className="space-y-3">
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                  Select Pool Tier
+                <label className="block text-xs font-semibold text-slate-300 font-sans uppercase tracking-wider">
+                  Select Staking Plan
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {plans.map((p) => (
@@ -200,48 +229,65 @@ export default function StakingPage() {
               </div>
 
               {selectedPlan && (
-                <form onSubmit={handleStake} className="space-y-4 pt-2">
+                <form onSubmit={handleStake} className="space-y-5 pt-2">
+                  {/* Field 1: Wallet * */}
                   <div>
-                    <div className="flex justify-between text-xs text-slate-400 mb-1.5 font-medium">
-                      <span>Amount to Stake (₮)</span>
-                      <span>Available: ₮{parseFloat(user?.balance || 0).toFixed(2)}</span>
-                    </div>
-                    <input
-                      type="number"
-                      step="any"
-                      required
-                      min={selectedPlan.min_amount}
-                      max={selectedPlan.max_amount}
-                      value={stakeAmount}
-                      onChange={(e) => setStakeAmount(e.target.value)}
-                      placeholder={`Min: ${selectedPlan.min_amount} USDT`}
-                      className="w-full bg-[#060f22] border border-[#182848] rounded-xl py-3 px-4 text-white font-bold text-sm focus:border-[#ff0044] focus:outline-none transition-all shadow-inner"
-                    />
+                    <label className="block text-xs font-semibold text-slate-300 mb-2 font-sans">
+                      Wallet <span className="text-[#ff0044]">*</span>
+                    </label>
+                    <Select
+                      value={selectedWallet}
+                      onValueChange={(val) => setSelectedWallet(val)}
+                    >
+                      <SelectTrigger className="h-12 bg-[#060f22] border-[#182848] text-white">
+                        <SelectValue placeholder="Select Wallet" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="main">
+                          Main Wallet (${parseFloat(user?.balance || 0).toFixed(2)})
+                        </SelectItem>
+                        <SelectItem value="profit">
+                          Profit Wallet (${parseFloat(user?.total_earned || 0).toFixed(2)})
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
-                  <div className="bg-[#060f22] p-4 rounded-xl text-xs space-y-2 border border-[#182848]">
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Lockup Period:</span>
-                      <span className="text-white font-bold">{selectedPlan.duration_days} Days</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Daily Return Rate:</span>
-                      <span className="text-emerald-400 font-bold">{selectedPlan.daily_return_percent}%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Est. Daily Profit:</span>
-                      <span className="text-white font-bold font-righteous">
-                        ₮{((parseFloat(stakeAmount || 0) * parseFloat(selectedPlan.daily_return_percent)) / 100).toFixed(2)}
-                      </span>
+                  {/* Field 2: Amount * */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-2 font-sans">
+                      Amount <span className="text-[#ff0044]">*</span>
+                    </label>
+                    <div className="flex items-center bg-[#060f22] border border-[#182848] rounded-lg overflow-hidden focus-within:ring-1 focus-within:ring-[#ff0044] transition-all">
+                      <input
+                        type="number"
+                        step="any"
+                        required
+                        min={selectedPlan.min_amount}
+                        max={selectedPlan.max_amount}
+                        value={stakeAmount}
+                        onChange={(e) => setStakeAmount(e.target.value)}
+                        placeholder={`Min: $${selectedPlan.min_amount}`}
+                        className="w-full h-12 bg-transparent border-0 outline-none px-4 text-white font-bold text-sm"
+                      />
+                      <div className="h-12 px-4 bg-gradient-to-r from-[#ff0044] to-[#fe780b] text-white font-bold text-xs uppercase flex items-center justify-center shrink-0">
+                        USDT
+                      </div>
                     </div>
                   </div>
 
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full btn-stakelab py-3.5 rounded-xl text-white font-righteous text-sm tracking-wider uppercase font-bold transition-all shadow-lg shadow-red-500/20 disabled:opacity-50"
+                    className="w-full btn-stakelab py-3.5 rounded-xl text-white font-sans text-sm tracking-wider uppercase font-bold transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 mt-4 cursor-pointer"
                   >
-                    {submitting ? 'Processing Stake...' : 'Confirm & Stake Now'}
+                    {submitting ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" /> Processing Stake
+                      </span>
+                    ) : (
+                      'Stake Now'
+                    )}
                   </button>
                 </form>
               )}

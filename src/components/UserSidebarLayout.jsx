@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
@@ -15,22 +15,67 @@ import {
   Users,
   Headphones,
   ShieldCheck,
+  Gift,
+  ClipboardList,
+  Disc,
   LogOut,
   ChevronDown,
   Menu,
   X,
   User,
   Bell,
+  Key,
 } from 'lucide-react';
 
+import PageLoader from './PageLoader';
 import api from '../lib/api';
 
 export default function UserSidebarLayout({ children }) {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { user, loading, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [whatsappLink, setWhatsappLink] = useState('https://wa.me/1234567890');
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
+  const [notifications, setNotifications] = useState({ unreadCount: 0, tickets: [], deposits: [], withdrawals: [] });
+  const [features, setFeatures] = useState({
+    giftBonus: true,
+    tasks: true,
+    dailyCheckin: true,
+    spinWheel: true,
+  });
+  const profileRef = useRef(null);
+  const notifRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setProfileDropdownOpen(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotifDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const fetchUserNotifs = async () => {
+      try {
+        const res = await api.get('/user/notifications');
+        if (res.data && res.data.success) {
+          setNotifications(res.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch user notifications:', err);
+      }
+    };
+    fetchUserNotifs();
+    const interval = setInterval(fetchUserNotifs, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     api
@@ -38,6 +83,15 @@ export default function UserSidebarLayout({ children }) {
       .then((res) => {
         if (res.data.success && res.data.contactLinks?.whatsappSupport) {
           setWhatsappLink(res.data.contactLinks.whatsappSupport);
+        }
+      })
+      .catch(() => null);
+
+    api
+      .get('/public/system-features')
+      .then((res) => {
+        if (res.data.success && res.data.features) {
+          setFeatures(res.data.features);
         }
       })
       .catch(() => null);
@@ -49,18 +103,10 @@ export default function UserSidebarLayout({ children }) {
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { label: 'My Wallet', path: '/wallet', icon: Wallet },
-    { label: 'Staking', path: '/staking', icon: Coins },
+    { label: 'Staking Plans', path: '/staking-plans', icon: Coins },
+    { label: 'My Staking', path: '/my-staking', icon: DollarSign },
     {
-      label: 'Currency',
-      icon: DollarSign,
-      matchPath: '/currency',
-      submenu: [
-        { label: 'Currency List', path: '/currency' },
-      ],
-    },
-    {
-      label: 'Deposits',
+      label: 'Manage Deposit',
       icon: ArrowDownLeft,
       matchPath: '/deposit',
       submenu: [
@@ -79,6 +125,9 @@ export default function UserSidebarLayout({ children }) {
       ],
     },
     { label: 'Transaction', path: '/transactions', icon: History },
+    ...(features.giftBonus ? [{ label: 'Lucky Treasure', path: '/treasure', icon: Gift }] : []),
+    ...(features.tasks ? [{ label: 'Tasks', path: '/tasks', icon: ClipboardList }] : []),
+    ...(features.spinWheel ? [{ label: 'Lucky Spin', path: '/spin', icon: Disc }] : []),
     { label: 'Referrals', path: '/referrals', icon: Users },
     {
       label: 'Support',
@@ -91,6 +140,7 @@ export default function UserSidebarLayout({ children }) {
       ],
     },
     { label: '2FA Security', path: '/security', icon: ShieldCheck },
+    { label: 'Logout', action: 'logout', icon: LogOut },
   ];
 
   // Auto expand parent submenu if current route matches
@@ -105,42 +155,64 @@ export default function UserSidebarLayout({ children }) {
     });
   }, [pathname]);
 
+  if (loading) {
+    return <PageLoader />;
+  }
+
   return (
-    <div className="h-screen overflow-hidden bg-[#061127] text-slate-100 font-sans flex">
+    <div className="h-screen overflow-hidden bg-[#061127] text-slate-100 font-sans flex user-dashboard-wrapper">
       {/* Left Sidebar Drawer (Full Height Top-to-Bottom) */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-30 w-64 bg-[#07142d] border-r border-[#142343] transform transition-transform duration-300 ease-in-out flex flex-col justify-between h-full overflow-y-auto no-scrollbar shrink-0 ${
+        className={`fixed lg:static inset-y-0 left-0 z-30 w-64 bg-[#07142d] border-r border-[#142343] transform transition-transform duration-300 ease-in-out flex flex-col h-full shrink-0 ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
-        <div>
-          {/* Top Sidebar Brand Logo */}
-          <div className="h-16 px-6 flex items-center border-b border-[#142343]">
-            <Link href="/dashboard" className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded bg-gradient-to-r from-[#ff0044] to-[#fe780b] flex items-center justify-center font-righteous text-white font-bold text-lg shadow-md shadow-red-500/20">
-                S
-              </div>
-              <span className="text-xl font-extrabold text-white font-righteous tracking-wide">
-                Stake<span className="text-gradient-stakelab">Lab</span>
-              </span>
-            </Link>
-          </div>
+        {/* Top Sidebar Brand Logo - FIXED (Does NOT scroll) */}
+        <div className="h-16 px-6 flex items-center border-b border-[#142343] shrink-0">
+          <Link href="/dashboard" className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded bg-gradient-to-r from-[#ff0044] to-[#fe780b] flex items-center justify-center font-righteous text-white font-bold text-lg shadow-md shadow-red-500/20">
+              S
+            </div>
+            <span className="text-xl font-extrabold text-white font-righteous tracking-wide">
+              Stake<span className="text-gradient-stakelab">Lab</span>
+            </span>
+          </Link>
+        </div>
 
-          {/* User Info Sidebar Card (Matching Reference Screenshot) */}
-          <div className="p-4">
-            <div className="bg-[#0b1834] border border-red-500/40 rounded-xl p-4 text-center relative overflow-hidden shadow-lg shadow-red-500/5">
-              {/* Red Dollar Circle Icon */}
-              <div className="w-7 h-7 rounded-full bg-gradient-to-r from-[#ff0044] to-[#fe780b] text-white font-righteous font-bold flex items-center justify-center mx-auto mb-2 text-xs shadow-md shadow-red-500/30">
-                $
+        {/* Scrollable Body: From Balance Card to Nav links */}
+        <div className="flex-1 overflow-y-auto no-scrollbar">
+          {/* User Info Sidebar Card (Exact Matching Reference Image 2 Chamfered Notch & Gradient Border) */}
+          <div className="px-4 py-3">
+            {/* Outer Gradient Border Wrapper with Clip Path */}
+            <div 
+              className="bg-gradient-to-r from-amber-500 via-red-500 to-rose-600 p-[1.5px] shadow-xl shadow-red-500/10"
+              style={{
+                clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)'
+              }}
+            >
+              {/* Inner Card Box with Matching Clip Path */}
+              <div 
+                className="bg-[#08152e] px-4 py-4 text-center relative overflow-hidden"
+                style={{
+                  clipPath: 'polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px)'
+                }}
+              >
+                {/* Red-Orange Circle Icon */}
+                <div className="w-7 h-7 rounded-full bg-gradient-to-r from-[#ff0044] to-[#fe780b] text-white font-righteous font-bold flex items-center justify-center mx-auto mb-2 text-xs shadow-md shadow-red-500/40">
+                  $
+                </div>
+                {/* User Name */}
+                <h4 className="text-sm font-bold text-white mb-2 tracking-wide font-sans text-center">
+                  {user?.full_name || user?.username || 'Chinedu Freedom'}
+                </h4>
+                {/* Stacked Balance Layout */}
+                <div className="space-y-0.5">
+                  <div className="text-xs font-semibold text-slate-200 text-center">Balance</div>
+                  <div className="text-base font-extrabold text-white text-center font-sans tracking-tight">
+                    ${user?.balance ? Number(user.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+                  </div>
+                </div>
               </div>
-              {/* User Name */}
-              <h4 className="text-xs font-bold text-white mb-0.5 tracking-wide">
-                {user?.username || user?.full_name || 'Sparko'}
-              </h4>
-              {/* Balance Badge */}
-              <p className="text-[11px] font-bold text-emerald-400">
-                Balance: ${user?.balance ? Number(user.balance).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '0.00'}
-              </p>
             </div>
           </div>
 
@@ -204,6 +276,23 @@ export default function UserSidebarLayout({ children }) {
                 );
               }
 
+              if (item.action === 'logout') {
+                return (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      logout();
+                    }}
+                    className="w-full px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-3 transition-all text-red-400 hover:text-white hover:bg-red-500/20 cursor-pointer text-left"
+                  >
+                    <Icon className="w-4 h-4 text-red-400" />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              }
+
               return (
                 <Link
                   key={item.label}
@@ -220,15 +309,6 @@ export default function UserSidebarLayout({ children }) {
                 </Link>
               );
             })}
-
-            {/* Log Out Action Item */}
-            <button
-              onClick={logout}
-              className="w-full px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-3 text-slate-300 hover:text-red-400 hover:bg-red-500/10 transition-all text-left"
-            >
-              <LogOut className="w-4 h-4 text-red-400" />
-              <span>Log Out</span>
-            </button>
           </nav>
         </div>
       </aside>
@@ -245,7 +325,7 @@ export default function UserSidebarLayout({ children }) {
       <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
         {/* Top Header Navbar (Joins Sidebar from the Right) */}
         <header className="h-16 bg-[#07142d] border-b border-[#142343] shrink-0 z-20 px-4 sm:px-6 flex items-center justify-between">
-          {/* Left Side: Mobile Menu Button */}
+          {/* Left Side: Mobile Menu Button & Brand Logo */}
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -253,27 +333,218 @@ export default function UserSidebarLayout({ children }) {
             >
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
+
+            {/* Mobile Screen Logo & Brand Name */}
+            <Link href="/dashboard" className="flex lg:hidden items-center space-x-2">
+              <div className="w-7 h-7 rounded bg-gradient-to-r from-[#ff0044] to-[#fe780b] flex items-center justify-center text-white font-bold text-sm shadow-md shadow-red-500/20 shrink-0">
+                S
+              </div>
+              <span className="text-base font-extrabold text-white tracking-wide font-sans">
+                Stake<span className="text-gradient-stakelab">Lab</span>
+              </span>
+            </Link>
           </div>
 
-          {/* Right Side: User Profile Header Badge */}
+          {/* Right Side: User Profile Header Badge & Daily Rewards Trigger */}
           <div className="flex items-center space-x-3">
-            <div
-              onClick={logout}
-              className="flex items-center space-x-3 bg-[#0c1a38] hover:bg-[#12234a] border border-[#18294d] rounded-full pl-1.5 pr-4 py-1 cursor-pointer transition-all"
-              title="Click to Log Out"
-            >
-              <div className="w-8 h-8 rounded-full bg-[#16274a] text-slate-200 flex items-center justify-center border border-[#233863]">
-                <User className="w-4 h-4" />
-              </div>
-              <div className="text-left hidden sm:block">
-                <div className="text-xs font-bold text-white leading-tight">
-                  {user?.username || user?.full_name || 'Sparko'}
+            {/* User Notification Bell Dropdown */}
+            <div className="relative" ref={notifRef}>
+              <button
+                type="button"
+                onClick={() => setNotifDropdownOpen(!notifDropdownOpen)}
+                className="relative p-2 rounded-full bg-[#0c1a38] hover:bg-[#12234a] border border-[#18294d] text-slate-300 hover:text-white transition-colors cursor-pointer"
+                title="Notifications"
+              >
+                <Bell className="w-4 h-4" />
+                {notifications.unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#ff0044] text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full shadow-md animate-pulse">
+                    {notifications.unreadCount > 9 ? '9+' : notifications.unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {/* User Notifications Dropdown Panel */}
+              {notifDropdownOpen && (
+                <div className="absolute right-0 top-full mt-3 w-80 bg-[#09152e] border border-[#1d335f] rounded-2xl shadow-2xl overflow-hidden z-50 text-xs font-sans animate-in zoom-in-95 duration-200">
+                  <div className="p-3.5 bg-[#0e1d3e] border-b border-[#1d335f] flex items-center justify-between">
+                    <h3 className="font-bold text-white font-righteous flex items-center gap-2">
+                      <Bell className="w-4 h-4 text-[#fe780b]" /> Notifications
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">
+                      {notifications.unreadCount} Unread
+                    </span>
+                  </div>
+
+                  <div className="max-h-80 overflow-y-auto divide-y divide-[#1d335f]/60">
+                    {/* Support Ticket Replies */}
+                    {notifications.tickets?.length > 0 && (
+                      <div className="p-3">
+                        <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                          <span>📩 Admin Support Ticket Replies ({notifications.tickets.length})</span>
+                          <Link href="/support" onClick={() => setNotifDropdownOpen(false)} className="text-amber-400 hover:underline">View All →</Link>
+                        </div>
+                        <div className="space-y-1.5">
+                          {notifications.tickets.map((t) => (
+                            <Link
+                              key={t.id}
+                              href={`/support/tickets/${t.id}`}
+                              onClick={() => setNotifDropdownOpen(false)}
+                              className="block p-2 rounded-lg bg-[#061127] hover:bg-[#0f2249] border border-[#1d335f] transition-all"
+                            >
+                              <div className="font-bold text-white truncate">#{t.ticket_code} - {t.subject}</div>
+                              <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
+                                <span>{new Date(t.updated_at).toLocaleDateString()}</span>
+                                <span className="text-emerald-400 font-semibold uppercase">Replied</span>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Deposit Updates */}
+                    {notifications.deposits?.length > 0 && (
+                      <div className="p-3">
+                        <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                          <span>📥 Recent Deposit Updates ({notifications.deposits.length})</span>
+                          <Link href="/deposit/history" onClick={() => setNotifDropdownOpen(false)} className="text-emerald-400 hover:underline">History →</Link>
+                        </div>
+                        <div className="space-y-1.5">
+                          {notifications.deposits.map((d) => (
+                            <Link
+                              key={d.id}
+                              href="/deposit/history"
+                              onClick={() => setNotifDropdownOpen(false)}
+                              className="block p-2 rounded-lg bg-[#061127] hover:bg-[#0f2249] border border-[#1d335f] transition-all"
+                            >
+                              <div className="font-bold text-emerald-400">+${parseFloat(d.amount).toFixed(2)} USDT</div>
+                              <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
+                                <span>{new Date(d.created_at).toLocaleDateString()}</span>
+                                <span className={`font-semibold uppercase ${d.status === 'APPROVED' ? 'text-emerald-400' : d.status === 'REJECTED' ? 'text-red-400' : 'text-amber-400'}`}>
+                                  {d.status}
+                                </span>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Withdrawal Updates */}
+                    {notifications.withdrawals?.length > 0 && (
+                      <div className="p-3">
+                        <div className="text-[10px] font-bold text-sky-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                          <span>📤 Recent Withdrawal Updates ({notifications.withdrawals.length})</span>
+                          <Link href="/withdraw/history" onClick={() => setNotifDropdownOpen(false)} className="text-sky-400 hover:underline">History →</Link>
+                        </div>
+                        <div className="space-y-1.5">
+                          {notifications.withdrawals.map((w) => (
+                            <Link
+                              key={w.id}
+                              href="/withdraw/history"
+                              onClick={() => setNotifDropdownOpen(false)}
+                              className="block p-2 rounded-lg bg-[#061127] hover:bg-[#0f2249] border border-[#1d335f] transition-all"
+                            >
+                              <div className="font-bold text-sky-400">-${parseFloat(w.amount).toFixed(2)} USDT</div>
+                              <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
+                                <span>{new Date(w.created_at).toLocaleDateString()}</span>
+                                <span className={`font-semibold uppercase ${w.status === 'APPROVED' ? 'text-emerald-400' : w.status === 'REJECTED' ? 'text-red-400' : 'text-amber-400'}`}>
+                                  {w.status}
+                                </span>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Empty State */}
+                    {notifications.unreadCount === 0 && notifications.tickets?.length === 0 && (
+                      <div className="p-6 text-center text-slate-400 text-xs font-semibold">
+                        🎉 No unread notifications right now!
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="text-[10px] text-slate-400 leading-tight">
-                  {user?.email || 'user@stakelab.io'}
+              )}
+            </div>
+
+            {features.dailyCheckin && (
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new Event('open-daily-checkin'))}
+                className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-90 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-red-500/20 transition-all cursor-pointer select-none"
+              >
+                <span>🎁</span>
+                <span className="hidden sm:inline font-righteous uppercase text-[11px] tracking-wider">Daily Rewards</span>
+              </button>
+            )}
+
+            <div className="relative" ref={profileRef}>
+              <button
+                type="button"
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className="flex items-center space-x-3 bg-[#0c1a38] hover:bg-[#12234a] border border-[#18294d] rounded-full pl-1.5 pr-3 py-1 cursor-pointer transition-all focus:outline-none select-none"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#16274a] text-slate-200 flex items-center justify-center border border-[#233863] shrink-0">
+                  <User className="w-4 h-4 text-slate-200" />
                 </div>
-              </div>
-              <LogOut className="w-3.5 h-3.5 text-red-400 hover:scale-110 transition-transform" />
+                <div className="text-left hidden sm:block">
+                  <div className="text-xs font-bold text-white leading-tight truncate max-w-[150px]">
+                    {user?.username || user?.full_name || 'adminwww'}
+                  </div>
+                  <div className="text-[10px] text-slate-400 leading-tight truncate max-w-[150px]">
+                    {user?.email || '[Email is protected for the demo]'}
+                  </div>
+                </div>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${profileDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Dropdown Menu Panel (Exact Match to User Screenshot) */}
+              {profileDropdownOpen && (
+                <div className="absolute right-0 top-full mt-2 w-52 bg-[#08152e] border border-[#18294d] rounded-xl shadow-2xl overflow-hidden z-50 py-1.5 font-sans">
+                  <Link
+                    href="/user-data"
+                    onClick={() => setProfileDropdownOpen(false)}
+                    className="px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-[#112349] hover:text-white flex items-center gap-3 transition-colors"
+                  >
+                    <User className="w-4 h-4 text-slate-300" />
+                    <span>My Profile</span>
+                  </Link>
+
+                  <Link
+                    href="/change-password"
+                    onClick={() => setProfileDropdownOpen(false)}
+                    className="px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-[#112349] hover:text-white flex items-center gap-3 transition-colors"
+                  >
+                    <Key className="w-4 h-4 text-slate-300" />
+                    <span>Password Change</span>
+                  </Link>
+
+                  <Link
+                    href="/security"
+                    onClick={() => setProfileDropdownOpen(false)}
+                    className="px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-[#112349] hover:text-white flex items-center gap-3 transition-colors"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-slate-300" />
+                    <span>2FA Security</span>
+                  </Link>
+
+                  <div className="my-1 border-t border-white/10" />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProfileDropdownOpen(false);
+                      logout();
+                    }}
+                    className="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-[#ff0044]/15 hover:text-white flex items-center gap-3 transition-colors cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4 text-slate-300" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </header>

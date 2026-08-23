@@ -46,6 +46,33 @@ import {
 } from 'lucide-react';
 
 export default function LandingPage() {
+  const [refRates, setRefRates] = useState([
+    { level: 'Level 01', rate: '10%', icon: '/images/ref-level1.png' },
+    { level: 'Level 02', rate: '5%', icon: '/images/ref-level2.png' },
+    { level: 'Level 03', rate: '3%', icon: '/images/ref-level3.png' },
+  ]);
+
+  useEffect(() => {
+    const fetchReferralRates = async () => {
+      try {
+        const res = await api.get('/public/referral-settings');
+        if (res.data && res.data.success && res.data.referralSettings?.depositLevels) {
+          const dl = res.data.referralSettings.depositLevels;
+          if (dl.length >= 3) {
+            setRefRates([
+              { level: 'Level 01', rate: `${dl[0].percent}%`, icon: '/images/ref-level1.png' },
+              { level: 'Level 02', rate: `${dl[1].percent}%`, icon: '/images/ref-level2.png' },
+              { level: 'Level 03', rate: `${dl[2].percent}%`, icon: '/images/ref-level3.png' },
+            ]);
+          }
+        }
+      } catch (err) {
+        // Quiet fallback
+      }
+    };
+    fetchReferralRates();
+  }, []);
+
   // Calculator state
   const [calcAmount, setCalcAmount] = useState(1000);
   const [selectedPlan, setSelectedPlan] = useState('silver');
@@ -53,6 +80,122 @@ export default function LandingPage() {
 
   // FAQ Accordion state
   const [activeFaq, setActiveFaq] = useState(0);
+
+  // Live Crypto Market state
+  const [marketTab, setMarketTab] = useState('Hot');
+  const [flashingPair, setFlashingPair] = useState(null);
+  const [marketData, setMarketData] = useState([
+    { id: 'cardano', pair: 'ADA/USDT', name: 'Cardano', amount: 0.2186, change: 11.31, isPositive: true, category: ['Hot', 'Layer 1/2'] },
+    { id: 'avalanche-2', pair: 'AVAX/USDT', name: 'Avalanche', amount: 7.66, change: 8.39, isPositive: true, category: ['Hot', 'Layer 1/2'] },
+    { id: 'binancecoin', pair: 'BNB/USDT', name: 'BNB', amount: 680.66, change: 5.23, isPositive: true, category: ['Hot', 'Turnover', 'Layer 1/2'] },
+    { id: 'bitcoin', pair: 'BTC/USDT', name: 'Bitcoin', amount: 77676.48, change: 7.50, isPositive: true, category: ['Hot', 'Turnover', 'Layer 1/2'] },
+    { id: 'dogecoin', pair: 'DOGE/USDT', name: 'Dogecoin', amount: 0.0847, change: 6.50, isPositive: true, category: ['Hot', 'Meme'] },
+    { id: 'polkadot', pair: 'DOT/USDT', name: 'Polkadot', amount: 0.8977, change: 7.89, isPositive: true, category: ['Hot', 'Layer 1/2'] },
+    { id: 'ethereum', pair: 'ETH/USDT', name: 'Ethereum', amount: 2398.10, change: 4.57, isPositive: true, category: ['Hot', 'Turnover', 'Layer 1/2'] },
+    { id: 'chainlink', pair: 'LINK/USDT', name: 'Chainlink', amount: 11.59, change: 12.51, isPositive: true, category: ['Hot', 'DeFi'] },
+    { id: 'solana', pair: 'SOL/USDT', name: 'Solana', amount: 92.87, change: 9.56, isPositive: true, category: ['Hot', 'Turnover', 'Layer 1/2'] },
+    { id: 'ripple', pair: 'XRP/USDT', name: 'XRP', amount: 1.41, change: 14.14, isPositive: true, category: ['Hot', 'Turnover'] },
+    { id: 'pepe', pair: 'PEPE/USDT', name: 'Pepe', amount: 0.0000089, change: 18.42, isPositive: true, category: ['Meme', 'Gainers'] },
+    { id: 'shiba-inu', pair: 'SHIB/USDT', name: 'Shiba Inu', amount: 0.0000174, change: 4.12, isPositive: true, category: ['Meme'] },
+    { id: 'sui', pair: 'SUI/USDT', name: 'Sui', amount: 1.84, change: 15.68, isPositive: true, category: ['Hot', 'Layer 1/2'] },
+    { id: 'near', pair: 'NEAR/USDT', name: 'Near Protocol', amount: 3.42, change: 8.91, isPositive: true, category: ['Layer 1/2'] },
+    { id: 'uniswap', pair: 'UNI/USDT', name: 'Uniswap', amount: 7.85, change: 3.84, isPositive: true, category: ['DeFi'] },
+    { id: 'aave', pair: 'AAVE/USDT', name: 'Aave', amount: 142.30, change: 10.15, isPositive: true, category: ['DeFi'] },
+    { id: 'injective-protocol', pair: 'INJ/USDT', name: 'Injective', amount: 18.90, change: -2.45, isPositive: false, category: ['DeFi', 'Losers'] },
+    { id: 'arbitrum', pair: 'ARB/USDT', name: 'Arbitrum', amount: 0.542, change: -4.18, isPositive: false, category: ['Layer 1/2', 'Losers'] },
+    { id: 'optimism', pair: 'OP/USDT', name: 'Optimism', amount: 1.35, change: -3.85, isPositive: false, category: ['Layer 1/2', 'Losers'] },
+    { id: 'litecoin', pair: 'LTC/USDT', name: 'Litecoin', amount: 72.40, change: -1.20, isPositive: false, category: ['Turnover', 'Losers'] },
+  ]);
+
+  // Fetch real market rates from CoinGecko API on mount and every 30s
+  useEffect(() => {
+    const fetchRealPrices = async () => {
+      try {
+        const ids = marketData.map((m) => m.id).join(',');
+        const res = await fetch(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        setMarketData((prev) =>
+          prev.map((item) => {
+            if (data[item.id] && data[item.id].usd !== undefined) {
+              const newAmount = data[item.id].usd;
+              const newChange = data[item.id].usd_24h_change || item.change;
+              return {
+                ...item,
+                amount: newAmount,
+                change: parseFloat(newChange.toFixed(2)),
+                isPositive: newChange >= 0,
+              };
+            }
+            return item;
+          })
+        );
+      } catch (e) {
+        // Fallback silently if offline
+      }
+    };
+
+    fetchRealPrices();
+    const fetchInterval = setInterval(fetchRealPrices, 30000);
+    return () => clearInterval(fetchInterval);
+  }, []);
+
+  // Live order-book fluctuation animation every 1.8 seconds across all crypto pairs simultaneously
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMarketData((prev) =>
+        prev.map((item) => {
+          // Dynamic fluctuation between -0.25% and +0.25% for every pair
+          const deltaPercent = (Math.random() * 0.5 - 0.245) / 100;
+          const oldAmount = item.amount;
+          let newAmount = oldAmount * (1 + deltaPercent);
+
+          if (newAmount < 1) {
+            newAmount = parseFloat(newAmount.toFixed(4));
+          } else {
+            newAmount = parseFloat(newAmount.toFixed(2));
+          }
+
+          const isUp = newAmount >= oldAmount;
+          const changeDiff = Math.random() * 0.08 - 0.035;
+          const newChange = parseFloat((item.change + changeDiff).toFixed(2));
+
+          return {
+            ...item,
+            amount: newAmount,
+            change: newChange,
+            isPositive: newChange >= 0,
+            tickDir: isUp ? 'up' : 'down',
+          };
+        })
+      );
+    }, 1800);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const getFilteredMarketData = () => {
+    let list = [...marketData];
+    if (marketTab === 'Gainers') {
+      return list.sort((a, b) => b.change - a.change);
+    } else if (marketTab === 'Losers') {
+      return list.sort((a, b) => a.change - b.change);
+    } else if (marketTab === 'Turnover') {
+      return list.sort((a, b) => b.amount - a.amount);
+    } else if (marketTab === 'Hot') {
+      return list.filter((item) => item.category.includes('Hot'));
+    } else {
+      return list.filter((item) => item.category.includes(marketTab));
+    }
+  };
+
+  const formatPrice = (val) => {
+    if (val < 0.001) return `$${val.toFixed(7)}`;
+    if (val < 1) return `$${val.toFixed(4)}`;
+    return `$${val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  };
 
   const calculateReturn = () => {
     let rate = 0.015; // 1.5% daily
@@ -107,7 +250,6 @@ export default function LandingPage() {
   const [dynamicPartners, setDynamicPartners] = useState([]);
   const [dynamicWhyChooseUs, setDynamicWhyChooseUs] = useState([]);
   const [whatsappLink, setWhatsappLink] = useState('https://wa.me/1234567890');
-  const [marketTab, setMarketTab] = useState('Hot');
 
   useEffect(() => {
     // Fetch live plans
@@ -115,7 +257,7 @@ export default function LandingPage() {
       .get('/staking/plans')
       .then((res) => {
         if (res.data.success && res.data.plans?.length > 0) {
-          setDynamicPlans(res.data.plans);
+          setDynamicPlans(res.data.plans.slice(0, 3));
         }
       })
       .catch(() => null);
@@ -402,15 +544,26 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-8 items-stretch pt-4">
             {(dynamicPlans.length > 0
-              ? dynamicPlans.map((p) => ({
-                  name: p.title || p.name,
-                  duration: `Stake for ${p.duration_days || p.days || 30} Days`,
-                  status: p.status,
-                  isAvailable: p.is_active !== false && p.status !== 'Unavailable',
-                  rates: p.tiers || [
-                    { range: `${p.min_amount || 10}.00-${p.max_amount || 1000}.00`, interest: `${p.daily_return_percent || 15}%` },
-                  ],
-                }))
+              ? dynamicPlans.slice(0, 3).map((p) => {
+                  const min = parseFloat(p.min_amount || 10);
+                  const max = parseFloat(p.max_amount || 1000);
+                  const step = (max - min) / 3;
+                  const rate1 = `${p.daily_return_percent || 15}%`;
+                  const rate2 = `${Math.round((p.daily_return_percent || 15) * 2)}%`;
+                  const rate3 = `${Math.round((p.daily_return_percent || 15) * 3.33)}%`;
+
+                  return {
+                    name: p.title || p.name || 'Silver',
+                    duration: `Stake for ${p.duration_days || p.days || 30} Days`,
+                    status: p.status,
+                    isAvailable: p.is_active !== false && p.status !== 'Unavailable',
+                    rates: p.tiers || [
+                      { range: `${min.toFixed(2)}-${(min + step).toFixed(2)}`, interest: rate1 },
+                      { range: `${(min + step + 1).toFixed(2)}-${(min + step * 2).toFixed(2)}`, interest: rate2 },
+                      { range: `${(min + step * 2 + 1).toFixed(2)}-${max.toFixed(2)}`, interest: rate3 },
+                    ],
+                  };
+                })
               : [
                   {
                     name: 'Silver',
@@ -443,7 +596,7 @@ export default function LandingPage() {
                     ],
                   },
                 ]
-            ).map((plan, idx) => (
+            ).slice(0, 3).map((plan, idx) => (
               <div key={idx} className="relative group flex flex-col">
                 {/* Outer Gradient Border Wrap with Pointed Shield Bottom */}
                 <div
@@ -493,7 +646,7 @@ export default function LandingPage() {
                               className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c] last:border-b-0"
                             >
                               <div className="font-semibold text-slate-200">
-                                <span className="text-[#ff0044] font-bold mr-0.5">₮</span>
+                                <span className="text-[#ff0044] font-bold mr-0.5">$</span>
                                 {row.range}
                               </div>
                               <span className="font-bold text-white tracking-wide">{row.interest}</span>
@@ -561,7 +714,7 @@ export default function LandingPage() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
-                  Deposit Amount (USDT ₮)
+                  Deposit Amount (USDT $)
                 </label>
                 <input
                   type="number"
@@ -626,19 +779,19 @@ export default function LandingPage() {
                 {calcRes.isCompounding && (
                   <div className="flex justify-between pb-2 border-b border-[#1c243f]">
                     <span className="text-slate-400">Compounding Growth Bonus</span>
-                    <span className="font-bold text-amber-400">+₮{calcRes.compoundingBonus}</span>
+                    <span className="font-bold text-amber-400">+${calcRes.compoundingBonus}</span>
                   </div>
                 )}
                 <div className="flex justify-between pb-2 border-b border-[#1c243f]">
                   <span className="text-slate-400">Net Estimated Profit</span>
-                  <span className="font-bold text-emerald-400">+₮{calcRes.profit}</span>
+                  <span className="font-bold text-emerald-400">+${calcRes.profit}</span>
                 </div>
               </div>
 
               <div className="pt-4 border-t border-[#1c243f] flex justify-between items-center">
                 <div>
                   <span className="text-xs text-slate-400">Total Final Return (FV)</span>
-                  <div className="text-2xl font-black text-white">₮{calcRes.total}</div>
+                  <div className="text-2xl font-black text-white">${calcRes.total}</div>
                 </div>
                 <Link href="/register" className="btn-stakelab px-6 py-2.5 text-xs font-bold">
                   Stake Now
@@ -762,23 +915,7 @@ export default function LandingPage() {
 
               {/* 3 Tier Level Cards */}
               <div className="space-y-5 pt-2">
-                {[
-                  {
-                    level: 'Level 01',
-                    rate: '60%',
-                    icon: '/images/ref-level1.png',
-                  },
-                  {
-                    level: 'Level 02',
-                    rate: '40%',
-                    icon: '/images/ref-level2.png',
-                  },
-                  {
-                    level: 'Level 03',
-                    rate: '20%',
-                    icon: '/images/ref-level3.png',
-                  },
-                ].map((item, idx) => (
+                {refRates.map((item, idx) => (
                   <div
                     key={idx}
                     className="w-full max-w-lg p-[1.5px] bg-gradient-to-r from-[#fe780b] to-[#ff0044] rounded-full shadow-xl transition-transform duration-300 hover:scale-[1.01] group"
@@ -996,19 +1133,19 @@ export default function LandingPage() {
               Live Crypto <span className="text-gradient-stakelab">Market Rates</span>
             </h2>
             <p className="text-slate-300 text-xs sm:text-sm">
-              Real-time cryptocurrency price updates and 24h market trends across top global pairs.
+              Real-time cryptocurrency price updates, order-book fluctuations, and 24h market trends.
             </p>
           </div>
 
-          {/* Market Category Filter Tabs (Hot, Gainers, Losers, Turnover) */}
-          <div className="flex items-center gap-2 mb-6 justify-start overflow-x-auto pb-2">
-            {['Hot', 'Gainers', 'Losers', 'Turnover'].map((tab) => (
+          {/* Market Category Filter Tabs */}
+          <div className="flex items-center gap-2 mb-6 justify-start overflow-x-auto pb-2 no-scrollbar">
+            {['Hot', 'Gainers', 'Losers', 'Turnover', 'Layer 1/2', 'DeFi', 'Meme'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setMarketTab(tab)}
-                className={`px-5 py-2 rounded-xl text-xs font-bold transition-all border ${
+                className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all border whitespace-nowrap ${
                   marketTab === tab
-                    ? 'bg-[#0f1d3a] border-amber-500/80 text-amber-400 font-righteous shadow-md'
+                    ? 'bg-[#0f1d3a] border-amber-500/80 text-amber-400 font-righteous shadow-lg shadow-amber-500/10'
                     : 'bg-[#0b162c] border-[#182848] text-slate-400 hover:text-white hover:border-slate-600'
                 }`}
               >
@@ -1017,47 +1154,60 @@ export default function LandingPage() {
             ))}
           </div>
 
-          {/* Live Crypto Prices Card Table Container (Matching Screenshots 1 & 2) */}
-          <div className="bg-[#0b152a] rounded-2xl border border-[#182848] p-6 shadow-2xl overflow-hidden">
-            <table className="w-full text-left border-collapse text-xs sm:text-sm">
-              <thead>
-                <tr className="border-b border-[#182848] text-slate-400 font-bold uppercase text-[11px] tracking-wider">
-                  <th className="py-3 px-4">PAIR</th>
-                  <th className="py-3 px-4 text-center">AMOUNT</th>
-                  <th className="py-3 px-4 text-right">CHANGE</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#182848]/60 font-sans">
-                {[
-                  { pair: 'ADA/USDT', amount: '$0.2186', change: '+11.31%', positive: true },
-                  { pair: 'AVAX/USDT', amount: '$7.66', change: '+8.39%', positive: true },
-                  { pair: 'BNB/USDT', amount: '$680.66', change: '+5.23%', positive: true },
-                  { pair: 'BTC/USDT', amount: '$77,676.48', change: '+7.50%', positive: true },
-                  { pair: 'DOGE/USDT', amount: '$0.0847', change: '+6.50%', positive: true },
-                  { pair: 'DOT/USDT', amount: '$0.8977', change: '+7.89%', positive: true },
-                  { pair: 'ETH/USDT', amount: '$2,398.10', change: '+4.57%', positive: true },
-                  { pair: 'LINK/USDT', amount: '$11.59', change: '+9.06%', positive: true },
-                  { pair: 'SOL/USDT', amount: '$91.87', change: '+5.56%', positive: true },
-                  { pair: 'XRP/USDT', amount: '$1.41', change: '+12.14%', positive: true },
-                ].map((row, idx) => (
-                  <tr key={idx} className="hover:bg-[#0f1d3c]/80 transition-colors">
-                    <td className="py-4 px-4 font-black text-white font-righteous tracking-wide">{row.pair}</td>
-                    <td className="py-4 px-4 text-center font-extrabold text-[#ff4d4d] font-mono">{row.amount}</td>
-                    <td className="py-4 px-4 text-right font-extrabold text-emerald-400 font-mono">
-                      ↑ {row.change}
-                    </td>
+          {/* Live Crypto Prices Card Table Container */}
+          <div className="bg-[#0b152a] rounded-2xl border border-[#182848] p-4 sm:p-6 shadow-2xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr className="border-b border-[#182848] text-slate-400 font-bold uppercase text-[11px] tracking-wider">
+                    <th className="py-3 px-4">PAIR</th>
+                    <th className="py-3 px-4 text-center">AMOUNT</th>
+                    <th className="py-3 px-4 text-right">24H CHANGE</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-[#182848]/60 font-sans">
+                  {getFilteredMarketData().map((row) => {
+                    const isUpTick = row.tickDir === 'up';
+
+                    return (
+                      <tr
+                        key={row.pair}
+                        className="hover:bg-[#0f1d3c]/80 transition-colors"
+                      >
+                        <td className="py-4 px-4 font-black text-white font-righteous tracking-wide">
+                          <div className="flex items-center gap-2">
+                            <span>{row.pair}</span>
+                            <span className="text-[10px] text-slate-400 font-mono font-normal">({row.name})</span>
+                          </div>
+                        </td>
+                        <td
+                          className={`py-4 px-4 text-center font-extrabold font-mono transition-colors duration-300 ${
+                            isUpTick ? 'text-[#10b981]' : 'text-[#ff4d4d]'
+                          }`}
+                        >
+                          {formatPrice(row.amount)}
+                        </td>
+                        <td
+                          className={`py-4 px-4 text-right font-extrabold font-mono transition-colors duration-300 ${
+                            row.isPositive ? 'text-emerald-400' : 'text-red-400'
+                          }`}
+                        >
+                          {row.isPositive ? `↑ +${Math.abs(row.change).toFixed(2)}%` : `↓ -${Math.abs(row.change).toFixed(2)}%`}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 10. SUPPORTED EXCHANGE PARTNERS SECTION (Matching Reference Screenshot 3) */}
-      <section id="partners" className="py-16 border-b border-[#1c243f] bg-[#050c1c]">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
-          <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
+      {/* 10. SUPPORTED EXCHANGE PARTNERS SECTION (Continuous Moving Infinite Marquee - No Border Box) */}
+      <section id="partners" className="py-16 border-b border-[#1c243f] bg-[#050c1c] overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 mb-10">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
             <h2 className="text-3xl font-extrabold text-white font-righteous">
               Supported <span className="text-gradient-stakelab">Exchange Partners</span>
             </h2>
@@ -1065,37 +1215,255 @@ export default function LandingPage() {
               We collaborate with top-tier global cryptocurrency exchanges and liquidity providers.
             </p>
           </div>
+        </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-6">
-            {(dynamicPartners.length > 0
-              ? dynamicPartners
-              : [
-                  { name: 'Binance', logo: 'https://cryptologos.cc/logos/binance-coin-bnb-logo.png', status: 'ACTIVE' },
-                  { name: 'Bybit', logo: 'https://cryptologos.cc/logos/bybit-logo.png', status: 'ACTIVE' },
-                  { name: 'Mexc', logo: 'https://cryptologos.cc/logos/mexc-logo.png', status: 'ACTIVE' },
-                  { name: 'HTX', logo: 'https://cryptologos.cc/logos/htx-logo.png', status: 'ACTIVE' },
-                  { name: 'OKX', logo: 'https://cryptologos.cc/logos/okx-logo.png', status: 'ACTIVE' },
-                  { name: 'BingX', logo: 'https://cryptologos.cc/logos/bingx-logo.png', status: 'ACTIVE' },
-                  { name: 'Kraken', logo: 'https://cryptologos.cc/logos/kraken-logo.png', status: 'ACTIVE' },
-                  { name: 'Luno', logo: 'https://cryptologos.cc/logos/luno-logo.png', status: 'ACTIVE' },
-                ]
-            ).map((partner, idx) => (
+        {/* Infinite Moving Marquee Container (No Border Containers, Real Color Logos) */}
+        <div className="relative w-full overflow-hidden py-4">
+          {/* Gradient Edge Masks for Smooth Fade In/Out */}
+          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#050c1c] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#050c1c] to-transparent z-10 pointer-events-none" />
+
+          <div className="animate-marquee-scroll flex items-center gap-10 sm:gap-16">
+            {[
+              {
+                name: 'Binance',
+                color: '#F0B90B',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#F0B90B">
+                    <path d="M12 2L6.5 7.5L9.3 10.3L12 7.6L14.7 10.3L17.5 7.5L12 2ZM2 12L7.5 6.5L10.3 9.3L7.6 12L10.3 14.7L7.5 17.5L2 12ZM12 22L17.5 16.5L14.7 13.7L12 16.4L9.3 13.7L6.5 16.5L12 22ZM22 12L16.5 17.5L13.7 14.7L16.4 12L13.7 9.3L16.5 6.5L22 12ZM12 10.1L13.9 12L12 13.9L10.1 12L12 10.1Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'Bybit',
+                color: '#F7A600',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="none">
+                    <rect width="24" height="24" rx="6" fill="#17181E" />
+                    <path d="M6 7H13.5C15.5 7 17 8.5 17 10.5C17 12 16 13.2 14.6 13.7C16.3 14.2 17.5 15.6 17.5 17.3C17.5 19.4 15.8 21 13.6 21H6V7Z" fill="#F7A600" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'MEXC',
+                color: '#00B897',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#00B897">
+                    <path d="M3 18L7.5 7L12 14L16.5 7L21 18H17L14.5 11.5L12 15.5L9.5 11.5L7 18H3Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'HTX',
+                color: '#007AFF',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#007AFF">
+                    <path d="M6 4V20H9.5V13.5H14.5V20H18V4H14.5V10.5H9.5V4H6Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'OKX',
+                color: '#FFFFFF',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#FFFFFF">
+                    <rect x="3" y="3" width="6" height="6" rx="1" />
+                    <rect x="15" y="3" width="6" height="6" rx="1" />
+                    <rect x="9" y="9" width="6" height="6" rx="1" />
+                    <rect x="3" y="15" width="6" height="6" rx="1" />
+                    <rect x="15" y="15" width="6" height="6" rx="1" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'BingX',
+                color: '#0052FF',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#0052FF">
+                    <path d="M4 4L12 12L4 20H8.5L14.25 14.25L20 20H20.5L12.5 12L20 4H15.5L9.75 9.75L4 4Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'Kraken',
+                color: '#5741D9',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#5741D9">
+                    <path d="M12 2C7.03 2 3 6.03 3 11C3 15.97 7.03 20 12 20C13.5 20 14.8 19.6 16 18.9V22H19V16.5C20.9 15 22 12.6 22 10C22 5.58 17.52 2 12 2ZM10.5 13.5C9.67 13.5 9 12.83 9 12C9 11.17 9.67 10.5 10.5 10.5C11.33 10.5 12 11.17 12 12C12 12.83 11.33 13.5 10.5 13.5Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'Luno',
+                color: '#0027BD',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#0027BD">
+                    <circle cx="12" cy="12" r="9" fill="#0027BD" />
+                    <path d="M8 8L16 12L8 16V8Z" fill="#FFFFFF" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'Coinbase',
+                color: '#0052FF',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#0052FF">
+                    <circle cx="12" cy="12" r="10" />
+                    <rect x="9" y="9" width="6" height="6" rx="1.5" fill="#071126" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'KuCoin',
+                color: '#24AD7F',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#24AD7F">
+                    <path d="M4 4V20H8V13L15 20H20L12 12L20 4H15L8 11V4H4Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'Bitget',
+                color: '#00F0FF',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#00F0FF">
+                    <path d="M4 8L12 4L20 8L12 12L4 8ZM4 16L12 12L20 16L12 20L4 16Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'Gate.io',
+                color: '#FF4D4D',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#FF4D4D">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12H12V2Z" />
+                  </svg>
+                ),
+              },
+              // Duplicate set for seamless continuous marquee loop
+              {
+                name: 'Binance',
+                color: '#F0B90B',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#F0B90B">
+                    <path d="M12 2L6.5 7.5L9.3 10.3L12 7.6L14.7 10.3L17.5 7.5L12 2ZM2 12L7.5 6.5L10.3 9.3L7.6 12L10.3 14.7L7.5 17.5L2 12ZM12 22L17.5 16.5L14.7 13.7L12 16.4L9.3 13.7L6.5 16.5L12 22ZM22 12L16.5 17.5L13.7 14.7L16.4 12L13.7 9.3L16.5 6.5L22 12ZM12 10.1L13.9 12L12 13.9L10.1 12L12 10.1Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'Bybit',
+                color: '#F7A600',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="none">
+                    <rect width="24" height="24" rx="6" fill="#17181E" />
+                    <path d="M6 7H13.5C15.5 7 17 8.5 17 10.5C17 12 16 13.2 14.6 13.7C16.3 14.2 17.5 15.6 17.5 17.3C17.5 19.4 15.8 21 13.6 21H6V7Z" fill="#F7A600" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'MEXC',
+                color: '#00B897',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#00B897">
+                    <path d="M3 18L7.5 7L12 14L16.5 7L21 18H17L14.5 11.5L12 15.5L9.5 11.5L7 18H3Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'HTX',
+                color: '#007AFF',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#007AFF">
+                    <path d="M6 4V20H9.5V13.5H14.5V20H18V4H14.5V10.5H9.5V4H6Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'OKX',
+                color: '#FFFFFF',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#FFFFFF">
+                    <rect x="3" y="3" width="6" height="6" rx="1" />
+                    <rect x="15" y="3" width="6" height="6" rx="1" />
+                    <rect x="9" y="9" width="6" height="6" rx="1" />
+                    <rect x="3" y="15" width="6" height="6" rx="1" />
+                    <rect x="15" y="15" width="6" height="6" rx="1" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'BingX',
+                color: '#0052FF',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#0052FF">
+                    <path d="M4 4L12 12L4 20H8.5L14.25 14.25L20 20H20.5L12.5 12L20 4H15.5L9.75 9.75L4 4Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'Kraken',
+                color: '#5741D9',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#5741D9">
+                    <path d="M12 2C7.03 2 3 6.03 3 11C3 15.97 7.03 20 12 20C13.5 20 14.8 19.6 16 18.9V22H19V16.5C20.9 15 22 12.6 22 10C22 5.58 17.52 2 12 2ZM10.5 13.5C9.67 13.5 9 12.83 9 12C9 11.17 9.67 10.5 10.5 10.5C11.33 10.5 12 11.17 12 12C12 12.83 11.33 13.5 10.5 13.5Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'Luno',
+                color: '#0027BD',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#0027BD">
+                    <circle cx="12" cy="12" r="9" fill="#0027BD" />
+                    <path d="M8 8L16 12L8 16V8Z" fill="#FFFFFF" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'Coinbase',
+                color: '#0052FF',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#0052FF">
+                    <circle cx="12" cy="12" r="10" />
+                    <rect x="9" y="9" width="6" height="6" rx="1.5" fill="#071126" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'KuCoin',
+                color: '#24AD7F',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#24AD7F">
+                    <path d="M4 4V20H8V13L15 20H20L12 12L20 4H15L8 11V4H4Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'Bitget',
+                color: '#00F0FF',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#00F0FF">
+                    <path d="M4 8L12 4L20 8L12 12L4 8ZM4 16L12 12L20 16L12 20L4 16Z" />
+                  </svg>
+                ),
+              },
+              {
+                name: 'Gate.io',
+                color: '#FF4D4D',
+                logo: (
+                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="#FF4D4D">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12H12V2Z" />
+                  </svg>
+                ),
+              },
+            ].map((item, index) => (
               <div
-                key={idx}
-                className="bg-[#0b152a] rounded-2xl border border-[#182848] p-5 flex flex-col items-center justify-between space-y-3 shadow-lg hover:border-slate-500 transition-all group"
+                key={index}
+                className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/[0.03] border border-white/[0.05] hover:bg-white/[0.08] transition-all shrink-0 cursor-pointer group"
               >
-                {/* Exchange Logo Square Container */}
-                <div className="w-14 h-14 rounded-2xl bg-black flex items-center justify-center p-2.5 border border-slate-800 shadow-inner group-hover:scale-105 transition-transform">
-                  <span className="text-white font-black text-xs font-mono">{partner.name.toUpperCase()}</span>
-                </div>
-
-                {/* Exchange Name */}
-                <h4 className="font-righteous text-sm font-bold text-white tracking-wide">{partner.name}</h4>
-
-                {/* Active Indicator Badge */}
-                <span className="px-3 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-                  {partner.status || 'ACTIVE'}
+                {item.logo}
+                <span className="font-righteous text-base font-bold text-white tracking-wide group-hover:text-slate-200">
+                  {item.name}
                 </span>
               </div>
             ))}

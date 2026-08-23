@@ -83,7 +83,7 @@ export default function WithdrawHistoryPage() {
                         {w.withdrawal_method}
                       </td>
                       <td className="py-4 px-6 font-righteous text-red-400 border-r border-[#ff0044]/10">
-                        ₮{parseFloat(w.amount).toFixed(2)}
+                        ${parseFloat(w.amount).toFixed(2)}
                       </td>
                       <td className="py-4 px-6 border-r border-[#ff0044]/10">
                         <span

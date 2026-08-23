@@ -57,19 +57,15 @@ function LoginContent() {
 
     try {
       const res = await login(email, password, keepMeLoggedIn);
-      if (res && res.error) {
-        setErrors({ form: res.error });
-        setSubmitting(false);
+      if (res && res.success) {
+        router.push('/dashboard');
       } else {
-        toast.success('Logged in successfully!');
-        if (res.user && !res.user.profile_complete) {
-          router.push('/user-data');
-        } else {
-          router.push('/dashboard');
-        }
+        const errMsg = res?.message || res?.error || 'Failed to login. Please try again.';
+        setErrors({ form: errMsg });
       }
     } catch (err) {
       setErrors({ form: err.message || 'Failed to login. Please try again.' });
+    } finally {
       setSubmitting(false);
     }
   };

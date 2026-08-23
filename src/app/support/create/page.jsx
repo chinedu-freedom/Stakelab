@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import UserSidebarLayout from '../../../components/UserSidebarLayout';
 import { useAuth } from '../../../context/AuthContext';
-import { X, ChevronDown, MessageCircle } from 'lucide-react';
+import { X, MessageCircle, Loader2 } from 'lucide-react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../../components/ui/select';
 import { toast } from 'sonner';
 
 export default function CreateTicketPage() {
@@ -19,14 +20,23 @@ export default function CreateTicketPage() {
 
   // WhatsApp Support Modal State
   const [whatsappModalOpen, setWhatsappModalOpen] = useState(false);
+  const [whatsappLink, setWhatsappLink] = useState('https://wa.me/1234567890');
 
   useEffect(() => {
     // Show WhatsApp support modal automatically when user lands on create ticket page
     setWhatsappModalOpen(true);
+
+    api
+      .get('/public/contact-links')
+      .then((res) => {
+        if (res.data.success && res.data.contactLinks?.whatsappSupport) {
+          setWhatsappLink(res.data.contactLinks.whatsappSupport);
+        }
+      })
+      .catch(() => null);
   }, []);
 
   const handleOpenWhatsApp = () => {
-    const whatsappLink = 'https://wa.me/1234567890';
     window.open(whatsappLink, '_blank');
     toast.success('Opening WhatsApp Direct Support...');
   };
@@ -61,32 +71,21 @@ export default function CreateTicketPage() {
 
     setSubmitting(true);
     try {
-      const randomTicketId = Math.floor(100000 + Math.random() * 900000);
-      
-      const newTicket = {
-        id: randomTicketId,
+      const res = await api.post('/support/create', {
         subject,
         priority,
         message,
-        status: 'Open',
-        created_at: new Date().toISOString(),
-        sender: user?.full_name || 'Chinedu Afamefuna',
-        attachments: fileRows.filter(r => r.file).map(r => r.name),
-      };
+      });
 
-      if (typeof window !== 'undefined') {
-        const stored = JSON.parse(localStorage.getItem('stakelab_tickets') || '[]');
-        stored.unshift(newTicket);
-        localStorage.setItem('stakelab_tickets', JSON.stringify(stored));
+      if (res.data.success) {
+        toast.success('Ticket opened successfully!');
+        const ticketIdClean = res.data.ticket.ticket_id.replace('#', '');
+        setTimeout(() => {
+          router.push(`/support/${ticketIdClean}`);
+        }, 500);
       }
-
-      toast.success('Ticket opened successfully!');
-
-      setTimeout(() => {
-        router.push(`/support/${randomTicketId}?subject=${encodeURIComponent(subject)}&message=${encodeURIComponent(message)}`);
-      }, 600);
     } catch (err) {
-      toast.error('Failed to open ticket. Please try again.');
+      toast.error(err.response?.data?.message || 'Failed to open ticket. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -133,18 +132,16 @@ export default function CreateTicketPage() {
                 <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
                   Priority <span className="text-[#ff0044]">*</span>
                 </label>
-                <div className="relative">
-                  <select
-                    value={priority}
-                    onChange={(e) => setPriority(e.target.value)}
-                    className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-lg px-4 pr-10 text-white text-xs font-sans appearance-none focus:outline-none focus:ring-1 focus:ring-[#ff0044] transition-all cursor-pointer"
-                  >
-                    <option value="High" className="bg-[#060f22]">High</option>
-                    <option value="Medium" className="bg-[#060f22]">Medium</option>
-                    <option value="Low" className="bg-[#060f22]">Low</option>
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                </div>
+                <Select value={priority} onValueChange={setPriority}>
+                  <SelectTrigger className="h-11 bg-[#060f22] border-[#182848] rounded-lg">
+                    <SelectValue placeholder="Select Priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="High">High</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="Low">Low</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -178,7 +175,13 @@ export default function CreateTicketPage() {
                 disabled={submitting}
                 className="btn-stakelab px-8 py-2.5 rounded-lg text-white font-righteous text-xs uppercase font-bold tracking-wider transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 disabled:opacity-50"
               >
-                {submitting ? 'Submitting...' : '▶ Submit'}
+                {submitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" /> Submitting
+                  </span>
+                ) : (
+                  '▶ Submit'
+                )}
               </button>
             </div>
 
@@ -220,10 +223,16 @@ export default function CreateTicketPage() {
           </form>
         </div>
 
-        {/* WhatsApp Direct Support Modal Popup */}
+        {/* WhatsApp Direct Support Modal Popup (Full Screen & Click Outside to Close) */}
         {whatsappModalOpen && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-[#0c1a3a] border border-[#233b6e] rounded-2xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl relative animate-in fade-in zoom-in duration-200 text-center">
+          <div
+            onClick={() => setWhatsappModalOpen(false)}
+            className="fixed inset-0 min-h-screen w-full bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#0c1a3a] border border-[#233b6e] rounded-2xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl relative animate-in fade-in zoom-in duration-200 text-center my-auto"
+            >
               <button
                 onClick={() => setWhatsappModalOpen(false)}
                 className="absolute right-4 top-4 text-slate-400 hover:text-white p-1"

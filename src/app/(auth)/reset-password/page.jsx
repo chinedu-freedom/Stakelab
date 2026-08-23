@@ -46,7 +46,6 @@ function ResetPasswordContent() {
     try {
       const res = await submitResetPassword(email, newPassword);
       if (res && res.success) {
-        toast.success('Password reset successfully! Redirecting to login...');
         setTimeout(() => {
           router.push('/login?verified=true');
         }, 1200);
@@ -204,15 +203,11 @@ function ResetPasswordContent() {
   );
 }
 
+import PageLoader from '../../../components/PageLoader';
+
 export default function ResetPasswordPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-[#07193b] flex items-center justify-center text-white">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#ff0044]"></div>
-        </div>
-      }
-    >
+    <Suspense fallback={<PageLoader />}>
       <ResetPasswordContent />
     </Suspense>
   );

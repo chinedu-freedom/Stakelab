@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import UserSidebarLayout from '../../components/UserSidebarLayout';
-import api from '../../lib/api';
-import { ClipboardList, ChevronDown } from 'lucide-react';
+import { ClipboardList } from 'lucide-react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState([]);
@@ -86,22 +86,20 @@ export default function TransactionsPage() {
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
               Type
             </label>
-            <div className="relative">
-              <select
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-lg px-4 pr-10 text-white text-xs font-sans appearance-none focus:outline-none focus:ring-1 focus:ring-[#ff0044] transition-all cursor-pointer"
-              >
-                <option value="All" className="bg-[#060f22]">All</option>
-                <option value="Plus (+)" className="bg-[#060f22]">Plus (+)</option>
-                <option value="Minus (-)" className="bg-[#060f22]">Minus (-)</option>
-                <option value="DEPOSIT" className="bg-[#060f22]">Deposit</option>
-                <option value="WITHDRAWAL" className="bg-[#060f22]">Withdrawal</option>
-                <option value="STAKE" className="bg-[#060f22]">Staking</option>
-                <option value="STAKE_PROFIT" className="bg-[#060f22]">Profit Claim</option>
-              </select>
-              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
+            <Select value={typeFilter} onValueChange={setTypeFilter}>
+              <SelectTrigger className="h-11 bg-[#060f22] border-[#182848] rounded-lg">
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All</SelectItem>
+                <SelectItem value="Plus (+)">Plus (+)</SelectItem>
+                <SelectItem value="Minus (-)">Minus (-)</SelectItem>
+                <SelectItem value="DEPOSIT">Deposit</SelectItem>
+                <SelectItem value="WITHDRAWAL">Withdrawal</SelectItem>
+                <SelectItem value="STAKE">Staking</SelectItem>
+                <SelectItem value="STAKE_PROFIT">Profit Claim</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Control 3: Currency Select Dropdown */}
@@ -109,23 +107,17 @@ export default function TransactionsPage() {
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
               Currency
             </label>
-            <div className="relative">
-              <select
-                value={currencyFilter}
-                onChange={(e) => setCurrencyFilter(e.target.value)}
-                className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-lg px-4 pr-10 text-white text-xs font-sans appearance-none focus:outline-none focus:ring-1 focus:ring-[#ff0044] transition-all cursor-pointer"
-              >
-                <option value="All" className="bg-[#060f22]">All</option>
-                <option value="USDT" className="bg-[#060f22]">USDT</option>
-                <option value="BTC" className="bg-[#060f22]">BTC</option>
-                <option value="ETH" className="bg-[#060f22]">ETH</option>
-                <option value="LTC" className="bg-[#060f22]">LTC</option>
-                <option value="DOGE" className="bg-[#060f22]">DOGE</option>
-                <option value="BNB" className="bg-[#060f22]">BNB</option>
-                <option value="SOL" className="bg-[#060f22]">SOL</option>
-              </select>
-              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
+            <Select value={currencyFilter} onValueChange={setCurrencyFilter}>
+              <SelectTrigger className="h-11 bg-[#060f22] border-[#182848] rounded-lg">
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All</SelectItem>
+                <SelectItem value="USDT">USDT</SelectItem>
+                <SelectItem value="BTC">BTC</SelectItem>
+                <SelectItem value="ETH">ETH</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -168,10 +160,10 @@ export default function TransactionsPage() {
                         {tx.type}
                       </td>
                       <td className="py-4 px-6 font-righteous text-emerald-400 border-r border-[#ff0044]/10">
-                        ₮{parseFloat(tx.amount).toFixed(2)}
+                        ${parseFloat(tx.amount).toFixed(2)}
                       </td>
                       <td className="py-4 px-6 font-righteous text-white border-r border-[#ff0044]/10">
-                        ₮{parseFloat(tx.balance_after).toFixed(2)}
+                        ${parseFloat(tx.balance_after).toFixed(2)}
                       </td>
                       <td className="py-4 px-6 text-slate-400 text-right">
                         {new Date(tx.created_at).toLocaleString()}

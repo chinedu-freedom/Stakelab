@@ -1,10 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Copy, Check, Users, Gift, Share2, Award, ChevronRight } from 'lucide-react';
+import api from '../lib/api';
 
 export default function HandPhoneMockup() {
   const [copied, setCopied] = useState(false);
+  const [rates, setRates] = useState([10, 5, 3]);
+
+  useEffect(() => {
+    const fetchRates = async () => {
+      try {
+        const res = await api.get('/public/referral-settings');
+        if (res.data && res.data.success && res.data.referralSettings?.depositLevels) {
+          const dl = res.data.referralSettings.depositLevels;
+          if (dl.length >= 3) {
+            setRates([dl[0].percent, dl[1].percent, dl[2].percent]);
+          }
+        }
+      } catch (err) {
+        // Quiet fallback
+      }
+    };
+    fetchRates();
+  }, []);
 
   const handleCopy = () => {
     setCopied(true);
@@ -128,7 +147,7 @@ export default function HandPhoneMockup() {
                     L1
                   </div>
                   <div>
-                    <span className="text-[11px] font-bold text-white block">Level 01 (60%)</span>
+                    <span className="text-[11px] font-bold text-white block">Level 01 ({rates[0]}%)</span>
                     <span className="text-[9px] text-slate-400">72 Referred Users</span>
                   </div>
                 </div>
@@ -142,7 +161,7 @@ export default function HandPhoneMockup() {
                     L2
                   </div>
                   <div>
-                    <span className="text-[11px] font-bold text-white block">Level 02 (40%)</span>
+                    <span className="text-[11px] font-bold text-white block">Level 02 ({rates[1]}%)</span>
                     <span className="text-[9px] text-slate-400">38 Referred Users</span>
                   </div>
                 </div>
@@ -156,7 +175,7 @@ export default function HandPhoneMockup() {
                     L3
                   </div>
                   <div>
-                    <span className="text-[11px] font-bold text-white block">Level 03 (20%)</span>
+                    <span className="text-[11px] font-bold text-white block">Level 03 ({rates[2]}%)</span>
                     <span className="text-[9px] text-slate-400">14 Referred Users</span>
                   </div>
                 </div>

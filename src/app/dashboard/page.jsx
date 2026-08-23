@@ -15,7 +15,8 @@ import {
   ChevronRight,
   BellRing,
 } from 'lucide-react';
-import { toast } from 'sonner';
+import OfficialInfoReleaseModal from '../../components/OfficialInfoReleaseModal';
+import PageLoader from '../../components/PageLoader';
 
 export default function DashboardPage() {
   const { user, refreshUser } = useAuth();
@@ -58,15 +59,45 @@ export default function DashboardPage() {
   const totalEarned = dashboardData?.user?.total_earned || user?.total_earned || 0;
   const transactions = dashboardData?.recentTransactions || [];
 
+  if (loading) {
+    return (
+      <UserSidebarLayout>
+        <PageLoader />
+      </UserSidebarLayout>
+    );
+  }
+
   return (
     <UserSidebarLayout>
+      <OfficialInfoReleaseModal />
       <div className="space-y-6 max-w-7xl mx-auto">
-        {/* Page Header Title */}
-        <h1 className="text-xl font-extrabold text-white font-righteous tracking-wide">
-          Dashboard
-        </h1>
+        {/* Page Header Title & Action Buttons */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-extrabold text-white font-righteous tracking-wide">
+            Dashboard
+          </h1>
+          <div className="flex items-center space-x-2.5">
+            <Link
+              href="/spin"
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-purple-500/20 transition-all select-none"
+            >
+              <span className="text-sm">🎰</span>
+              <span>Lucky Spin</span>
+            </Link>
 
-        {/* Browser Notification Alert Card */}
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event('open-daily-checkin'))}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-90 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-red-500/20 transition-all cursor-pointer select-none"
+            >
+              <span className="text-sm">🎁</span>
+              <span>Daily Rewards</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Browser Notification Alert Card (Commented out for now) */}
+        {/*
         <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-5 text-slate-200 shadow-xl">
           <h2 className="text-sm font-bold text-white font-righteous flex items-center gap-2">
             Please Allow / Reset Browser Notification{' '}
@@ -76,6 +107,7 @@ export default function DashboardPage() {
             If you want to get push notification then you have to allow notification from your browser
           </p>
         </div>
+        */}
 
         {/* 3 Stat Cards Grid (Total Deposit, Total Withdraw, Referral Earning) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -88,7 +120,7 @@ export default function DashboardPage() {
               <div>
                 <div className="text-xs text-slate-400 font-medium">Total Deposit</div>
                 <div className="text-lg font-extrabold text-white font-righteous mt-0.5">
-                  ₮{parseFloat(totalDeposit).toFixed(2)}
+                  ${parseFloat(totalDeposit).toFixed(2)}
                 </div>
               </div>
             </div>
@@ -110,7 +142,7 @@ export default function DashboardPage() {
               <div>
                 <div className="text-xs text-slate-400 font-medium">Total Withdraw</div>
                 <div className="text-lg font-extrabold text-white font-righteous mt-0.5">
-                  ₮{parseFloat(totalWithdraw).toFixed(2)}
+                  ${parseFloat(totalWithdraw).toFixed(2)}
                 </div>
               </div>
             </div>
@@ -132,7 +164,7 @@ export default function DashboardPage() {
               <div>
                 <div className="text-xs text-slate-400 font-medium">Referral Earning</div>
                 <div className="text-lg font-extrabold text-white font-righteous mt-0.5">
-                  ₮{parseFloat(totalEarned).toFixed(2)}
+                  ${parseFloat(totalEarned).toFixed(2)}
                 </div>
               </div>
             </div>
@@ -169,7 +201,7 @@ export default function DashboardPage() {
                       <h3 className="text-base font-bold text-white mt-1 font-righteous">{stake.plan.title}</h3>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-black text-white font-righteous">₮{parseFloat(stake.amount).toFixed(2)}</div>
+                      <div className="text-lg font-black text-white font-righteous">${parseFloat(stake.amount).toFixed(2)}</div>
                       <div className="text-xs text-slate-400">Amount Staked</div>
                     </div>
                   </div>
@@ -177,11 +209,11 @@ export default function DashboardPage() {
                   <div className="grid grid-cols-2 gap-2 text-xs bg-[#060f22] p-3 rounded-lg border border-[#182848]">
                     <div>
                       <span className="text-slate-400">Daily Return:</span>
-                      <span className="text-emerald-400 font-bold ml-1">₮{parseFloat(stake.daily_profit).toFixed(2)}</span>
+                      <span className="text-emerald-400 font-bold ml-1">${parseFloat(stake.daily_profit).toFixed(2)}</span>
                     </div>
                     <div>
                       <span className="text-slate-400">Total Claimed:</span>
-                      <span className="text-white font-bold ml-1">₮{parseFloat(stake.total_earned).toFixed(2)}</span>
+                      <span className="text-white font-bold ml-1">${parseFloat(stake.total_earned).toFixed(2)}</span>
                     </div>
                   </div>
 
@@ -189,7 +221,7 @@ export default function DashboardPage() {
                     onClick={() => handleClaim(stake.id)}
                     className="w-full py-2.5 rounded-lg bg-[#142345] text-[#ff0044] hover:bg-[#ff0044] hover:text-white font-bold text-xs border border-[#ff0044]/30 transition-all flex items-center justify-center gap-2"
                   >
-                    <RefreshCw className="w-3.5 h-3.5" /> Claim Daily Return (₮{parseFloat(stake.daily_profit).toFixed(2)})
+                    <RefreshCw className="w-3.5 h-3.5" /> Claim Daily Return (${parseFloat(stake.daily_profit).toFixed(2)})
                   </button>
                 </div>
               ))}
@@ -226,8 +258,8 @@ export default function DashboardPage() {
                     <tr key={tx.id} className="hover:bg-[#0e1d3e]/50 text-slate-200">
                       <td className="py-3 px-4 font-mono text-[11px] text-slate-400">{tx.id.substring(0, 8)}...</td>
                       <td className="py-3 px-4 font-bold text-white">{tx.type}</td>
-                      <td className="py-3 px-4 font-righteous text-emerald-400">₮{parseFloat(tx.amount).toFixed(2)}</td>
-                      <td className="py-3 px-4 font-righteous text-white">₮{parseFloat(tx.balance_after).toFixed(2)}</td>
+                      <td className="py-3 px-4 font-righteous text-emerald-400">${parseFloat(tx.amount).toFixed(2)}</td>
+                      <td className="py-3 px-4 font-righteous text-white">${parseFloat(tx.balance_after).toFixed(2)}</td>
                       <td className="py-3 px-4 text-slate-400">{new Date(tx.created_at).toLocaleDateString()}</td>
                     </tr>
                   ))}

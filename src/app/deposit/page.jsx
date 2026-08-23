@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import UserSidebarLayout from '../../components/UserSidebarLayout';
 import api from '../../lib/api';
-import { Copy, Check, ChevronDown, ChevronUp, ShieldCheck, Info } from 'lucide-react';
+import { Copy, Check, ChevronDown, ChevronUp, ShieldCheck, Info, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function DepositPage() {
@@ -28,29 +28,40 @@ export default function DepositPage() {
     '• All deposits are verified on the blockchain automatically.\n• Please send exact amounts to official generated wallet address.\n• Minimum deposit limit: $1.00.\n• Deposits below min limits cannot be credited.'
   );
 
+  const [globalSettings, setGlobalSettings] = useState({
+    minDeposit: 1,
+    maxDeposit: 50000,
+    depositCharge: 0,
+  });
+
   useEffect(() => {
+    api.get('/public/deposit-withdrawal-settings').then((res) => {
+      if (res.data.success && res.data.settings) {
+        const s = res.data.settings;
+        if (s.rechargeNotice) setRechargeNotice(s.rechargeNotice);
+        setGlobalSettings({
+          minDeposit: parseFloat(s.minDeposit || 1),
+          maxDeposit: parseFloat(s.maxDeposit || 50000),
+          depositCharge: parseFloat(s.depositCharge || 0),
+        });
+      }
+    }).catch(() => null);
+
     api.get('/payment-methods').then((res) => {
       if (res.data.success && res.data.methods.length > 0) {
-        // Map backend methods to display format
         const mapped = res.data.methods.map((m, idx) => ({
           id: m.id || String(idx + 1),
           name: `${m.symbol} (${m.network})`,
           badge: m.network,
           symbol: m.symbol,
-          minLimit: 1,
-          maxLimit: 50000,
-          fee: 0,
-          rate: 1.0,
+          minLimit: m.min_limit ? parseFloat(m.min_limit) : null,
+          maxLimit: m.max_limit ? parseFloat(m.max_limit) : null,
+          fee: m.fee !== undefined && m.fee !== null ? parseFloat(m.fee) : null,
+          rate: m.rate ? parseFloat(m.rate) : 1.0,
           address: m.wallet_address || '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
         }));
         setGateways(mapped);
         setSelectedGateway(mapped[0]);
-      }
-    }).catch(() => null);
-
-    api.get('/public/deposit-withdrawal-settings').then((res) => {
-      if (res.data.success && res.data.settings?.rechargeNotice) {
-        setRechargeNotice(res.data.settings.rechargeNotice);
       }
     }).catch(() => null);
   }, []);
@@ -64,13 +75,23 @@ export default function DepositPage() {
     }
   };
 
+  const [dynamicInvoice, setDynamicInvoice] = useState(null);
+
+  const minLimit = selectedGateway?.minLimit ?? globalSettings.minDeposit;
+  const maxLimit = selectedGateway?.maxLimit ?? globalSettings.maxDeposit;
+  const feePercent = selectedGateway?.fee ?? globalSettings.depositCharge;
+
+  const amountNum = parseFloat(amount || 0);
+  const fee = (amountNum * feePercent) / 100;
+  const totalAmount = amountNum + fee;
+  const inUSD = totalAmount * (selectedGateway?.rate || 1);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!amount || !selectedGateway) return;
 
-    const amountNum = parseFloat(amount);
-    if (amountNum < selectedGateway.minLimit || amountNum > selectedGateway.maxLimit) {
-      toast.error(`Amount must be between ₮${selectedGateway.minLimit} and ₮${selectedGateway.maxLimit}`);
+    if (amountNum < minLimit || amountNum > maxLimit) {
+      toast.error(`Amount must be between $${minLimit} and $${maxLimit}`);
       return;
     }
 
@@ -83,9 +104,19 @@ export default function DepositPage() {
       });
 
       if (res.data.success) {
-        toast.success('Deposit request submitted successfully! Pending admin verification.');
-        setAmount('');
-        setTxHash('');
+        if (res.data.dynamic && res.data.address) {
+          setDynamicInvoice({
+            address: res.data.address,
+            trackId: res.data.trackId,
+            amount: amountNum,
+            method: selectedGateway.name,
+          });
+          toast.success('Dynamic OxaPay payment address generated!');
+        } else {
+          toast.success('Deposit request submitted successfully! Pending admin verification.');
+          setAmount('');
+          setTxHash('');
+        }
       }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Deposit submission failed');
@@ -93,11 +124,6 @@ export default function DepositPage() {
       setSubmitting(false);
     }
   };
-
-  const amountNum = parseFloat(amount || 0);
-  const fee = selectedGateway?.fee || 0;
-  const totalAmount = amountNum + fee;
-  const inUSD = totalAmount * (selectedGateway?.rate || 1);
 
   const visibleGateways = showAllOptions ? gateways : gateways.slice(0, 5);
 
@@ -125,12 +151,15 @@ export default function DepositPage() {
                     <div
                       key={gw.id}
                       onClick={() => setSelectedGateway(gw)}
-                      className={`flex items-center justify-between py-3.5 px-4 rounded-lg cursor-pointer transition-all ${
+                      className={`relative flex items-center justify-between py-3.5 px-4 rounded-lg cursor-pointer transition-all overflow-hidden ${
                         isSelected
-                          ? 'bg-[#12234e] text-white font-bold border-l-4 border-[#ff0044]'
+                          ? 'bg-[#12234e] text-white font-bold pl-5'
                           : 'text-slate-300 hover:bg-[#0e1d44]'
                       }`}
                     >
+                      {isSelected && (
+                        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#ff0044] to-[#fe780b] rounded-l-lg" />
+                      )}
                       <div className="flex items-center space-x-3">
                         <div
                           className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
@@ -183,7 +212,7 @@ export default function DepositPage() {
                   Amount
                 </label>
                 <div className="flex items-center bg-[#06102b] border border-[#1a2b57] rounded-lg overflow-hidden focus-within:ring-1 focus-within:ring-[#ff0044] transition-all">
-                  <span className="px-3.5 text-xs font-bold text-slate-400 select-none">₮</span>
+                  <span className="pl-3.5 text-xs font-bold text-slate-400 select-none">$</span>
                   <input
                     type="number"
                     step="any"
@@ -201,7 +230,7 @@ export default function DepositPage() {
                 <div className="flex justify-between items-center">
                   <span className="text-slate-400 font-medium">Limit</span>
                   <span className="font-bold text-white font-righteous">
-                    ₮{selectedGateway?.minLimit || 1}.00 - ₮{selectedGateway?.maxLimit || 50000}.00
+                    ${minLimit.toFixed(2)} - ${maxLimit.toFixed(2)}
                   </span>
                 </div>
 
@@ -278,7 +307,13 @@ export default function DepositPage() {
                 disabled={submitting}
                 className="w-full bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-95 text-white font-righteous font-bold py-3.5 rounded-lg text-sm tracking-wider uppercase transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 cursor-pointer"
               >
-                {submitting ? 'Processing Deposit...' : 'Deposit Confirm'}
+                {submitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" /> Processing Deposit
+                  </span>
+                ) : (
+                  'Deposit Confirm'
+                )}
               </button>
 
               {/* Footnote matching reference screenshot */}
@@ -288,6 +323,86 @@ export default function DepositPage() {
             </form>
           </div>
         </div>
+
+        {/* Dynamic OxaPay Invoice Modal */}
+        {dynamicInvoice && (
+          <div
+            onClick={() => setDynamicInvoice(null)}
+            className="fixed inset-0 min-h-screen w-full bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#0b1739] border border-[#1a2b57] rounded-2xl max-w-md w-full p-6 space-y-5 text-center shadow-2xl relative my-auto animate-in fade-in zoom-in duration-200"
+            >
+              <div className="flex justify-between items-center pb-3 border-b border-[#16274a]">
+                <h3 className="text-sm font-bold text-white font-righteous">
+                  OxaPay Dynamic Payment Address
+                </h3>
+                <button
+                  onClick={() => setDynamicInvoice(null)}
+                  className="text-slate-400 hover:text-white p-1"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="bg-[#06102b] p-4 rounded-xl border border-[#1a2b57] space-y-3">
+                <p className="text-xs text-slate-300">
+                  Send <span className="font-bold text-emerald-400 font-righteous">${dynamicInvoice.amount} USD</span> via{' '}
+                  <span className="font-bold text-white">{dynamicInvoice.method}</span> to the unique address below:
+                </p>
+
+                {/* QR Code */}
+                <div className="flex justify-center py-2">
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(dynamicInvoice.address)}`}
+                    alt="OxaPay QR Code"
+                    className="w-40 h-40 rounded-lg border-4 border-[#16274a] bg-white p-1"
+                  />
+                </div>
+
+                {/* Address Box */}
+                <div className="flex items-center gap-2 bg-[#0b1739] p-3 rounded-lg border border-[#1a2b57]">
+                  <input
+                    type="text"
+                    readOnly
+                    value={dynamicInvoice.address}
+                    className="bg-transparent text-xs font-mono text-emerald-400 w-full focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(dynamicInvoice.address);
+                      toast.success('Payment address copied!');
+                    }}
+                    className="p-1.5 rounded bg-[#16274a] text-[#ff0044] hover:bg-[#ff0044] hover:text-white transition-all shrink-0 cursor-pointer"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {dynamicInvoice.trackId && (
+                  <p className="text-[11px] text-slate-400 font-mono">
+                    Track ID: <span className="text-slate-200">{dynamicInvoice.trackId}</span>
+                  </p>
+                )}
+              </div>
+
+              <div className="flex items-center justify-center gap-2 text-xs text-amber-400 font-medium">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                Waiting for blockchain payment... (Auto-credits on completion)
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setDynamicInvoice(null)}
+                className="w-full bg-[#12234e] hover:bg-[#16274a] text-white font-bold py-2.5 rounded-lg text-xs transition-all cursor-pointer"
+              >
+                Close Window
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </UserSidebarLayout>
   );

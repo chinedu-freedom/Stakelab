@@ -83,7 +83,7 @@ export default function DepositHistoryPage() {
                         {dep.payment_method}
                       </td>
                       <td className="py-4 px-6 font-righteous text-emerald-400 border-r border-[#ff0044]/10">
-                        ₮{parseFloat(dep.amount).toFixed(2)}
+                        ${parseFloat(dep.amount).toFixed(2)}
                       </td>
                       <td className="py-4 px-6 border-r border-[#ff0044]/10">
                         <span

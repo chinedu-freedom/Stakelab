@@ -20,12 +20,16 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
         return;
       }
+      document.cookie = `stakelab_token=${token}; path=/; max-age=604800; SameSite=Lax`;
+      document.cookie = `sec-prd-token=${token}; path=/; max-age=604800; SameSite=Lax`;
       const res = await api.get('/auth/me');
       if (res.data.success) {
         setUser(res.data.user);
       }
     } catch (err) {
       localStorage.removeItem('stakelab_token');
+      document.cookie = 'stakelab_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'sec-prd-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       setUser(null);
     } finally {
       setLoading(false);
@@ -41,9 +45,15 @@ export const AuthProvider = ({ children }) => {
       const res = await api.post('/auth/login', { email, password });
       if (res.data.success) {
         localStorage.setItem('stakelab_token', res.data.token);
+        document.cookie = `stakelab_token=${res.data.token}; path=/; max-age=604800; SameSite=Lax`;
+        document.cookie = `sec-prd-token=${res.data.token}; path=/; max-age=604800; SameSite=Lax`;
         setUser(res.data.user);
         toast.success('Welcome back to Stakelab!');
         return { success: true, user: res.data.user };
+      } else {
+        const msg = res.data.message || 'Login failed';
+        toast.error(msg);
+        return { success: false, message: msg };
       }
     } catch (err) {
       const msg = err.response?.data?.message || 'Login failed';
@@ -57,9 +67,15 @@ export const AuthProvider = ({ children }) => {
       const res = await api.post('/auth/register', formData);
       if (res.data.success) {
         localStorage.setItem('stakelab_token', res.data.token);
+        document.cookie = `stakelab_token=${res.data.token}; path=/; max-age=604800; SameSite=Lax`;
+        document.cookie = `sec-prd-token=${res.data.token}; path=/; max-age=604800; SameSite=Lax`;
         setUser(res.data.user);
         toast.success('Registration successful! Please complete your user data.');
         return { success: true, user: res.data.user };
+      } else {
+        const msg = res.data.message || 'Registration failed';
+        toast.error(msg);
+        return { success: false, message: msg };
       }
     } catch (err) {
       const msg = err.response?.data?.message || 'Registration failed';
@@ -74,6 +90,10 @@ export const AuthProvider = ({ children }) => {
       if (res.data.success) {
         toast.success(res.data.message || 'OTP code sent to your email!');
         return { success: true, message: res.data.message };
+      } else {
+        const msg = res.data.message || 'Failed to send OTP code';
+        toast.error(msg);
+        return { success: false, message: msg };
       }
     } catch (err) {
       const msg = err.response?.data?.message || 'Failed to send OTP code';
@@ -88,6 +108,10 @@ export const AuthProvider = ({ children }) => {
       if (res.data.success) {
         toast.success(res.data.message || 'OTP verified successfully!');
         return { success: true, message: res.data.message };
+      } else {
+        const msg = res.data.message || 'Invalid or expired OTP code';
+        toast.error(msg);
+        return { success: false, message: msg };
       }
     } catch (err) {
       const msg = err.response?.data?.message || 'Invalid or expired OTP code';
@@ -102,6 +126,10 @@ export const AuthProvider = ({ children }) => {
       if (res.data.success) {
         toast.success(res.data.message || 'Password reset successfully! Please login.');
         return { success: true, message: res.data.message };
+      } else {
+        const msg = res.data.message || 'Failed to reset password';
+        toast.error(msg);
+        return { success: false, message: msg };
       }
     } catch (err) {
       const msg = err.response?.data?.message || 'Failed to reset password';
@@ -112,6 +140,8 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('stakelab_token');
+    document.cookie = 'stakelab_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    document.cookie = 'sec-prd-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     setUser(null);
     toast.info('Logged out successfully');
     router.push('/login');

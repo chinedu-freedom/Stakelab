@@ -10,9 +10,21 @@ import { toast } from 'sonner';
 export default function SupportTicketsPage() {
   const { user } = useAuth();
   const [tickets, setTickets] = useState([]);
+  const [whatsappLink, setWhatsappLink] = useState('https://wa.me/1234567890');
+
+  useEffect(() => {
+    api
+      .get('/public/contact-links')
+      .then((res) => {
+        if (res.data.success && res.data.contactLinks?.whatsappSupport) {
+          setWhatsappLink(res.data.contactLinks.whatsappSupport);
+        }
+      })
+      .catch(() => null);
+  }, []);
 
   const handleOpenWhatsApp = () => {
-    window.open('https://wa.me/1234567890', '_blank');
+    window.open(whatsappLink, '_blank');
     toast.success('Opening WhatsApp Direct Support...');
   };
 

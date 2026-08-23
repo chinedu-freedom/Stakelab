@@ -21,8 +21,19 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [captchaToken, setCaptchaToken] = useState('');
+  const [referralCode, setReferralCode] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('reference') || params.get('ref') || params.get('referral') || params.get('referral_code') || '';
+      if (ref) {
+        setReferralCode(ref);
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,22 +67,21 @@ export default function RegisterPage() {
         email,
         password,
         username: email.split('@')[0],
+        referral_code: referralCode,
         captchaToken,
       });
 
-      if (res && res.error) {
-        if (res.error.toLowerCase().includes('email')) {
-          setErrors({ email: res.error });
-        } else {
-          setErrors({ form: res.error });
-        }
-        setSubmitting(false);
+      if (res && res.success) {
+        window.location.href = '/user-data';
       } else {
-        toast.success('Account created successfully!');
-        router.push('/user-data');
+        const errMsg = res?.message || 'Failed to create account';
+        if (errMsg.toLowerCase().includes('email')) {
+          setErrors({ email: errMsg });
+        }
       }
     } catch (err) {
-      setErrors({ form: err.message || 'Failed to create account. Please try again.' });
+      console.error('Registration error:', err);
+    } finally {
       setSubmitting(false);
     }
   };
@@ -92,11 +102,6 @@ export default function RegisterPage() {
                 Sign up for free and start growing your wealth today
               </p>
             </div>
-
-            {/* General Form Error */}
-            {errors.form && (
-              <p className="mb-3 text-red-400 text-xs font-medium">{errors.form}</p>
-            )}
 
             {/* Register Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -212,6 +217,21 @@ export default function RegisterPage() {
                 )}
               </div>
 
+              {/* Referral Code / Inviter Username */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                  <span>Referral Code / Inviter</span>
+                  <span className="text-[10px] text-amber-400 font-medium">Optional</span>
+                </label>
+                <input
+                  type="text"
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value)}
+                  placeholder="Referral code or inviter username (e.g. Sparko)"
+                  className="w-full h-11 bg-[#0c1424] border-0 outline-none focus:outline-none rounded-md px-3.5 text-white placeholder-slate-500 font-sans text-xs sm:text-sm focus:ring-1 focus:ring-[#ff0044] transition-all shadow-inner"
+                />
+              </div>
+
               {/* Terms & Policies Checkbox Row */}
               <div className="pt-1">
                 <label className="flex items-start space-x-2.5 cursor-pointer select-none text-xs leading-relaxed">
@@ -223,7 +243,7 @@ export default function RegisterPage() {
                       if (errors.terms) setErrors((prev) => ({ ...prev, terms: '' }));
                     }}
                     className="w-4 h-4 mt-0.5 rounded border-[#1c2844] bg-[#0c1424] text-[#ff0044] focus:ring-0 accent-[#ff0044] cursor-pointer shrink-0"
-                  />
+                  /> 
                   <span className="text-slate-200">
                     I agree with{' '}
                     <span className="text-[#ff0044] font-bold hover:underline">Privacy Policy</span> |{' '}

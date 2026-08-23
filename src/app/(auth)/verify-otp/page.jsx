@@ -64,7 +64,6 @@ function VerifyOtpContent() {
     try {
       const res = await verifyOtp(email, fullOtp);
       if (res && res.success) {
-        toast.success('OTP verified successfully!');
         setTimeout(() => {
           router.push(`/reset-password?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(fullOtp)}`);
         }, 1000);
@@ -83,10 +82,7 @@ function VerifyOtpContent() {
       toast.error('Email address missing. Please go back to forgot password.');
       return;
     }
-    const res = await requestPasswordReset(email);
-    if (res && res.success) {
-      toast.success('A new 4-digit verification code has been sent to your email.');
-    }
+    await requestPasswordReset(email);
   };
 
   return (
@@ -197,15 +193,11 @@ function VerifyOtpContent() {
   );
 }
 
+import PageLoader from '../../../components/PageLoader';
+
 export default function VerifyOtpPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-[#07193b] flex items-center justify-center text-white">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#ff0044]"></div>
-        </div>
-      }
-    >
+    <Suspense fallback={<PageLoader />}>
       <VerifyOtpContent />
     </Suspense>
   );
