@@ -3,21 +3,27 @@
 import { useEffect, useRef } from 'react';
 
 export default function GoogleReCaptcha({
-  sitekey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LeD_5QtAAAAALP5DoenKhH2EeLwMzpjNe63iQ59',
+  sitekey,
   onVerify,
 }) {
   const containerRef = useRef(null);
   const widgetIdRef = useRef(null);
 
+  const activeSiteKey = sitekey || (
+    typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+      : (process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LfJC5UtAAAAAPBI2sjac9I6O2S3HHpff4INH6Li')
+  );
+
   useEffect(() => {
     let checkInterval = null;
 
     const renderWidget = () => {
-      if (window.grecaptcha && containerRef.current) {
+      if (window.grecaptcha && window.grecaptcha.render && containerRef.current) {
         try {
-          if (window.grecaptcha.render && widgetIdRef.current === null && containerRef.current.children.length === 0) {
+          if (widgetIdRef.current === null && containerRef.current.children.length === 0) {
             widgetIdRef.current = window.grecaptcha.render(containerRef.current, {
-              sitekey: sitekey,
+              sitekey: activeSiteKey,
               callback: (token) => {
                 if (onVerify) onVerify(token);
               },
@@ -25,53 +31,30 @@ export default function GoogleReCaptcha({
                 if (onVerify) onVerify('');
               },
               'error-callback': () => {
-                // If v2 render fails or key type mismatch, attempt v3 execute
-                if (window.grecaptcha.execute) {
-                  window.grecaptcha.ready(() => {
-                    window.grecaptcha.execute(sitekey, { action: 'submit' }).then((token) => {
-                      if (onVerify) onVerify(token);
-                    }).catch(() => {
-                      if (onVerify) onVerify('bypass_token');
-                    });
-                  });
-                } else {
-                  if (onVerify) onVerify('bypass_token');
-                }
+                if (onVerify) onVerify('bypass_token');
               },
             });
           }
         } catch (e) {
-          // If v2 render throws error (e.g. v3 key used), execute v3
-          if (window.grecaptcha.execute) {
-            window.grecaptcha.ready(() => {
-              window.grecaptcha.execute(sitekey, { action: 'submit' }).then((token) => {
-                if (onVerify) onVerify(token);
-              }).catch(() => {
-                if (onVerify) onVerify('bypass_token');
-              });
-            });
-          } else {
-            if (onVerify) onVerify('bypass_token');
-          }
+          // Widget already rendered
         }
       }
     };
 
-    // Dynamically inject script
     if (!document.getElementById('recaptcha-script-tag')) {
       const script = document.createElement('script');
       script.id = 'recaptcha-script-tag';
-      script.src = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(sitekey)}`;
+      script.src = 'https://www.google.com/recaptcha/api.js?render=explicit';
       script.async = true;
       script.defer = true;
       document.body.appendChild(script);
     }
 
-    if (window.grecaptcha) {
+    if (window.grecaptcha && window.grecaptcha.render) {
       renderWidget();
     } else {
       checkInterval = setInterval(() => {
-        if (window.grecaptcha) {
+        if (window.grecaptcha && window.grecaptcha.render) {
           renderWidget();
           clearInterval(checkInterval);
         }
@@ -81,10 +64,10 @@ export default function GoogleReCaptcha({
     return () => {
       if (checkInterval) clearInterval(checkInterval);
     };
-  }, [sitekey, onVerify]);
+  }, [activeSiteKey, onVerify]);
 
   return (
-    <div className="my-2 min-h-[40px] flex items-center">
+    <div className="my-2 min-h-[78px] flex items-center">
       <div ref={containerRef}></div>
     </div>
   );
