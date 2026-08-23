@@ -9,10 +9,10 @@ export default function GoogleReCaptcha({
   const containerRef = useRef(null);
   const widgetIdRef = useRef(null);
 
-  const activeSiteKey = sitekey || (
+  const activeSiteKey = sitekey || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || (
     typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
-      : (process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LfJC5UtAAAAAPBI2sjac9I6O2S3HHpff4INH6Li')
+      : '6LfJC5UtAAAAAPBI2sjac9I6O2S3HHpff4INH6Li'
   );
 
   useEffect(() => {
