@@ -19,7 +19,7 @@ export default function GoogleReCaptcha({
         try {
           if (widgetIdRef.current === null && containerRef.current.children.length === 0) {
             widgetIdRef.current = window.grecaptcha.render(containerRef.current, {
-              sitekey: sitekey || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+              sitekey: sitekey || '6LeD_5QtAAAAALP5DoenKhH2EeLwMzpjNe63iQ59',
               callback: (token) => {
                 if (onVerify) onVerify(token);
               },
