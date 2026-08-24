@@ -12,6 +12,9 @@ export default function OfficialInfoReleaseModal() {
     // Show modal automatically on entry
     setIsOpen(true);
 
+    const handleOpenModal = () => setIsOpen(true);
+    window.addEventListener('open-whatsapp-modal', handleOpenModal);
+
     // Fetch dynamic WhatsApp group modal link from backend
     api
       .get('/public/contact-links')
@@ -21,6 +24,10 @@ export default function OfficialInfoReleaseModal() {
         }
       })
       .catch(() => null);
+
+    return () => {
+      window.removeEventListener('open-whatsapp-modal', handleOpenModal);
+    };
   }, []);
 
   const handleJoinNow = () => {

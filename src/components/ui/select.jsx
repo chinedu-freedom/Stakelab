@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
-import { ChevronDown, Check } from 'lucide-react';
+import { ChevronDown, Check, Search, X } from 'lucide-react';
 
 const SelectContext = createContext(null);
 
@@ -68,13 +68,71 @@ export function SelectValue({ placeholder = 'Select...', children }) {
   );
 }
 
-export function SelectContent({ className = '', children }) {
+export function SelectContent({ className = '', searchable = true, searchPlaceholder = 'Search country...', children }) {
   const { open } = useContext(SelectContext);
+  const [searchQuery, setSearchQuery] = useState('');
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (open) {
+      setSearchQuery('');
+      setTimeout(() => {
+        if (inputRef.current) inputRef.current.focus();
+      }, 50);
+    }
+  }, [open]);
+
   if (!open) return null;
 
+  const childrenArray = React.Children.toArray(children);
+  const filteredChildren = childrenArray.filter((child) => {
+    if (!searchQuery.trim()) return true;
+    if (React.isValidElement(child)) {
+      const text = child.props.children || child.props.value || '';
+      return String(text).toLowerCase().includes(searchQuery.toLowerCase().trim());
+    }
+    return true;
+  });
+
   return (
-    <div className={`absolute left-0 right-0 top-full mt-1.5 bg-[#081226] border border-[#ff0044]/30 rounded-xl shadow-2xl overflow-hidden z-50 max-h-60 overflow-y-auto no-scrollbar font-sans py-1 divide-y divide-[#16274a]/40 ${className}`}>
-      {children}
+    <div className={`absolute left-0 right-0 top-full mt-1.5 bg-[#081226] border border-[#ff0044]/30 rounded-xl shadow-2xl overflow-hidden z-50 font-sans ${className}`}>
+      {searchable && (
+        <div className="p-2 border-b border-[#16274a] bg-[#060f22] sticky top-0 z-10">
+          <div className="relative flex items-center">
+            <Search className="w-3.5 h-3.5 absolute left-3 text-slate-400" />
+            <input
+              ref={inputRef}
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={searchPlaceholder}
+              className="w-full bg-[#0d1c3a] border border-[#1d335f] text-white text-xs rounded-lg pl-8 pr-7 py-2 focus:outline-none focus:border-[#ff0044] placeholder-slate-500 font-sans"
+              onClick={(e) => e.stopPropagation()}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSearchQuery('');
+                }}
+                className="absolute right-2 text-slate-400 hover:text-white p-1"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+      <div className="max-h-56 overflow-y-auto no-scrollbar py-1 divide-y divide-[#16274a]/40">
+        {filteredChildren.length > 0 ? (
+          filteredChildren
+        ) : (
+          <div className="px-4 py-3 text-xs text-slate-400 text-center font-sans">
+            No matching items found
+          </div>
+        )}
+      </div>
     </div>
   );
 }

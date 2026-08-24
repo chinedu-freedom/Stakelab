@@ -142,7 +142,6 @@ export default function UserSidebarLayout({ children }) {
         { label: 'All Tickets', path: '/support' },
       ],
     },
-    { label: '2FA Security', path: '/security', icon: ShieldCheck },
     { label: 'Logout', action: 'logout', icon: LogOut },
   ];
 
@@ -519,21 +518,12 @@ export default function UserSidebarLayout({ children }) {
                   </Link>
 
                   <Link
-                    href="/change-password"
+                    href="/user-data"
                     onClick={() => setProfileDropdownOpen(false)}
                     className="px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-[#112349] hover:text-white flex items-center gap-3 transition-colors"
                   >
                     <Key className="w-4 h-4 text-slate-300" />
                     <span>Password Change</span>
-                  </Link>
-
-                  <Link
-                    href="/security"
-                    onClick={() => setProfileDropdownOpen(false)}
-                    className="px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-[#112349] hover:text-white flex items-center gap-3 transition-colors"
-                  >
-                    <ShieldCheck className="w-4 h-4 text-slate-300" />
-                    <span>2FA Security</span>
                   </Link>
 
                   <div className="my-1 border-t border-white/10" />
@@ -556,9 +546,70 @@ export default function UserSidebarLayout({ children }) {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 bg-[#061127] p-4 sm:p-6 lg:p-8 h-full overflow-y-auto no-scrollbar">
+        <main className="flex-1 bg-[#061127] p-4 sm:p-6 lg:p-8 h-full overflow-y-auto no-scrollbar pb-24 lg:pb-8">
           {children}
         </main>
+
+        {/* Mobile Bottom Navigation Bar (Matching Reference Image) */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#07142d]/95 backdrop-blur-md border-t border-[#142343] px-2 py-1.5 flex items-center justify-around font-sans shadow-2xl">
+          {/* 1. Home */}
+          <Link
+            href="/dashboard"
+            className={`flex flex-col items-center py-1 px-2 rounded-xl transition-colors ${
+              pathname === '/dashboard' ? 'text-[#ff0044] font-bold' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <LayoutDashboard className="w-5 h-5" />
+            <span className="text-[10px] mt-1 font-medium tracking-tight">Home</span>
+          </Link>
+
+          {/* 2. Staking Plans */}
+          <Link
+            href="/staking/create"
+            className={`flex flex-col items-center py-1 px-2 rounded-xl transition-colors ${
+              pathname === '/staking/create' ? 'text-[#ff0044] font-bold' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Coins className="w-5 h-5" />
+            <span className="text-[10px] mt-1 font-medium tracking-tight">Staking Plans</span>
+          </Link>
+
+          {/* 3. Center Trade / Exchange Button (⇄) */}
+          <Link
+            href="/staking"
+            className="flex flex-col items-center -mt-5 group"
+          >
+            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[#ff0044] to-[#fe780b] flex items-center justify-center text-white shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform">
+              <svg className="w-6 h-6 stroke-white fill-none" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M7 16V4M7 4L3 8M7 4L11 8" />
+                <path d="M17 8V20M17 20L21 16M17 20L13 16" />
+              </svg>
+            </div>
+            <span className="text-[10px] mt-0.5 text-slate-300 font-semibold">Trade</span>
+          </Link>
+
+          {/* 4. My Team */}
+          <Link
+            href="/referrals"
+            className={`flex flex-col items-center py-1 px-2 rounded-xl transition-colors ${
+              pathname === '/referrals' ? 'text-[#ff0044] font-bold' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Users className="w-5 h-5" />
+            <span className="text-[10px] mt-1 font-medium tracking-tight">My Team</span>
+          </Link>
+
+          {/* 5. Account */}
+          <Link
+            href="/user-data"
+            className={`flex flex-col items-center py-1 px-2 rounded-xl transition-colors ${
+              pathname === '/user-data' ? 'text-[#ff0044] font-bold' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <User className="w-5 h-5" />
+            <span className="text-[10px] mt-1 font-medium tracking-tight">Account</span>
+          </Link>
+        </div>
       </div>
     </div>
   );
