@@ -63,8 +63,10 @@ export default function GoogleReCaptcha({
   }, [activeSiteKey, onVerify]);
 
   return (
-    <div className="my-2 min-h-[78px] flex items-center">
-      <div ref={containerRef}></div>
+    <div className="my-2 h-[76px] w-[304px] overflow-hidden rounded-md flex items-end bg-[#0a1835]">
+      <div className="relative overflow-hidden w-full h-[105px] flex items-end">
+        <div ref={containerRef} className="transform translate-y-[26px]"></div>
+      </div>
     </div>
   );
 }
