@@ -38,6 +38,8 @@ import {
   Gift,
   Download,
   MessageCircle,
+  Info,
+  ShieldCheck,
 } from 'lucide-react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
 
