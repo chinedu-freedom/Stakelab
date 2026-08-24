@@ -333,7 +333,7 @@ export default function UserSidebarLayout({ children }) {
       <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
         {/* Top Header Navbar (Joins Sidebar from the Right) */}
         <header className="h-16 bg-[#07142d] border-b border-[#142343] shrink-0 z-20 px-4 sm:px-6 flex items-center justify-between">
-          {/* Left Side: Mobile Menu Button & Brand Logo */}
+          {/* Left Side: Mobile Menu Button */}
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -341,22 +341,6 @@ export default function UserSidebarLayout({ children }) {
             >
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
-
-            {/* Mobile Screen Logo & Brand Name */}
-            <Link href="/dashboard" className="flex lg:hidden items-center space-x-2">
-              {customLogo ? (
-                <img src={customLogo} alt="EverStake Logo" className="h-8 max-w-[140px] object-contain" />
-              ) : (
-                <>
-                  <div className="w-7 h-7 rounded bg-gradient-to-r from-[#ff0044] to-[#fe780b] flex items-center justify-center text-white font-bold text-sm shadow-md shadow-red-500/20 shrink-0">
-                    E
-                  </div>
-                  <span className="text-base font-extrabold text-white tracking-wide font-sans">
-                    Ever<span className="text-gradient-stakelab">Stake</span>
-                  </span>
-                </>
-              )}
-            </Link>
           </div>
 
           {/* Right Side: User Profile Header Badge & Daily Rewards Trigger */}
