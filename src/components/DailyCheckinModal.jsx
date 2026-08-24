@@ -176,9 +176,15 @@ export default function DailyCheckinModal() {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
+    <div
+      onClick={() => setIsOpen(false)}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm cursor-pointer animate-fadeIn"
+    >
       {/* Modal Dialog Box */}
-      <div className="relative w-full max-w-sm bg-[#09152e] border border-[#1d335f] rounded-3xl p-6 sm:p-7 shadow-2xl overflow-hidden font-sans text-center space-y-5">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-sm bg-[#09152e] border border-[#1d335f] rounded-3xl p-6 sm:p-7 shadow-2xl overflow-hidden font-sans text-center space-y-5 cursor-default"
+      >
         {/* Close Button */}
         <button
           onClick={() => setIsOpen(false)}
