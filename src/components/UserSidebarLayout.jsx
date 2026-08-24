@@ -106,8 +106,8 @@ export default function UserSidebarLayout({ children }) {
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { label: 'Staking Plans', path: '/staking-plans', icon: Coins },
-    { label: 'My Staking', path: '/my-staking', icon: DollarSign },
+    { label: 'Staking Plans', path: '/staking/create', icon: Coins },
+    { label: 'My Staking', path: '/staking', icon: DollarSign },
     {
       label: 'Manage Deposit',
       icon: ArrowDownLeft,
@@ -484,16 +484,7 @@ export default function UserSidebarLayout({ children }) {
               )}
             </div>
 
-            {features.dailyCheckin && (
-              <button
-                type="button"
-                onClick={() => window.dispatchEvent(new Event('open-daily-checkin'))}
-                className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-90 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-red-500/20 transition-all cursor-pointer select-none"
-              >
-                <span>🎁</span>
-                <span className="hidden sm:inline font-righteous uppercase text-[11px] tracking-wider">Daily Rewards</span>
-              </button>
-            )}
+
 
             <div className="relative" ref={profileRef}>
               <button

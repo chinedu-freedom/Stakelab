@@ -832,7 +832,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
-              Why Choose <span className="text-gradient-stakelab">StakeLab</span>
+              Why Choose <span className="text-gradient-stakelab">EverStake</span>
             </h2>
             <p className="text-slate-400 text-sm">
               Discover the advantages of our investment plan and see what you will get from us.
@@ -1081,7 +1081,7 @@ export default function LandingPage() {
               Real Stories. Real Impact. <span className="text-gradient-stakelab">Real Results.</span>
             </h2>
             <p className="text-slate-300 text-sm leading-relaxed">
-              At StakeLab, we're proud of the trust our stakers place in us and the results we've helped them achieve. From first-time investors to seasoned crypto traders, our community spans individuals across the globe who are building smarter, stronger financial futures with us.
+              At EverStake, we're proud of the trust our stakers place in us and the results we've helped them achieve. From first-time investors to seasoned crypto traders, our community spans individuals across the globe who are building smarter, stronger financial futures with us.
             </p>
           </div>
 
@@ -1764,7 +1764,7 @@ export default function LandingPage() {
 
         {/* Bottom Copyright Bar */}
         <div className="bg-[#050b17] py-5 border-t border-[#132448] text-center text-sm text-slate-200 relative">
-          <p>© Copyright 2026 | <span className="text-[#ff0044] font-bold">StakeLab</span> All rights reserved</p>
+          <p>© Copyright 2026 | <span className="text-[#ff0044] font-bold">EverStake</span> All rights reserved</p>
 
           {/* Floating Back to Top Button */}
           <button
