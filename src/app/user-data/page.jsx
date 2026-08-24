@@ -27,9 +27,17 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   Users,
-  Info,
-  ShieldCheck,
   X,
+  RotateCcw,
+  Layers,
+  DollarSign,
+  CalendarCheck,
+  ClipboardList,
+  Disc,
+  FileText,
+  Gift,
+  Download,
+  MessageCircle,
 } from 'lucide-react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
 
@@ -281,6 +289,123 @@ export default function AccountSettingsPage() {
             <div className="text-base sm:text-lg font-black text-white font-righteous mt-2">
               {user?.referral_count || 0} Members
             </div>
+          </div>
+        </div>
+
+        {/* 12 Quick Action Shortcuts Grid */}
+        <div className="bg-[#0a1835] border border-[#182848] rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
+          <div className="flex items-center justify-between border-b border-[#182848] pb-3">
+            <h2 className="text-sm font-extrabold text-white font-righteous tracking-wide uppercase flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#fe780b] animate-ping" />
+              Quick Platform Shortcuts
+            </h2>
+            <span className="text-[11px] text-slate-400 font-medium">Instant Access</span>
+          </div>
+
+          <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-6 pt-1">
+            {[
+              {
+                label: 'Deposit',
+                link: '/deposit',
+                bgColor: 'bg-gradient-to-tr from-amber-500 to-yellow-400 shadow-amber-500/20',
+                icon: Wallet,
+              },
+              {
+                label: 'Withdraw',
+                link: '/withdraw',
+                bgColor: 'bg-gradient-to-tr from-blue-600 to-indigo-500 shadow-blue-500/20',
+                icon: RotateCcw,
+              },
+              {
+                label: 'Stake',
+                link: '/staking',
+                bgColor: 'bg-gradient-to-tr from-[#ff0044] to-[#fe780b] shadow-red-500/20',
+                icon: Layers,
+              },
+              {
+                label: 'My Staking',
+                link: '/staking/my-stakes',
+                bgColor: 'bg-gradient-to-tr from-emerald-600 to-teal-500 shadow-emerald-500/20',
+                icon: DollarSign,
+              },
+              {
+                label: 'Daily Check-in',
+                link: '/daily-check-in',
+                bgColor: 'bg-gradient-to-tr from-blue-500 to-sky-400 shadow-blue-500/20',
+                icon: CalendarCheck,
+              },
+              {
+                label: 'Tasks',
+                link: '/tasks',
+                bgColor: 'bg-gradient-to-tr from-emerald-500 to-green-400 shadow-emerald-500/20',
+                icon: ClipboardList,
+              },
+              {
+                label: 'Lucky Spin',
+                link: '/spin',
+                bgColor: 'bg-gradient-to-tr from-purple-600 to-indigo-500 shadow-purple-500/20',
+                icon: Disc,
+              },
+              {
+                label: 'Transaction Log',
+                link: '/transactions',
+                bgColor: 'bg-gradient-to-tr from-amber-600 to-orange-500 shadow-orange-500/20',
+                icon: FileText,
+              },
+              {
+                label: 'Bonus Code',
+                link: '/gift-bonus',
+                bgColor: 'bg-gradient-to-tr from-red-600 to-rose-500 shadow-red-500/20',
+                icon: Gift,
+              },
+              {
+                label: 'Download App',
+                link: '/download',
+                bgColor: 'bg-gradient-to-tr from-cyan-600 to-blue-500 shadow-cyan-500/20',
+                icon: Download,
+              },
+              {
+                label: 'Referrals',
+                link: '/referrals',
+                bgColor: 'bg-gradient-to-tr from-violet-600 to-purple-500 shadow-violet-500/20',
+                icon: Users,
+              },
+              {
+                label: 'WhatsApp Group',
+                link: 'https://wa.me/1234567890',
+                isExternal: true,
+                bgColor: 'bg-gradient-to-tr from-emerald-500 to-green-500 shadow-emerald-500/20',
+                icon: MessageCircle,
+              },
+            ].map((action, idx) => {
+              const Icon = action.icon;
+              const content = (
+                <div className="flex flex-col items-center group cursor-pointer">
+                  <div
+                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${action.bgColor} flex items-center justify-center text-white shadow-lg transition-transform duration-200 group-hover:scale-110 group-active:scale-95`}
+                  >
+                    <Icon className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2]" />
+                  </div>
+                  <span className="text-[11px] sm:text-xs font-semibold text-slate-300 mt-2 text-center group-hover:text-white transition-colors leading-tight">
+                    {action.label}
+                  </span>
+                </div>
+              );
+
+              if (action.isExternal) {
+                return (
+                  <a key={idx} href={action.link} target="_blank" rel="noopener noreferrer">
+                    {content}
+                  </a>
+                );
+              }
+
+              return (
+                <Link key={idx} href={action.link}>
+                  {content}
+                </Link>
+              );
+            })}
           </div>
         </div>
 
