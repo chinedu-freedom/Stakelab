@@ -9,7 +9,7 @@ export default function GoogleReCaptcha({
   const containerRef = useRef(null);
   const widgetIdRef = useRef(null);
 
-  const activeSiteKey = sitekey || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+  const activeSiteKey = sitekey || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LffwZUtAAAAAAWEJC22zvGTTuoEa-EtlqKu5oqN';
 
   useEffect(() => {
     let checkInterval = null;
@@ -63,10 +63,8 @@ export default function GoogleReCaptcha({
   }, [activeSiteKey, onVerify]);
 
   return (
-    <div className="my-2 h-[74px] w-[302px] overflow-hidden rounded-lg bg-[#ffffff]">
-      <div className="relative overflow-hidden w-full h-[105px]">
-        <div ref={containerRef} className="transform -translate-y-[26px]"></div>
-      </div>
+    <div className="my-2 min-h-[78px] flex items-center">
+      <div ref={containerRef}></div>
     </div>
   );
 }
