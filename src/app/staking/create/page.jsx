@@ -5,114 +5,48 @@ import Link from 'next/link';
 import UserSidebarLayout from '../../../components/UserSidebarLayout';
 import { useAuth } from '../../../context/AuthContext';
 import api from '../../../lib/api';
-import { X, Check, Loader2 } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../../components/ui/select';
 
 export default function CreateStakingPage() {
   const { user, refreshUser } = useAuth();
-  const [plans, setPlans] = useState([
-    {
-      id: 'silver',
-      name: 'Silver',
-      duration: 'Stake for 30 Days',
-      durationDays: 30,
-      tiers: [
-        { range: '$10.00-100.00', interest: '15.00%', min: 10, max: 100, percent: 15 },
-        { range: '$101.00-250.00', interest: '30.00%', min: 101, max: 250, percent: 30 },
-        { range: '$251.00-500.00', interest: '50.00%', min: 251, max: 500, percent: 50 },
-      ],
-    },
-    {
-      id: 'golden',
-      name: 'Golden',
-      duration: 'Stake for 90 Days',
-      durationDays: 90,
-      tiers: [
-        { range: '$50.00-500.00', interest: '20.00%', min: 50, max: 500, percent: 20 },
-        { range: '$501.00-2,000.00', interest: '40.00%', min: 501, max: 2000, percent: 40 },
-        { range: '$2,001.00-5,000.00', interest: '60.00%', min: 2001, max: 5000, percent: 60 },
-      ],
-    },
-    {
-      id: 'platinum',
-      name: 'Platinum',
-      duration: 'Stake for 180 Days',
-      durationDays: 180,
-      tiers: [
-        { range: '$100.00-1,000.00', interest: '40.00%', min: 100, max: 1000, percent: 40 },
-        { range: '$1,001.00-5,000.00', interest: '50.00%', min: 1001, max: 5000, percent: 50 },
-        { range: '$5,001.00-20,000.00', interest: '70.00%', min: 5001, max: 20000, percent: 70 },
-      ],
-    },
-  ]);
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [selectedTier, setSelectedTier] = useState(null);
   const [selectedWallet, setSelectedWallet] = useState('main');
   const [stakeAmount, setStakeAmount] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    const fetchBackendPlans = async () => {
-      try {
-        const res = await api.get('/staking/plans');
-        if (res.data && res.data.success && Array.isArray(res.data.plans) && res.data.plans.length > 0) {
-          const formattedBackendPlans = res.data.plans.map((p) => {
-            const minAmt = parseFloat(p.min_amount);
-            const maxAmt = parseFloat(p.max_amount);
-            const dailyRate = parseFloat(p.daily_return_percent);
-            const step = Math.round((maxAmt - minAmt) / 3);
-
-            return {
-              id: p.id,
-              name: p.title,
-              duration: `Stake for ${p.duration_days} Days`,
-              durationDays: p.duration_days,
-              tiers: [
-                {
-                  range: `$${minAmt.toLocaleString('en-US')}-${(minAmt + step).toLocaleString('en-US')}`,
-                  interest: `${dailyRate.toFixed(2)}%`,
-                  min: minAmt,
-                  max: maxAmt,
-                  percent: dailyRate,
-                },
-                {
-                  range: `$${(minAmt + step + 1).toLocaleString('en-US')}-${(minAmt + step * 2).toLocaleString('en-US')}`,
-                  interest: `${(dailyRate * 1.5).toFixed(2)}%`,
-                  min: minAmt,
-                  max: maxAmt,
-                  percent: dailyRate * 1.5,
-                },
-                {
-                  range: `$${(minAmt + step * 2 + 1).toLocaleString('en-US')}-${maxAmt.toLocaleString('en-US')}`,
-                  interest: `${(dailyRate * 2.0).toFixed(2)}%`,
-                  min: minAmt,
-                  max: maxAmt,
-                  percent: dailyRate * 2.0,
-                },
-              ],
-            };
-          });
-          setPlans(formattedBackendPlans);
-        }
-      } catch (e) {
-        console.error('Failed to fetch backend staking plans:', e);
+  const fetchBackendPlans = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/staking/plans');
+      if (res.data && res.data.success && Array.isArray(res.data.plans)) {
+        setPlans(res.data.plans);
       }
-    };
+    } catch (e) {
+      console.error('Failed to fetch backend staking plans:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchBackendPlans();
   }, []);
 
   const handleOpenModal = (plan) => {
     setSelectedPlan(plan);
-    setSelectedTier(plan.tiers[0]);
     setSelectedWallet('main');
-    setStakeAmount(plan.tiers[0].min.toString());
+    const minVal = parseFloat(plan.min_amount || 30);
+    setStakeAmount(minVal.toString());
   };
 
   const handleConfirmStake = async (e) => {
     e.preventDefault();
-    if (!selectedPlan || !selectedTier || !stakeAmount) return;
+    if (!selectedPlan || !stakeAmount) return;
 
     if (!selectedWallet) {
       toast.error('Please select a wallet.');
@@ -120,8 +54,11 @@ export default function CreateStakingPage() {
     }
 
     const amountNum = parseFloat(stakeAmount);
-    if (amountNum < selectedTier.min || amountNum > selectedTier.max) {
-      toast.error(`Amount must be between $${selectedTier.min} and $${selectedTier.max}`);
+    const minAmt = parseFloat(selectedPlan.min_amount || 0);
+    const maxAmt = parseFloat(selectedPlan.max_amount || 999999);
+
+    if (amountNum < minAmt || amountNum > maxAmt) {
+      toast.error(`Stake amount must be between $${minAmt.toLocaleString()} and $${maxAmt.toLocaleString()}`);
       return;
     }
 
@@ -144,123 +81,128 @@ export default function CreateStakingPage() {
         plan_id: selectedPlan.id,
         amount: amountNum,
         wallet_type: selectedWallet,
-      }).catch(() => null);
+      });
 
-      toast.success(`Successfully staked $${amountNum} in ${selectedPlan.name} Plan!`);
-      setSelectedPlan(null);
-      setStakeAmount('');
-      refreshUser();
+      if (res.data && res.data.success) {
+        toast.success(res.data.message || `Successfully staked $${amountNum} in ${selectedPlan.title}!`);
+        setSelectedPlan(null);
+        setStakeAmount('');
+        refreshUser();
+      } else {
+        toast.error(res.data?.message || 'Staking failed');
+      }
     } catch (err) {
-      toast.error('Failed to process stake. Please check your balance.');
+      toast.error(err.response?.data?.message || 'Failed to process stake. Please check your balance.');
     } finally {
       setSubmitting(false);
     }
   };
 
+  const amtNum = parseFloat(stakeAmount) || 0;
+  const returnRate = selectedPlan ? parseFloat(selectedPlan.daily_return_percent || selectedPlan.apy_percent || 0) : 0;
+  const durationDays = selectedPlan ? parseInt(selectedPlan.duration_days || 30) : 30;
+  const dailyProfitCalc = (amtNum * returnRate) / 100;
+  const totalReturnCalc = dailyProfitCalc * durationDays;
+
   return (
     <UserSidebarLayout>
-      <div className="space-y-6 max-w-7xl mx-auto">
-        {/* Page Header Title */}
-        <h1 className="text-xl font-extrabold text-white font-righteous tracking-wide">
-          Staking Plan
-        </h1>
+      <div className="space-y-6 max-w-7xl mx-auto pb-12">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-white font-righteous tracking-wide">
+              Staking & Investment Pools
+            </h1>
+            <p className="text-xs text-slate-400 mt-1">
+              Select a pool to earn guaranteed daily yield synced directly with your wallet.
+            </p>
+          </div>
 
-        {/* Staking Cards Grid (Matching Image 1 Design - No addition, No subtraction) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-4">
-          {plans
-            .filter((p) => p.status !== 'Unavailable' && p.isAvailable !== false)
-            .map((plan, idx) => (
-              <div key={plan.id || idx} className="relative group flex flex-col">
-                {/* Outer Gradient Border Wrap with Pointed Shield Bottom */}
-                <div
-                  style={{
-                    clipPath: 'polygon(0 0, 100% 0, 100% 92%, 50% 100%, 0 92%)',
-                  }}
-                  className="p-[2px] bg-gradient-to-b from-slate-800 via-[#ff0044] to-[#fe780b] rounded-t-3xl flex-1 flex flex-col drop-shadow-2xl"
-                >
-                  {/* Inner Dark Card Body */}
-                  <div
-                    style={{
-                      clipPath: 'polygon(0 0, 100% 0, 100% 92%, 50% 100%, 0 92%)',
-                    }}
-                    className="w-full bg-[#0c1424] rounded-t-3xl pt-8 pb-16 px-6 sm:px-8 text-slate-100 flex-1 flex flex-col justify-between relative"
-                  >
-                    {/* Top Header Plan Title */}
-                    <div>
-                      <h3 className="font-righteous text-3xl sm:text-4xl font-extrabold text-white text-center tracking-wide">
-                        {plan.name}
-                      </h3>
-
-                      {/* Overhanging Gradient Ribbon Banner */}
-                      <div className="relative my-6 -mx-6 sm:-mx-8">
-                        {/* Ribbon Body */}
-                        <div className="bg-gradient-to-r from-[#fe500b] via-[#ff0044] to-[#fe880b] text-white font-righteous text-lg sm:text-xl font-bold py-3 text-center shadow-lg tracking-wide">
-                          {plan.duration}
-                        </div>
-                        {/* Left Ribbon Fold Triangle */}
-                        <div className="absolute -left-2 -bottom-2 w-0 h-0 border-t-[8px] border-t-[#a3002b] border-l-[8px] border-l-transparent" />
-                        {/* Right Ribbon Fold Triangle */}
-                        <div className="absolute -right-2 -bottom-2 w-0 h-0 border-t-[8px] border-t-[#a3002b] border-r-[8px] border-r-transparent" />
-                      </div>
-
-                      {/* Range & Interest Rates Table */}
-                      <div className="space-y-4 pt-2">
-                        {/* Table Header */}
-                        <div className="flex justify-between items-center text-slate-300 text-sm font-semibold pb-2 border-b border-[#1c2844]">
-                          <span>Range</span>
-                          <span>Interest</span>
-                        </div>
-
-                        {/* Table Rows */}
-                        <div className="space-y-3">
-                          {plan.tiers.map((row, rIdx) => (
-                            <div
-                              key={rIdx}
-                              className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c] last:border-b-0"
-                            >
-                              <div className="font-semibold text-slate-200">
-                                <span className="text-[#ff0044] font-bold mr-0.5">$</span>
-                                {row.range.replace(/^\$/, '')}
-                              </div>
-                              <span className="font-bold text-white tracking-wide">{row.interest}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* CTA Button: Stake Now */}
-                    <div className="pt-8 text-center">
-                      {plan.status === 'Coming Soon' ? (
-                        <button
-                          disabled
-                          className="w-full max-w-[200px] mx-auto py-3.5 text-center text-xs font-bold block bg-amber-600/30 text-amber-300 border border-amber-500/50 rounded-md font-righteous uppercase tracking-wider cursor-not-allowed shadow-md"
-                        >
-                          Coming Soon
-                        </button>
-                      ) : plan.isAvailable === false || plan.status === 'Unavailable' ? (
-                        <button
-                          disabled
-                          className="w-full max-w-[200px] mx-auto py-3.5 text-center text-xs font-bold block bg-slate-700/80 text-slate-400 rounded-md font-righteous uppercase tracking-wider cursor-not-allowed border border-slate-600/50 shadow-md"
-                        >
-                          Unavailable
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleOpenModal(plan)}
-                          className="btn-stakelab w-full max-w-[200px] mx-auto py-3.5 text-center text-sm font-bold block shadow-lg shadow-red-500/30 rounded-md font-righteous uppercase tracking-wider hover:scale-105 transition-transform"
-                        >
-                          Stake Now
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <Link
+            href="/staking"
+            className="border border-[#182848] text-slate-300 hover:text-white font-bold px-4 py-2 rounded-xl text-xs bg-[#0a1835] hover:bg-[#12244d] transition-all cursor-pointer shadow-md"
+          >
+            My Active Investments →
+          </Link>
         </div>
 
-        {/* Stake Modal (Matching Screenshot Design - Full Height & Click Outside to Close) */}
+        {loading ? (
+          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-16 text-center text-slate-400 font-sans">
+            Loading active pools from server...
+          </div>
+        ) : plans.length === 0 ? (
+          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-16 text-center text-slate-400 font-sans">
+            No active staking pools currently available.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {plans.map((plan) => {
+              const minAmt = parseFloat(plan.min_amount || 0);
+              const maxAmt = parseFloat(plan.max_amount || 0);
+              const ratePercent = parseFloat(plan.daily_return_percent || 0);
+              const days = plan.duration_days || 30;
+
+              return (
+                <div
+                  key={plan.id}
+                  className="bg-[#0c1938] border border-[#1a2b4c] rounded-2xl p-5 flex flex-col justify-between shadow-xl hover:border-[#fe780b]/50 transition-all group relative overflow-hidden"
+                >
+                  {plan.badge && (
+                    <div className="absolute top-3 right-3">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#fe780b]/15 text-[#fe780b] border border-[#fe780b]/30">
+                        {plan.badge}
+                      </span>
+                    </div>
+                  )}
+
+                  <div>
+                    <div className="flex justify-between items-start pr-12">
+                      <h2 className="text-white font-black text-base uppercase tracking-wide font-sans">
+                        {plan.title}
+                      </h2>
+                    </div>
+
+                    <div className="my-3 flex items-baseline justify-between border-b border-[#182848] pb-3">
+                      <span className="text-xs text-slate-400 font-medium">Daily Return</span>
+                      <span className="text-2xl font-black text-[#fe780b] font-righteous tracking-tight">
+                        {ratePercent.toFixed(1)}%
+                      </span>
+                    </div>
+
+                    <div className="space-y-2.5 text-xs">
+                      <div className="flex justify-between items-center text-slate-300">
+                        <span className="text-slate-400 font-medium">Minimum Deposit:</span>
+                        <span className="font-bold text-white font-righteous">
+                          ${minAmt.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center text-slate-300">
+                        <span className="text-slate-400 font-medium">Maximum Deposit:</span>
+                        <span className="font-bold text-white font-righteous">
+                          ${maxAmt.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center text-slate-300">
+                        <span className="text-slate-400 font-medium">Staking Duration:</span>
+                        <span className="font-bold text-white font-sans">{days} Days</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleOpenModal(plan)}
+                    className="mt-5 w-full bg-gradient-to-r from-[#fe500b] to-[#ff0044] hover:from-[#e04508] hover:to-[#e6003d] text-white font-bold py-2.5 px-4 rounded-xl text-xs tracking-wider uppercase font-righteous shadow-lg shadow-red-500/20 transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    Stake
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {selectedPlan && (
           <div
             onClick={() => setSelectedPlan(null)}
@@ -268,65 +210,70 @@ export default function CreateStakingPage() {
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="bg-[#0b162c] border border-[#1a2846] p-6 sm:p-8 rounded-2xl max-w-md w-full space-y-6 relative shadow-2xl my-auto"
+              className="bg-[#0b162c] border border-[#1a2846] p-6 sm:p-7 rounded-2xl max-w-md w-full space-y-5 relative shadow-2xl my-auto text-slate-100"
             >
-              {/* Modal Header */}
-              <div className="flex justify-between items-center pb-4 border-b border-[#182848]">
-                <h3 className="text-xl font-extrabold text-white font-sans">
-                  Staking
-                </h3>
+              <div className="flex justify-between items-center pb-3 border-b border-[#182848]">
+                <div>
+                  <h3 className="text-lg font-bold text-white font-righteous">
+                    {selectedPlan.title}
+                  </h3>
+                  <p className="text-[11px] text-[#fe780b] font-medium">
+                    Earn {parseFloat(selectedPlan.daily_return_percent || 0).toFixed(1)}% Daily for {selectedPlan.duration_days} Days
+                  </p>
+                </div>
                 <button
+                  type="button"
                   onClick={() => setSelectedPlan(null)}
-                  className="w-7 h-7 rounded-full bg-[#142345] hover:bg-[#1e325c] border border-[#233863] flex items-center justify-center text-slate-300 hover:text-white transition-colors"
+                  className="w-7 h-7 rounded-full bg-[#142345] hover:bg-[#1e325c] border border-[#233863] flex items-center justify-center text-slate-300 hover:text-white transition-colors cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <form onSubmit={handleConfirmStake} className="space-y-5">
-                {/* Field 1: Wallet * */}
+              <form onSubmit={handleConfirmStake} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-2 font-sans">
-                    Wallet <span className="text-[#ff0044]">*</span>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    Select Wallet Source
                   </label>
-                  <Select
-                    value={selectedWallet}
-                    onValueChange={(val) => setSelectedWallet(val)}
-                  >
-                    <SelectTrigger className="h-12 bg-[#060f22] border-[#182848] text-white">
+                  <Select value={selectedWallet} onValueChange={setSelectedWallet}>
+                    <SelectTrigger className="w-full bg-[#071020] border-[#1b2b4d] text-white rounded-xl h-11 text-xs focus:ring-1 focus:ring-[#ff0044]">
                       <SelectValue placeholder="Select Wallet" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="main">
+                    <SelectContent className="bg-[#0b162c] border-[#1c2e54] text-white">
+                      <SelectItem value="main" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">
                         Main Wallet (${parseFloat(user?.balance || 0).toFixed(2)})
                       </SelectItem>
-                      <SelectItem value="profit">
+                      <SelectItem value="profit" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">
                         Profit Wallet (${parseFloat(user?.total_earned || 0).toFixed(2)})
                       </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                {/* Field 2: Amount * */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-2 font-sans">
-                    Amount <span className="text-[#ff0044]">*</span>
-                  </label>
-                  <div className="flex items-center bg-[#060f22] border border-[#182848] rounded-lg overflow-hidden focus-within:ring-1 focus-within:ring-[#ff0044] transition-all">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <label className="text-xs font-semibold text-slate-300">
+                      Enter Stake Amount (USD)
+                    </label>
+                    <span className="text-[10px] text-slate-400">
+                      Min: ${parseFloat(selectedPlan.min_amount).toLocaleString()} | Max: ${parseFloat(selectedPlan.max_amount).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
+                      $
+                    </span>
                     <input
                       type="number"
                       step="any"
                       required
-                      min={selectedTier?.min}
-                      max={selectedTier?.max}
+                      min={parseFloat(selectedPlan.min_amount)}
+                      max={parseFloat(selectedPlan.max_amount)}
                       value={stakeAmount}
                       onChange={(e) => setStakeAmount(e.target.value)}
-                      placeholder={`Min: $${selectedTier?.min} - Max: $${selectedTier?.max}`}
-                      className="w-full h-12 bg-transparent border-0 outline-none px-4 text-white font-bold text-sm"
+                      placeholder={`${selectedPlan.min_amount}`}
+                      className="w-full bg-[#071020] border border-[#1b2b4d] rounded-xl py-2.5 pl-8 pr-4 text-white font-bold text-sm placeholder-slate-600 focus:outline-none focus:border-[#ff0044] transition-all"
                     />
-                    <div className="h-12 px-4 bg-gradient-to-r from-[#ff0044] to-[#fe780b] text-white font-bold text-xs uppercase flex items-center justify-center shrink-0">
-                      USDT
-                    </div>
                   </div>
                 </div>
 
@@ -337,12 +284,12 @@ export default function CreateStakingPage() {
                   className="w-full btn-stakelab py-3.5 rounded-xl text-white font-sans text-sm tracking-wider uppercase font-bold transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 mt-4 cursor-pointer"
                 >
                   {submitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" /> Processing Stake
-                  </span>
-                ) : (
-                  'Stake Now'
-                )}
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin" /> Processing Stake
+                    </span>
+                  ) : (
+                    'Stake Now'
+                  )}
                 </button>
               </form>
             </div>

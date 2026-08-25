@@ -304,91 +304,104 @@ export default function AccountSettingsPage() {
             <span className="text-[11px] text-slate-400 font-medium">Instant Access</span>
           </div>
 
-          <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-6 pt-1">
+          <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 gap-4 sm:gap-6 pt-1">
             {[
               {
                 label: 'Deposit',
                 link: '/deposit',
-                bgColor: 'bg-gradient-to-tr from-amber-500 to-yellow-400 shadow-amber-500/20',
+                isCircle: true,
+                bgColor: 'bg-[#f59e0b] shadow-amber-500/20 text-white',
                 icon: Wallet,
               },
               {
                 label: 'Withdraw',
                 link: '/withdraw',
-                bgColor: 'bg-gradient-to-tr from-blue-600 to-indigo-500 shadow-blue-500/20',
+                isCircle: true,
+                bgColor: 'bg-[#122246] border border-[#1e3463] shadow-blue-500/10 text-slate-200',
                 icon: RotateCcw,
               },
               {
                 label: 'Stake',
-                link: '/staking',
-                bgColor: 'bg-gradient-to-tr from-[#ff0044] to-[#fe780b] shadow-red-500/20',
+                link: '/staking/create',
+                isCircle: true,
+                bgColor: 'bg-gradient-to-r from-[#fe500b] to-[#ff0044] shadow-red-500/30 text-white',
                 icon: Layers,
               },
               {
                 label: 'My Staking',
-                link: '/staking/my-stakes',
-                bgColor: 'bg-gradient-to-tr from-emerald-600 to-teal-500 shadow-emerald-500/20',
+                link: '/staking',
+                isCircle: true,
+                bgColor: 'bg-[#122246] border border-[#1e3463] shadow-blue-500/10 text-emerald-400',
                 icon: DollarSign,
               },
               {
                 label: 'Daily Check-in',
-                link: '/daily-check-in',
-                bgColor: 'bg-gradient-to-tr from-blue-500 to-sky-400 shadow-blue-500/20',
+                link: '/tasks',
+                isCircle: false,
+                bgColor: 'bg-[#2563eb] shadow-blue-500/20 text-white',
                 icon: CalendarCheck,
               },
               {
                 label: 'Tasks',
                 link: '/tasks',
-                bgColor: 'bg-gradient-to-tr from-emerald-500 to-green-400 shadow-emerald-500/20',
+                isCircle: false,
+                bgColor: 'bg-[#059669] shadow-emerald-500/20 text-white',
                 icon: ClipboardList,
               },
               {
                 label: 'Lucky Spin',
                 link: '/spin',
-                bgColor: 'bg-gradient-to-tr from-purple-600 to-indigo-500 shadow-purple-500/20',
+                isCircle: false,
+                bgColor: 'bg-[#7c3aed] shadow-purple-500/20 text-white',
                 icon: Disc,
               },
               {
                 label: 'Transaction Log',
                 link: '/transactions',
-                bgColor: 'bg-gradient-to-tr from-amber-600 to-orange-500 shadow-orange-500/20',
+                isCircle: false,
+                bgColor: 'bg-[#d97706] shadow-amber-500/20 text-white',
                 icon: FileText,
               },
               {
                 label: 'Bonus Code',
-                link: '/gift-bonus',
-                bgColor: 'bg-gradient-to-tr from-red-600 to-rose-500 shadow-red-500/20',
+                link: '/treasure',
+                isCircle: false,
+                bgColor: 'bg-[#dc2626] shadow-red-500/20 text-white',
                 icon: Gift,
               },
               {
                 label: 'Download App',
                 link: '/download',
-                bgColor: 'bg-gradient-to-tr from-cyan-600 to-blue-500 shadow-cyan-500/20',
+                isCircle: false,
+                bgColor: 'bg-[#0284c7] shadow-sky-500/20 text-white',
                 icon: Download,
               },
               {
                 label: 'Referrals',
                 link: '/referrals',
-                bgColor: 'bg-gradient-to-tr from-violet-600 to-purple-500 shadow-violet-500/20',
+                isCircle: false,
+                bgColor: 'bg-[#8b5cf6] shadow-purple-500/20 text-white',
                 icon: Users,
               },
               {
                 label: 'WhatsApp Group',
-                link: 'https://wa.me/1234567890',
+                link: 'https://chat.whatsapp.com',
                 isExternal: true,
-                bgColor: 'bg-gradient-to-tr from-emerald-500 to-green-500 shadow-emerald-500/20',
+                isCircle: true,
+                bgColor: 'bg-[#10b981] shadow-emerald-500/30 text-white',
                 icon: MessageCircle,
               },
             ].map((action, idx) => {
               const Icon = action.icon;
+              const shapeClass = action.isCircle ? 'rounded-full' : 'rounded-2xl';
               const content = (
                 <div className="flex flex-col items-center group cursor-pointer">
                   <div
-                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${action.bgColor} flex items-center justify-center text-white shadow-lg transition-transform duration-200 group-hover:scale-110 group-active:scale-95`}
+                    className={`w-12 h-12 sm:w-14 sm:h-14 ${shapeClass} ${action.bgColor} flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110 group-active:scale-95`}
                   >
-                    <Icon className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2]" />
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2]" />
                   </div>
-                  <span className="text-[11px] sm:text-xs font-semibold text-slate-300 mt-2 text-center group-hover:text-white transition-colors leading-tight">
+                  <span className="text-[11px] sm:text-xs font-semibold text-slate-300 mt-2 text-center group-hover:text-white transition-colors leading-tight font-sans">
                     {action.label}
                   </span>
                 </div>
@@ -411,227 +424,70 @@ export default function AccountSettingsPage() {
           </div>
         </div>
 
-        {/* Main Grid: Profile Info & Security Password Change */}
+        {/* Main Grid: Profile Overview & Security Password Change */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Profile Details Card (Col Span 8) */}
-          <div className="lg:col-span-8 bg-[#0a1835] border border-[#182848] rounded-3xl overflow-hidden shadow-2xl">
-            <div className="bg-[#0e1d3e] border-b border-[#182848] px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h2 className="text-base font-extrabold text-white font-righteous">Profile Details</h2>
-                <p className="text-xs text-slate-400 mt-0.5">Update your personal information and contact details.</p>
+          {/* Profile Overview Card (Col Span 7) */}
+          <div className="lg:col-span-7 bg-[#0a1835] border border-[#182848] rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between p-6 space-y-6">
+            <div className="flex flex-col sm:flex-row items-center gap-5">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-[#1e3463] bg-[#0c1a38] overflow-hidden flex items-center justify-center shadow-xl shrink-0">
+                {user?.profile_image ? (
+                  <img src={user.profile_image} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-2xl font-extrabold text-white font-righteous">{getInitials()}</span>
+                )}
               </div>
 
-              {/* Referral Badge */}
-              <div className="flex items-center gap-2 bg-[#061025] px-3.5 py-1.5 rounded-full border border-[#1b2f56]">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ref Code:</span>
-                <span className="text-xs font-mono font-bold text-white">{referralCode}</span>
+              <div className="text-center sm:text-left space-y-1">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                  <h2 className="text-xl font-extrabold text-white font-righteous">{user?.full_name || user?.username}</h2>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">Verified</span>
+                </div>
+                <p className="text-xs text-slate-400 font-mono">@{user?.username} • {user?.email}</p>
+                <p className="text-xs text-slate-400 flex items-center justify-center sm:justify-start gap-1 mt-1">
+                  <span>Country:</span> <span className="font-bold text-white">{user?.country || 'Not specified'}</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Referral Link Quick Copy Box */}
+            <div className="bg-[#061025] border border-[#182848] rounded-2xl p-4 space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px]">Your Referral Link</span>
+                <span className="text-emerald-400 font-mono font-bold text-[10px]">Ref Code: {referralCode}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={typeof window !== 'undefined' ? `${window.location.origin}/register?ref=${referralCode}` : `ref=${referralCode}`}
+                  className="w-full bg-[#0c1a38] border border-[#182848] rounded-xl px-3 py-2 text-xs text-slate-300 font-mono focus:outline-none"
+                />
                 <button
+                  type="button"
                   onClick={handleCopyReferral}
-                  className="ml-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
-                  title="Copy Referral Link"
+                  className="px-3.5 py-2 rounded-xl bg-[#142852] hover:bg-[#1c366e] text-white font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
                 >
-                  {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedCode ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-300" />}
+                  <span>{copiedCode ? 'Copied' : 'Copy'}</span>
                 </button>
               </div>
             </div>
 
-            <form onSubmit={handleSaveProfile} className="p-6 sm:p-8 space-y-6">
-              <div className="flex flex-col md:flex-row gap-8 items-start">
-                {/* Avatar Upload Container */}
-                <div className="flex flex-col items-center space-y-3 shrink-0 mx-auto md:mx-0">
-                  <div className="relative group">
-                    <div
-                      onClick={handleImageClick}
-                      className="w-28 h-28 rounded-full overflow-hidden border-4 border-[#1c305a] shadow-xl bg-[#060f22] transition-all group-hover:border-[#ff0044]/60 cursor-pointer relative"
-                    >
-                      {profileImage ? (
-                        <img src={profileImage} alt="Profile Avatar" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-[#ff0044] to-[#fe780b]">
-                          <span className="text-2xl font-black text-white font-righteous">{getInitials()}</span>
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Upload className="w-6 h-6 text-white" />
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={handleImageClick}
-                      className="absolute bottom-1 right-1 w-8 h-8 bg-[#ff0044] text-white rounded-full flex items-center justify-center shadow-lg border-2 border-[#0a1835] hover:scale-110 transition-transform cursor-pointer"
-                    >
-                      <Camera className="w-4 h-4" />
-                    </button>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      className="hidden"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-                  </div>
-
-                  <div className="text-center">
-                    <h3 className="font-bold text-sm text-white">{user?.full_name || user?.username || 'User Account'}</h3>
-                    <p className="text-xs text-slate-400 font-mono mt-0.5">@{user?.username || 'user'}</p>
-                  </div>
-                </div>
-
-                {/* Form Fields Grid */}
-                <div className="flex-1 w-full space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Full Name */}
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                        Full Name
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.fullName}
-                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                        placeholder="John Doe"
-                        className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl px-4 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
-                      />
-                    </div>
-
-                    {/* Username */}
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                        Username <span className="text-[#ff0044]">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.username}
-                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                        placeholder="username"
-                        className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl px-4 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Email (Read Only) */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                      Email Address (Verified)
-                    </label>
-                    <input
-                      type="email"
-                      value={user?.email || ''}
-                      readOnly
-                      className="w-full h-11 bg-[#060d1f] border border-[#142340] rounded-xl px-4 text-slate-400 text-xs font-bold cursor-not-allowed opacity-80"
-                    />
-                  </div>
-
-                  {/* Country & Phone Row */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Country Searchable Dropdown */}
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                        Country
-                      </label>
-                      <Select
-                        value={selectedCountry.name}
-                        onValueChange={(cName) => {
-                          const found = countries.find((c) => c.name === cName) || countries[0];
-                          setSelectedCountry(found);
-                        }}
-                      >
-                        <SelectTrigger className="h-11 border-[#182848] rounded-xl">
-                          <SelectValue placeholder="Select Country" />
-                        </SelectTrigger>
-                        <SelectContent searchPlaceholder="Search country...">
-                          {countries.map((c) => (
-                            <SelectItem key={c.code} value={c.name}>
-                              {c.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Phone Number */}
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                        Phone Number
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.mobile}
-                        onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
-                        placeholder="8012345678"
-                        className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl px-4 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Address, City, State */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                        City
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.city}
-                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                        placeholder="City"
-                        className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl px-4 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                        State
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.state}
-                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                        placeholder="State"
-                        className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl px-4 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                        Zip Code
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.zip_code}
-                        onChange={(e) => setFormData({ ...formData, zip_code: e.target.value })}
-                        placeholder="100001"
-                        className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl px-4 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Save Profile Button */}
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      disabled={savingProfile}
-                      className="w-full sm:w-auto px-8 h-11 bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-90 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-red-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
-                    >
-                      {savingProfile ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin text-white" />
-                          <span>Saving Changes...</span>
-                        </>
-                      ) : (
-                        <span>Save Changes</span>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </form>
+            {/* Link to Full Profile Page */}
+            <div className="pt-2">
+              <Link
+                href="/profile"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#ff0044] to-[#fe780b] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-red-500/20 inline-flex items-center justify-center gap-2 hover:opacity-95 transition-all"
+              >
+                <User className="w-4 h-4" />
+                <span>Edit Profile Details</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
 
           {/* Security & Password Card (Col Span 4) */}
-          <div className="lg:col-span-4 bg-[#0a1835] border border-[#182848] rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between">
+          <div className="lg:col-span-5 bg-[#0a1835] border border-[#182848] rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between">
             <div>
               <div className="bg-[#0e1d3e] border-b border-[#182848] px-6 py-4">
                 <h2 className="text-base font-extrabold text-white font-righteous">Security</h2>

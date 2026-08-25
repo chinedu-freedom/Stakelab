@@ -14,14 +14,28 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlToken = urlParams.get('impersonate_token') || urlParams.get('token') || urlParams.get('sec-prd-token');
+        if (urlToken) {
+          localStorage.setItem('stakelab_token', urlToken);
+          const isLocal = window.location.hostname.includes('localhost');
+          document.cookie = `stakelab_token=${urlToken}; path=/; max-age=604800; SameSite=Lax${!isLocal ? '; domain=.everstake.cx; Secure' : ''}`;
+          document.cookie = `sec-prd-token=${urlToken}; path=/; max-age=604800; SameSite=Lax${!isLocal ? '; domain=.everstake.cx; Secure' : ''}`;
+          const cleanUrl = window.location.pathname;
+          window.history.replaceState({}, '', cleanUrl);
+        }
+      }
+
       const token = localStorage.getItem('stakelab_token');
       if (!token) {
         setUser(null);
         setLoading(false);
         return;
       }
-      document.cookie = `stakelab_token=${token}; path=/; max-age=604800; SameSite=Lax`;
-      document.cookie = `sec-prd-token=${token}; path=/; max-age=604800; SameSite=Lax`;
+      const isLocal = typeof window !== 'undefined' && window.location.hostname.includes('localhost');
+      document.cookie = `stakelab_token=${token}; path=/; max-age=604800; SameSite=Lax${!isLocal ? '; domain=.everstake.cx; Secure' : ''}`;
+      document.cookie = `sec-prd-token=${token}; path=/; max-age=604800; SameSite=Lax${!isLocal ? '; domain=.everstake.cx; Secure' : ''}`;
       const res = await api.get('/auth/me');
       if (res.data.success) {
         setUser(res.data.user);

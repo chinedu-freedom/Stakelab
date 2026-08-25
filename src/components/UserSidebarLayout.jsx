@@ -128,9 +128,7 @@ export default function UserSidebarLayout({ children }) {
       ],
     },
     { label: 'Transaction', path: '/transactions', icon: History },
-    ...(features.giftBonus ? [{ label: 'Lucky Treasure', path: '/treasure', icon: Gift }] : []),
-    ...(features.tasks ? [{ label: 'Tasks', path: '/tasks', icon: ClipboardList }] : []),
-    ...(features.spinWheel ? [{ label: 'Lucky Spin', path: '/spin', icon: Disc }] : []),
+    { label: 'My Profile', path: '/profile', icon: User },
     { label: 'Referrals', path: '/referrals', icon: Users },
     {
       label: 'Support',
@@ -493,7 +491,7 @@ export default function UserSidebarLayout({ children }) {
               {profileDropdownOpen && (
                 <div className="absolute right-0 top-full mt-2 w-52 bg-[#08152e] border border-[#18294d] rounded-xl shadow-2xl overflow-hidden z-50 py-1.5 font-sans">
                   <Link
-                    href="/user-data"
+                    href="/profile"
                     onClick={() => setProfileDropdownOpen(false)}
                     className="px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-[#112349] hover:text-white flex items-center gap-3 transition-colors"
                   >
