@@ -256,9 +256,14 @@ export default function MyProfilePage() {
                     </div>
                     <input
                       type="text"
+                      maxLength={10}
                       value={formData.mobile}
-                      onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
-                      placeholder="e.g. 8123456789"
+                      onChange={(e) => {
+                        let val = e.target.value.replace(/\D/g, '');
+                        if (val.startsWith('0')) val = val.substring(1);
+                        setFormData({ ...formData, mobile: val.slice(0, 10) });
+                      }}
+                      placeholder="e.g. 8158051119"
                       className="w-full bg-[#061025] border border-[#182848] rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500 transition-all font-sans"
                     />
                   </div>

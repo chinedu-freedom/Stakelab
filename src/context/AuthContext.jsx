@@ -153,12 +153,24 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('stakelab_token');
-    document.cookie = 'stakelab_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    document.cookie = 'sec-prd-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('stakelab_token');
+      localStorage.removeItem('impersonate_token');
+      localStorage.removeItem('sec-prd-token');
+
+      const isLocal = window.location.hostname.includes('localhost');
+      const domainAttr = !isLocal ? '; domain=.everstake.cx' : '';
+
+      document.cookie = `stakelab_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT${domainAttr}`;
+      document.cookie = `sec-prd-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT${domainAttr}`;
+      document.cookie = 'stakelab_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'sec-prd-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    }
     setUser(null);
     toast.info('Logged out successfully');
-    router.push('/login');
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
   };
 
   return (

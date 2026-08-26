@@ -1,12 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import api from '../lib/api';
 
 export default function FaviconGuard() {
-  const [logoUrl, setLogoUrl] = useState(null);
-  const [faviconUrl, setFaviconUrl] = useState(null);
-
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const fetchLogoFavicon = async () => {
@@ -14,28 +11,29 @@ export default function FaviconGuard() {
         const res = await api.get('/public/logo-favicon');
         if (res.data && res.data.success && res.data.settings) {
           const { logoUrl: logo, faviconUrl: fav } = res.data.settings;
+          const targetFavicon = fav || logo;
           
-          if (fav) {
-            setFaviconUrl(fav);
-            // Dynamically update favicon link tag in <head>
-            let link = document.querySelector("link[rel*='icon']");
-            if (!link) {
-              link = document.createElement('link');
+          if (targetFavicon) {
+            const existingLinks = document.querySelectorAll("link[rel*='icon']");
+            if (existingLinks.length > 0) {
+              existingLinks.forEach((link) => {
+                link.href = targetFavicon;
+              });
+            } else {
+              const link = document.createElement('link');
               link.rel = 'shortcut icon';
+              link.href = targetFavicon;
               document.getElementsByTagName('head')[0].appendChild(link);
             }
-            link.href = fav;
           }
 
           if (logo) {
-            setLogoUrl(logo);
-            // Broadcast logo to headers & sidebars
             window.siteCustomLogoUrl = logo;
             window.dispatchEvent(new CustomEvent('site-logo-updated', { detail: logo }));
           }
         }
       } catch (err) {
-        // Fallback silently if offline or not configured yet
+        // Fallback silently
       }
     };
 

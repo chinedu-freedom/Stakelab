@@ -84,10 +84,16 @@ export default function AccountSettingsPage() {
 
   useEffect(() => {
     if (user) {
+      let rawMob = user.mobile || '';
+      rawMob = rawMob.replace(/^\+\d+\s*/, '').replace(/\D/g, '');
+      if (rawMob.startsWith('0') && rawMob.length === 11) {
+        rawMob = rawMob.substring(1);
+      }
+
       setFormData({
         username: user.username || '',
         fullName: user.full_name || user.username || '',
-        mobile: user.mobile ? user.mobile.replace(/^\+\d+\s*/, '') : '',
+        mobile: rawMob.slice(0, 10),
         address: user.address || '',
         state: user.state || '',
         zip_code: user.zip_code || '',
@@ -133,23 +139,58 @@ export default function AccountSettingsPage() {
   // --- Save Profile Handler ---
   const handleSaveProfile = async (e) => {
     e.preventDefault();
-    if (!formData.username.trim()) {
+    const cleanUsername = formData.username.trim();
+    const cleanFullName = formData.fullName.trim();
+    let cleanMobile = formData.mobile.replace(/\D/g, '');
+    if (cleanMobile.startsWith('0')) cleanMobile = cleanMobile.substring(1);
+    cleanMobile = cleanMobile.slice(0, 10);
+
+    const cleanAddress = formData.address.trim();
+    const cleanCity = formData.city.trim();
+    const cleanState = formData.state.trim();
+    const cleanZip = formData.zip_code.trim();
+
+    if (!cleanUsername) {
       toast.error('Username is required');
+      return;
+    }
+    if (!cleanFullName) {
+      toast.error('Full Name is required');
+      return;
+    }
+    if (!cleanMobile || cleanMobile.length !== 10) {
+      toast.error('Mobile number is required and must be exactly 10 digits');
+      return;
+    }
+    if (!cleanAddress) {
+      toast.error('Address is required');
+      return;
+    }
+    if (!cleanCity) {
+      toast.error('City is required');
+      return;
+    }
+    if (!cleanState) {
+      toast.error('State is required');
+      return;
+    }
+    if (!cleanZip) {
+      toast.error('Zip/Postal Code is required');
       return;
     }
 
     setSavingProfile(true);
     try {
-      const fullMobile = `${selectedCountry.dialCode} ${formData.mobile.trim()}`;
+      const fullMobile = `${selectedCountry.dialCode} ${cleanMobile}`;
       const res = await api.post('/user/data', {
-        username: formData.username.trim(),
-        full_name: formData.fullName.trim(),
+        username: cleanUsername,
+        full_name: cleanFullName,
         country: selectedCountry.name,
         mobile: fullMobile,
-        address: formData.address.trim(),
-        state: formData.state.trim(),
-        zip_code: formData.zip_code.trim(),
-        city: formData.city.trim(),
+        address: cleanAddress,
+        state: cleanState,
+        zip_code: cleanZip,
+        city: cleanCity,
         profile_image: profileImage,
       });
 

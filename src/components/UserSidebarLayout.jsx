@@ -128,6 +128,7 @@ export default function UserSidebarLayout({ children }) {
       ],
     },
     { label: 'Transaction', path: '/transactions', icon: History },
+    { label: 'Account Data', path: '/user-data', icon: Key },
     { label: 'My Profile', path: '/profile', icon: User },
     { label: 'Referrals', path: '/referrals', icon: Users },
     {

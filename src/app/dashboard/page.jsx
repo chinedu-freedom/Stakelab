@@ -20,12 +20,17 @@ import {
 } from 'lucide-react';
 import OfficialInfoReleaseModal from '../../components/OfficialInfoReleaseModal';
 import PageLoader from '../../components/PageLoader';
+import { toast } from 'sonner';
 
 export default function DashboardPage() {
   const { user, refreshUser } = useAuth();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showBalances, setShowBalances] = useState(true);
+  const [showStakingBalance, setShowStakingBalance] = useState(true);
+  const [showEarningBalance, setShowEarningBalance] = useState(true);
+  const [showTotalDeposit, setShowTotalDeposit] = useState(true);
+  const [showTotalWithdraw, setShowTotalWithdraw] = useState(true);
+  const [showReferralEarning, setShowReferralEarning] = useState(true);
 
   const fetchDashboard = async () => {
     try {
@@ -58,17 +63,6 @@ export default function DashboardPage() {
     }
   };
 
-  const activeStakesList = dashboardData?.activeStakes || [];
-  const stakingBalance =
-    dashboardData?.user?.staking_balance ||
-    activeStakesList.reduce((acc, s) => acc + parseFloat(s.amount || 0), 0) ||
-    0;
-  const earningBalance = dashboardData?.user?.earning_balance || dashboardData?.user?.total_earned || user?.total_earned || 0;
-  const totalDeposit = dashboardData?.user?.total_deposit || 0;
-  const totalWithdraw = dashboardData?.user?.total_withdraw || 0;
-  const referralEarning = dashboardData?.user?.referral_earning || 0;
-  const transactions = dashboardData?.recentTransactions || [];
-
   if (loading) {
     return (
       <UserSidebarLayout>
@@ -77,36 +71,41 @@ export default function DashboardPage() {
     );
   }
 
+  const stakingBalance = dashboardData?.user?.staked_balance || user?.staked_balance || 0;
+  const earningBalance = dashboardData?.user?.total_earned || user?.total_earned || 0;
+  const totalDeposit = dashboardData?.user?.total_deposit || user?.total_deposit || 0;
+  const totalWithdraw = dashboardData?.user?.total_withdraw || user?.total_withdraw || 0;
+  const referralEarning = dashboardData?.user?.referral_earning || user?.referral_earning || 0;
+  const transactions = dashboardData?.recentTransactions || [];
+
   return (
     <UserSidebarLayout>
       <OfficialInfoReleaseModal />
-      <div className="space-y-6 max-w-7xl mx-auto">
-        {/* Page Header Title */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-extrabold text-white font-righteous tracking-wide">
-            Dashboard
-          </h1>
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Top Header Banner */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#0a1835] border border-[#182848] rounded-2xl p-6 shadow-xl">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-righteous tracking-wide flex items-center gap-2">
+              Welcome back, <span className="text-emerald-400">{user?.full_name || user?.username || 'User'}</span>! 👋
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-400 mt-1 font-sans">
+              Monitor your active staking yield, manage deposits, and track daily returns in real-time.
+            </p>
+          </div>
+          <Link
+            href="/staking/create"
+            className="bg-[#ff0044] hover:bg-[#d60039] text-white px-5 py-2.5 rounded-xl font-righteous text-xs sm:text-sm tracking-wider uppercase font-bold transition-all shadow-lg shadow-red-500/20 shrink-0"
+          >
+            + Start Staking
+          </Link>
         </div>
 
-        {/* Browser Notification Alert Card (Commented out for now) */}
-        {/*
-        <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-5 text-slate-200 shadow-xl">
-          <h2 className="text-sm font-bold text-white font-righteous flex items-center gap-2">
-            Please Allow / Reset Browser Notification{' '}
-            <span className="text-[#ff0044] animate-bounce inline-block">🔔</span>
-          </h2>
-          <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-            If you want to get push notification then you have to allow notification from your browser
-          </p>
-        </div>
-        */}
-
-        {/* 5 Stat Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {/* 5 Main Stat Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Stat Card 1: Staking Balance */}
-          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-xl hover:border-emerald-500/30 transition-all">
+          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-xl hover:border-[#ff0044]/30 transition-all">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl bg-[#0e2730] border border-[#174352] flex items-center justify-center text-emerald-400 shrink-0 shadow-inner">
+              <div className="w-10 h-10 rounded-xl bg-[#0f2d29] border border-[#1b4d45] flex items-center justify-center text-emerald-400 shrink-0 shadow-inner">
                 <Coins className="w-5 h-5 text-emerald-400" />
               </div>
               <span className="text-xs text-slate-400 font-medium">Staking Balance</span>
@@ -114,17 +113,17 @@ export default function DashboardPage() {
 
             <div className="flex items-center justify-between gap-2 pt-1">
               <div className="text-xl sm:text-2xl font-extrabold text-white font-righteous tracking-tight">
-                {showBalances ? `$${parseFloat(stakingBalance).toFixed(2)}` : '••••••'}
+                {showStakingBalance ? `$${parseFloat(stakingBalance).toFixed(2)}` : '••••••'}
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowBalances(!showBalances)}
+                  onClick={() => setShowStakingBalance(!showStakingBalance)}
                   className="w-8 h-8 rounded-full bg-[#122449] border border-[#1d366a] hover:bg-[#1b3469] flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
-                  title={showBalances ? 'Hide Balance' : 'Show Balance'}
+                  title={showStakingBalance ? 'Hide Balance' : 'Show Balance'}
                 >
-                  {showBalances ? <Eye className="w-4 h-4 text-slate-300" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
+                  {showStakingBalance ? <Eye className="w-4 h-4 text-slate-300" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
                 </button>
 
                 <Link
@@ -148,17 +147,17 @@ export default function DashboardPage() {
 
             <div className="flex items-center justify-between gap-2 pt-1">
               <div className="text-xl sm:text-2xl font-extrabold text-white font-righteous tracking-tight">
-                {showBalances ? `$${parseFloat(earningBalance).toFixed(2)}` : '••••••'}
+                {showEarningBalance ? `$${parseFloat(earningBalance).toFixed(2)}` : '••••••'}
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowBalances(!showBalances)}
+                  onClick={() => setShowEarningBalance(!showEarningBalance)}
                   className="w-8 h-8 rounded-full bg-[#122449] border border-[#1d366a] hover:bg-[#1b3469] flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
-                  title={showBalances ? 'Hide Balance' : 'Show Balance'}
+                  title={showEarningBalance ? 'Hide Balance' : 'Show Balance'}
                 >
-                  {showBalances ? <Eye className="w-4 h-4 text-slate-300" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
+                  {showEarningBalance ? <Eye className="w-4 h-4 text-slate-300" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
                 </button>
 
                 <Link
@@ -182,17 +181,17 @@ export default function DashboardPage() {
 
             <div className="flex items-center justify-between gap-2 pt-1">
               <div className="text-xl sm:text-2xl font-extrabold text-white font-righteous tracking-tight">
-                {showBalances ? `$${parseFloat(totalDeposit).toFixed(2)}` : '••••••'}
+                {showTotalDeposit ? `$${parseFloat(totalDeposit).toFixed(2)}` : '••••••'}
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowBalances(!showBalances)}
+                  onClick={() => setShowTotalDeposit(!showTotalDeposit)}
                   className="w-8 h-8 rounded-full bg-[#122449] border border-[#1d366a] hover:bg-[#1b3469] flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
-                  title={showBalances ? 'Hide Balance' : 'Show Balance'}
+                  title={showTotalDeposit ? 'Hide Balance' : 'Show Balance'}
                 >
-                  {showBalances ? <Eye className="w-4 h-4 text-slate-300" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
+                  {showTotalDeposit ? <Eye className="w-4 h-4 text-slate-300" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
                 </button>
 
                 <Link
@@ -216,17 +215,17 @@ export default function DashboardPage() {
 
             <div className="flex items-center justify-between gap-2 pt-1">
               <div className="text-xl sm:text-2xl font-extrabold text-white font-righteous tracking-tight">
-                {showBalances ? `$${parseFloat(totalWithdraw).toFixed(2)}` : '••••••'}
+                {showTotalWithdraw ? `$${parseFloat(totalWithdraw).toFixed(2)}` : '••••••'}
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowBalances(!showBalances)}
+                  onClick={() => setShowTotalWithdraw(!showTotalWithdraw)}
                   className="w-8 h-8 rounded-full bg-[#122449] border border-[#1d366a] hover:bg-[#1b3469] flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
-                  title={showBalances ? 'Hide Balance' : 'Show Balance'}
+                  title={showTotalWithdraw ? 'Hide Balance' : 'Show Balance'}
                 >
-                  {showBalances ? <Eye className="w-4 h-4 text-slate-300" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
+                  {showTotalWithdraw ? <Eye className="w-4 h-4 text-slate-300" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
                 </button>
 
                 <Link
@@ -250,17 +249,17 @@ export default function DashboardPage() {
 
             <div className="flex items-center justify-between gap-2 pt-1">
               <div className="text-xl sm:text-2xl font-extrabold text-white font-righteous tracking-tight">
-                {showBalances ? `$${parseFloat(referralEarning).toFixed(2)}` : '••••••'}
+                {showReferralEarning ? `$${parseFloat(referralEarning).toFixed(2)}` : '••••••'}
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setShowBalances(!showBalances)}
+                  onClick={() => setShowReferralEarning(!showReferralEarning)}
                   className="w-8 h-8 rounded-full bg-[#122449] border border-[#1d366a] hover:bg-[#1b3469] flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
-                  title={showBalances ? 'Hide Balance' : 'Show Balance'}
+                  title={showReferralEarning ? 'Hide Balance' : 'Show Balance'}
                 >
-                  {showBalances ? <Eye className="w-4 h-4 text-slate-300" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
+                  {showReferralEarning ? <Eye className="w-4 h-4 text-slate-300" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
                 </button>
 
                 <Link
