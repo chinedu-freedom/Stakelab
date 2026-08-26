@@ -24,7 +24,14 @@ export default function CreateStakingPage() {
       setLoading(true);
       const res = await api.get('/staking/plans');
       if (res.data && res.data.success && Array.isArray(res.data.plans)) {
-        setPlans(res.data.plans);
+        const uniquePlansMap = new Map();
+        res.data.plans.forEach((p) => {
+          const key = p.title.trim().toLowerCase();
+          if (!uniquePlansMap.has(key)) {
+            uniquePlansMap.set(key, p);
+          }
+        });
+        setPlans(Array.from(uniquePlansMap.values()));
       }
     } catch (e) {
       console.error('Failed to fetch backend staking plans:', e);
