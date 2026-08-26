@@ -7,6 +7,8 @@ import { useAuth } from '../../../context/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import GoogleReCaptcha from '../../../components/GoogleReCaptcha';
+import { countries } from '../../../lib/countries';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../../components/ui/select';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -15,6 +17,8 @@ export default function RegisterPage() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  const [mobileNumber, setMobileNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -41,6 +45,10 @@ export default function RegisterPage() {
 
     const newErrors = {};
 
+    if (!mobileNumber.trim()) {
+      newErrors.mobile = 'Mobile number is required.';
+    }
+
     if (password !== confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match. Please verify both passwords.';
     }
@@ -62,11 +70,14 @@ export default function RegisterPage() {
 
     try {
       const full_name = `${firstName} ${lastName}`.trim();
+      const fullMobile = `${selectedCountry.dialCode} ${mobileNumber.trim()}`;
       const res = await registerUser({
         full_name,
         email,
         password,
         username: email.split('@')[0],
+        country: selectedCountry.name,
+        mobile: fullMobile,
         referral_code: referralCode,
         captchaToken,
       });
@@ -156,6 +167,70 @@ export default function RegisterPage() {
                 {errors.email && (
                   <p className="text-red-400 text-xs mt-1.5 font-medium">{errors.email}</p>
                 )}
+              </div>
+
+              {/* Country & Mobile Number */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Country Dropdown */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                    Country
+                  </label>
+                  <Select
+                    value={selectedCountry.name}
+                    onValueChange={(val) => {
+                      const found = countries.find((c) => c.name === val);
+                      if (found) setSelectedCountry(found);
+                    }}
+                  >
+                    <SelectTrigger className="w-full bg-[#0c1424] border-0 text-white rounded-md h-11 px-3 text-xs font-medium focus:ring-1 focus:ring-[#ff0044]">
+                      <SelectValue placeholder="Select Country">
+                        <span className="flex items-center gap-1.5 truncate">
+                          <span className="text-sm">{selectedCountry.flag}</span>
+                          <span className="truncate">{selectedCountry.name}</span>
+                        </span>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#091630] border border-[#182848] text-white max-h-52 overflow-y-auto no-scrollbar z-50">
+                      {countries.map((c) => (
+                        <SelectItem key={c.code} value={c.name} className="hover:bg-[#142852] focus:bg-[#142852] text-xs py-2">
+                          <span className="flex items-center gap-2">
+                            <span className="text-sm">{c.flag}</span>
+                            <span>{c.name}</span>
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Mobile Input */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                    Mobile Number
+                  </label>
+                  <div className="flex items-center gap-1.5">
+                    <div className="px-2.5 h-11 bg-[#0c1424] border-0 rounded-md text-xs font-bold text-slate-300 flex items-center shrink-0">
+                      {selectedCountry.dialCode}
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      value={mobileNumber}
+                      onChange={(e) => {
+                        setMobileNumber(e.target.value);
+                        if (errors.mobile) setErrors((prev) => ({ ...prev, mobile: '' }));
+                      }}
+                      placeholder="e.g. 8123456789"
+                      className={`w-full h-11 bg-[#0c1424] outline-none focus:outline-none rounded-md px-3.5 text-white placeholder-slate-500 font-sans text-xs sm:text-sm transition-all shadow-inner ${
+                        errors.mobile ? 'border border-red-500/80 focus:ring-1 focus:ring-red-500' : 'border-0 focus:ring-1 focus:ring-[#ff0044]'
+                      }`}
+                    />
+                  </div>
+                  {errors.mobile && (
+                    <p className="text-red-400 text-xs mt-1.5 font-medium">{errors.mobile}</p>
+                  )}
+                </div>
               </div>
 
               {/* Password Input */}

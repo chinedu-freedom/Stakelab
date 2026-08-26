@@ -155,6 +155,20 @@ export default function UserSidebarLayout({ children }) {
     });
   }, [pathname]);
 
+  // Enforce required Profile Data completion (Mobile Number & Country)
+  useEffect(() => {
+    if (!loading && user) {
+      const isMissingData = !user.profile_complete || !user.mobile || !user.country;
+      const isDataPage = pathname === '/user-data' || pathname === '/profile' || pathname === '/logout';
+      if (isMissingData && !isDataPage) {
+        toast.info('Please complete your required profile details (Mobile Number & Country) to continue.');
+        if (typeof window !== 'undefined') {
+          window.location.href = '/user-data';
+        }
+      }
+    }
+  }, [user, loading, pathname]);
+
   if (loading) {
     return <PageLoader />;
   }
