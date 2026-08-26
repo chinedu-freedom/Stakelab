@@ -141,7 +141,7 @@ export default function CreateStakingPage() {
             No active staking pools currently available.
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch pt-4">
             {plans.map((plan) => {
               const minAmt = parseFloat(plan.min_amount || 0);
               const maxAmt = parseFloat(plan.max_amount || 0);
@@ -149,61 +149,72 @@ export default function CreateStakingPage() {
               const days = plan.duration_days || 30;
 
               return (
-                <div
-                  key={plan.id}
-                  className="bg-[#0c1938] border border-[#1a2b4c] rounded-2xl p-5 flex flex-col justify-between shadow-xl hover:border-[#fe780b]/50 transition-all group relative overflow-hidden"
-                >
-                  {plan.badge && (
-                    <div className="absolute top-3 right-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#fe780b]/15 text-[#fe780b] border border-[#fe780b]/30">
-                        {plan.badge}
-                      </span>
-                    </div>
-                  )}
+                <div key={plan.id} className="relative group flex flex-col">
+                  {/* Outer Gradient Border Wrap with Pointed Shield Bottom */}
+                  <div
+                    style={{
+                      clipPath: 'polygon(0 0, 100% 0, 100% 92%, 50% 100%, 0 92%)',
+                    }}
+                    className="p-[2px] bg-gradient-to-b from-slate-800 via-[#ff0044] to-[#fe780b] rounded-t-3xl flex-1 flex flex-col drop-shadow-2xl hover:scale-[1.02] transition-transform duration-300"
+                  >
+                    {/* Inner Dark Card Body */}
+                    <div
+                      style={{
+                        clipPath: 'polygon(0 0, 100% 0, 100% 92%, 50% 100%, 0 92%)',
+                      }}
+                      className="w-full bg-[#0c1424] rounded-t-3xl pt-8 pb-16 px-6 sm:px-8 text-slate-100 flex-1 flex flex-col justify-between relative"
+                    >
+                      <div>
+                        {/* Top Header Plan Title */}
+                        <h3 className="font-righteous text-3xl sm:text-4xl font-extrabold text-white text-center tracking-wide uppercase">
+                          {plan.title}
+                        </h3>
 
-                  <div>
-                    <div className="flex justify-between items-start pr-12">
-                      <h2 className="text-white font-black text-base uppercase tracking-wide font-sans">
-                        {plan.title}
-                      </h2>
-                    </div>
+                        {/* Overhanging Gradient Ribbon Banner (Middle Header) */}
+                        <div className="relative my-6 -mx-6 sm:-mx-8">
+                          <div className="bg-gradient-to-r from-[#fe500b] via-[#ff0044] to-[#fe880b] text-white font-righteous text-lg sm:text-xl font-bold py-3 text-center shadow-lg tracking-wide uppercase">
+                            Stake for {days} Days
+                          </div>
+                          <div className="absolute -left-2 -bottom-2 w-0 h-0 border-t-[8px] border-t-[#a3002b] border-l-[8px] border-l-transparent" />
+                          <div className="absolute -right-2 -bottom-2 w-0 h-0 border-t-[8px] border-t-[#a3002b] border-r-[8px] border-r-transparent" />
+                        </div>
 
-                    <div className="my-3 flex items-baseline justify-between border-b border-[#182848] pb-3">
-                      <span className="text-xs text-slate-400 font-medium">Daily Return</span>
-                      <span className="text-2xl font-black text-[#fe780b] font-righteous tracking-tight">
-                        {ratePercent.toFixed(1)}%
-                      </span>
-                    </div>
+                        {/* Pool Details Table */}
+                        <div className="space-y-4 pt-2">
+                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
+                            <span className="text-slate-400 font-semibold">Daily Return</span>
+                            <span className="font-extrabold text-[#fe780b] text-lg font-righteous">{ratePercent}%</span>
+                          </div>
 
-                    <div className="space-y-2.5 text-xs">
-                      <div className="flex justify-between items-center text-slate-300">
-                        <span className="text-slate-400 font-medium">Minimum Deposit:</span>
-                        <span className="font-bold text-white font-righteous">
-                          ${minAmt.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
-                        </span>
+                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
+                            <span className="text-slate-400 font-semibold">Minimum Deposit</span>
+                            <span className="font-bold text-white">${minAmt.toLocaleString()}</span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
+                            <span className="text-slate-400 font-semibold">Maximum Deposit</span>
+                            <span className="font-bold text-white">${maxAmt.toLocaleString()}</span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
+                            <span className="text-slate-400 font-semibold">Staking Duration</span>
+                            <span className="font-bold text-white">{days} Days</span>
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="flex justify-between items-center text-slate-300">
-                        <span className="text-slate-400 font-medium">Maximum Deposit:</span>
-                        <span className="font-bold text-white font-righteous">
-                          ${maxAmt.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between items-center text-slate-300">
-                        <span className="text-slate-400 font-medium">Staking Duration:</span>
-                        <span className="font-bold text-white font-sans">{days} Days</span>
+                      {/* STAKE Button */}
+                      <div className="pt-8 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenModal(plan)}
+                          className="btn-stakelab w-full max-w-[200px] mx-auto py-3.5 text-center text-xs font-bold block shadow-lg shadow-red-500/30 rounded-md font-righteous uppercase tracking-wider hover:scale-105 transition-transform cursor-pointer"
+                        >
+                          STAKE
+                        </button>
                       </div>
                     </div>
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleOpenModal(plan)}
-                    className="mt-5 w-full bg-gradient-to-r from-[#fe500b] to-[#ff0044] hover:from-[#e04508] hover:to-[#e6003d] text-white font-bold py-2.5 px-4 rounded-xl text-xs tracking-wider uppercase font-righteous shadow-lg shadow-red-500/20 transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
-                  >
-                    Stake
-                  </button>
                 </div>
               );
             })}

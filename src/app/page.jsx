@@ -84,7 +84,14 @@ export default function LandingPage() {
       try {
         const res = await api.get('/staking/plans');
         if (res.data && res.data.success && res.data.plans?.length > 0) {
-          setDbPlans(res.data.plans);
+          const uniqueMap = new Map();
+          res.data.plans.forEach((p) => {
+            const key = p.title.trim().toLowerCase();
+            if (!uniqueMap.has(key)) {
+              uniqueMap.set(key, p);
+            }
+          });
+          setDbPlans(Array.from(uniqueMap.values()));
         }
       } catch (err) {
         // Quiet fallback
@@ -568,141 +575,88 @@ export default function LandingPage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 items-stretch pt-4">
-            {(dynamicPlans.length > 0
-              ? dynamicPlans.slice(0, 3).map((p) => {
-                  const min = parseFloat(p.min_amount || 10);
-                  const max = parseFloat(p.max_amount || 1000);
-                  const step = (max - min) / 3;
-                  const rate1 = `${p.daily_return_percent || 15}%`;
-                  const rate2 = `${Math.round((p.daily_return_percent || 15) * 2)}%`;
-                  const rate3 = `${Math.round((p.daily_return_percent || 15) * 3.33)}%`;
-
-                  return {
-                    name: p.title || p.name || 'Silver',
-                    duration: `Stake for ${p.duration_days || p.days || 30} Days`,
-                    status: p.status,
-                    isAvailable: p.is_active !== false && p.status !== 'Unavailable',
-                    rates: p.tiers || [
-                      { range: `${min.toFixed(2)}-${(min + step).toFixed(2)}`, interest: rate1 },
-                      { range: `${(min + step + 1).toFixed(2)}-${(min + step * 2).toFixed(2)}`, interest: rate2 },
-                      { range: `${(min + step * 2 + 1).toFixed(2)}-${max.toFixed(2)}`, interest: rate3 },
-                    ],
-                  };
-                })
+            {(dbPlans.length > 0
+              ? dbPlans
               : [
-                  {
-                    name: 'Silver',
-                    duration: 'Stake for 30 Days',
-                    isAvailable: true,
-                    rates: [
-                      { range: '10.00-100.00', interest: '15%' },
-                      { range: '101.00-250.00', interest: '30%' },
-                      { range: '251.00-500.00', interest: '50%' },
-                    ],
-                  },
-                  {
-                    name: 'Golden',
-                    duration: 'Stake for 90 Days',
-                    isAvailable: true,
-                    rates: [
-                      { range: '50.00-500.00', interest: '20%' },
-                      { range: '501.00-2,000.00', interest: '40%' },
-                      { range: '2,001.00-5,000.00', interest: '60%' },
-                    ],
-                  },
-                  {
-                    name: 'Platinum',
-                    duration: 'Stake for 180 Days',
-                    isAvailable: true,
-                    rates: [
-                      { range: '100.00-1,000.00', interest: '40%' },
-                      { range: '1,001.00-5,000.00', interest: '50%' },
-                      { range: '5,001.00-20,000.00', interest: '70%' },
-                    ],
-                  },
+                  { title: 'Flexi Starter', min_amount: 10, max_amount: 500, daily_return_percent: 0.05, duration_days: 7 },
+                  { title: 'Yield Booster', min_amount: 500, max_amount: 5000, daily_return_percent: 0.1, duration_days: 30 },
+                  { title: 'Vault Pro', min_amount: 5000, max_amount: 25000, daily_return_percent: 0.2, duration_days: 90 },
                 ]
-            ).slice(0, 3).map((plan, idx) => (
-              <div key={idx} className="relative group flex flex-col">
-                {/* Outer Gradient Border Wrap with Pointed Shield Bottom */}
-                <div
-                  style={{
-                    clipPath: 'polygon(0 0, 100% 0, 100% 92%, 50% 100%, 0 92%)',
-                  }}
-                  className="p-[2px] bg-gradient-to-b from-slate-800 via-[#ff0044] to-[#fe780b] rounded-t-3xl flex-1 flex flex-col drop-shadow-2xl"
-                >
-                  {/* Inner Dark Card Body */}
+            ).map((plan, idx) => {
+              const minAmt = parseFloat(plan.min_amount || 0);
+              const maxAmt = parseFloat(plan.max_amount || 0);
+              const ratePercent = parseFloat(plan.daily_return_percent || 0);
+              const days = plan.duration_days || 30;
+
+              return (
+                <div key={idx} className="relative group flex flex-col">
+                  {/* Outer Gradient Border Wrap with Pointed Shield Bottom */}
                   <div
                     style={{
                       clipPath: 'polygon(0 0, 100% 0, 100% 92%, 50% 100%, 0 92%)',
                     }}
-                    className="w-full bg-[#0c1424] rounded-t-3xl pt-8 pb-16 px-6 sm:px-8 text-slate-100 flex-1 flex flex-col justify-between relative"
+                    className="p-[2px] bg-gradient-to-b from-slate-800 via-[#ff0044] to-[#fe780b] rounded-t-3xl flex-1 flex flex-col drop-shadow-2xl hover:scale-[1.02] transition-transform duration-300"
                   >
-                    {/* Top Header Plan Title */}
-                    <div>
-                      <h3 className="font-righteous text-3xl sm:text-4xl font-extrabold text-white text-center tracking-wide">
-                        {plan.name}
-                      </h3>
+                    {/* Inner Dark Card Body */}
+                    <div
+                      style={{
+                        clipPath: 'polygon(0 0, 100% 0, 100% 92%, 50% 100%, 0 92%)',
+                      }}
+                      className="w-full bg-[#0c1424] rounded-t-3xl pt-8 pb-16 px-6 sm:px-8 text-slate-100 flex-1 flex flex-col justify-between relative"
+                    >
+                      {/* Top Header Plan Title */}
+                      <div>
+                        <h3 className="font-righteous text-3xl sm:text-4xl font-extrabold text-white text-center tracking-wide uppercase">
+                          {plan.title}
+                        </h3>
 
-                      {/* Overhanging Gradient Ribbon Banner (Middle Header) */}
-                      <div className="relative my-6 -mx-6 sm:-mx-8">
-                        {/* Ribbon Body */}
-                        <div className="bg-gradient-to-r from-[#fe500b] via-[#ff0044] to-[#fe880b] text-white font-righteous text-lg sm:text-xl font-bold py-3 text-center shadow-lg tracking-wide">
-                          {plan.duration}
+                        {/* Overhanging Gradient Ribbon Banner (Middle Header) */}
+                        <div className="relative my-6 -mx-6 sm:-mx-8">
+                          <div className="bg-gradient-to-r from-[#fe500b] via-[#ff0044] to-[#fe880b] text-white font-righteous text-lg sm:text-xl font-bold py-3 text-center shadow-lg tracking-wide uppercase">
+                            Stake for {days} Days
+                          </div>
+                          <div className="absolute -left-2 -bottom-2 w-0 h-0 border-t-[8px] border-t-[#a3002b] border-l-[8px] border-l-transparent" />
+                          <div className="absolute -right-2 -bottom-2 w-0 h-0 border-t-[8px] border-t-[#a3002b] border-r-[8px] border-r-transparent" />
                         </div>
-                        {/* Left Ribbon Fold Triangle */}
-                        <div className="absolute -left-2 -bottom-2 w-0 h-0 border-t-[8px] border-t-[#a3002b] border-l-[8px] border-l-transparent" />
-                        {/* Right Ribbon Fold Triangle */}
-                        <div className="absolute -right-2 -bottom-2 w-0 h-0 border-t-[8px] border-t-[#a3002b] border-r-[8px] border-r-transparent" />
+
+                        {/* Pool Details Table */}
+                        <div className="space-y-4 pt-2">
+                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
+                            <span className="text-slate-400 font-semibold">Daily Return</span>
+                            <span className="font-extrabold text-[#fe780b] text-lg font-righteous">{ratePercent}%</span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
+                            <span className="text-slate-400 font-semibold">Minimum Deposit</span>
+                            <span className="font-bold text-white">${minAmt.toLocaleString()}</span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
+                            <span className="text-slate-400 font-semibold">Maximum Deposit</span>
+                            <span className="font-bold text-white">${maxAmt.toLocaleString()}</span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
+                            <span className="text-slate-400 font-semibold">Staking Duration</span>
+                            <span className="font-bold text-white">{days} Days</span>
+                          </div>
+                        </div>
                       </div>
 
-                      {/* Range & Interest Rates Table */}
-                      <div className="space-y-4 pt-2">
-                        {/* Table Header */}
-                        <div className="flex justify-between items-center text-slate-300 text-sm font-semibold pb-2 border-b border-[#1c2844]">
-                          <span>Range</span>
-                          <span>Interest</span>
-                        </div>
-
-                        {/* Table Rows */}
-                        <div className="space-y-3">
-                          {plan.rates.map((row, rIdx) => (
-                            <div
-                              key={rIdx}
-                              className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c] last:border-b-0"
-                            >
-                              <div className="font-semibold text-slate-200">
-                                <span className="text-[#ff0044] font-bold mr-0.5">$</span>
-                                {row.range}
-                              </div>
-                              <span className="font-bold text-white tracking-wide">{row.interest}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* CTA Button: Stake Now or Unavailable (Matching Reference Screenshot) */}
-                    <div className="pt-8 text-center">
-                      {!plan.isAvailable ? (
-                        <button
-                          disabled
-                          className="w-full max-w-[200px] mx-auto py-3.5 text-center text-xs font-bold block bg-slate-700/80 text-slate-400 rounded-md font-righteous uppercase tracking-wider cursor-not-allowed border border-slate-600/50 shadow-md"
-                        >
-                          Unavailable
-                        </button>
-                      ) : (
+                      {/* CTA Button: STAKE NOW */}
+                      <div className="pt-8 text-center">
                         <Link
                           href="/register"
-                          className="btn-stakelab w-full max-w-[200px] mx-auto py-3.5 text-center text-sm font-bold block shadow-lg shadow-red-500/30 rounded-md font-righteous uppercase tracking-wider hover:scale-105 transition-transform"
+                          className="btn-stakelab w-full max-w-[200px] mx-auto py-3.5 text-center text-xs font-bold block shadow-lg shadow-red-500/30 rounded-md font-righteous uppercase tracking-wider hover:scale-105 transition-transform"
                         >
-                          Stake Now
+                          STAKE NOW
                         </Link>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
