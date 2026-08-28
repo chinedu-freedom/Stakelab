@@ -86,7 +86,7 @@ export default function DashboardPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#0a1835] border border-[#182848] rounded-2xl p-6 shadow-xl">
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-righteous tracking-wide flex items-center gap-2">
-              Welcome back, <span className="text-emerald-400">{user?.full_name || user?.username || 'User'}</span>! 👋
+              Welcome back, <span className="text-emerald-400">{user?.full_name?.trim() || user?.username || user?.email?.split('@')[0] || 'Investor'}</span>! 👋
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 mt-1 font-sans">
               Monitor your active staking yield, manage deposits, and track daily returns in real-time.

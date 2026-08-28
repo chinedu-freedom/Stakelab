@@ -224,7 +224,7 @@ export default function UserSidebarLayout({ children }) {
                 </div>
                 {/* User Name */}
                 <h4 className="text-sm font-bold text-white mb-2 tracking-wide font-sans text-center">
-                  {user?.full_name || user?.username || 'Chinedu Freedom'}
+                  {user?.full_name?.trim() || user?.username || user?.email?.split('@')[0] || 'Investor'}
                 </h4>
                 {/* Stacked Balance Layout */}
                 <div className="space-y-0.5">
@@ -493,10 +493,10 @@ export default function UserSidebarLayout({ children }) {
                 </div>
                 <div className="text-left hidden sm:block">
                   <div className="text-xs font-bold text-white leading-tight truncate max-w-[150px]">
-                    {user?.username || user?.full_name || 'adminwww'}
+                    {user?.full_name?.trim() || user?.username || user?.email?.split('@')[0] || 'Investor'}
                   </div>
                   <div className="text-[10px] text-slate-400 leading-tight truncate max-w-[150px]">
-                    {user?.email || '[Email is protected for the demo]'}
+                    {user?.email || ''}
                   </div>
                 </div>
                 <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${profileDropdownOpen ? 'rotate-180' : ''}`} />
