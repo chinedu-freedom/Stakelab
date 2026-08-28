@@ -104,6 +104,12 @@ export default function WithdrawPage() {
     e.preventDefault();
     if (!amount || !walletAddress || !selectedGateway) return;
 
+    if (user && !user.email_verified) {
+      toast.error('Please verify your email address to perform withdrawals.');
+      window.location.href = '/verify-email';
+      return;
+    }
+
     if (amountNum < minLimit || amountNum > maxLimit) {
       toast.error(`Withdrawal amount must be between $${minLimit} and $${maxLimit}`);
       return;

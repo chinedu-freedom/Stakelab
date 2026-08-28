@@ -55,6 +55,12 @@ export default function CreateStakingPage() {
     e.preventDefault();
     if (!selectedPlan || !stakeAmount) return;
 
+    if (user && !user.email_verified) {
+      toast.error('Please verify your email address to perform staking.');
+      window.location.href = '/verify-email';
+      return;
+    }
+
     if (!selectedWallet) {
       toast.error('Please select a wallet.');
       return;

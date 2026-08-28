@@ -6,7 +6,10 @@ import api from '../../lib/api';
 import { Copy, Check, ChevronDown, ChevronUp, ShieldCheck, Info, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { useAuth } from '../../context/AuthContext';
+
 export default function DepositPage() {
+  const { user } = useAuth();
   const [gateways, setGateways] = useState([
     { id: '1', name: '2Checkout - USD', badge: '2checkout', symbol: 'USD', minLimit: 1, maxLimit: 10000, fee: 0, rate: 1.0, address: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F' },
     { id: '2', name: 'Aamarpay - BDT', badge: 'aamarpay', symbol: 'BDT', minLimit: 10, maxLimit: 5000, fee: 0, rate: 0.0091, address: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F' },
@@ -89,6 +92,12 @@ export default function DepositPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!amount || !selectedGateway) return;
+
+    if (user && !user.email_verified) {
+      toast.error('Please verify your email address to perform deposits.');
+      window.location.href = '/verify-email';
+      return;
+    }
 
     if (amountNum < minLimit || amountNum > maxLimit) {
       toast.error(`Amount must be between $${minLimit} and $${maxLimit}`);

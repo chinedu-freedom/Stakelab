@@ -555,6 +555,22 @@ export default function UserSidebarLayout({ children }) {
           </div>
         </header>
 
+        {/* Unverified Email Warning Banner */}
+        {user && !user.email_verified && (
+          <div className="bg-gradient-to-r from-amber-600/90 to-red-600/90 text-white px-4 py-2.5 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2 shadow-md shrink-0">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 shrink-0 text-amber-200 animate-pulse" />
+              <span>Your email address ({user.email}) is not verified. Please verify your email to unlock deposits, withdrawals & staking.</span>
+            </div>
+            <Link
+              href="/verify-email"
+              className="px-3.5 py-1.5 rounded-lg bg-white text-slate-900 font-extrabold hover:bg-slate-100 transition-all text-[11px] shrink-0 uppercase tracking-wider shadow cursor-pointer"
+            >
+              Verify Email →
+            </Link>
+          </div>
+        )}
+
         {/* Main Content Area */}
         <main className="flex-1 bg-[#061127] p-4 sm:p-6 lg:p-8 h-full overflow-y-auto no-scrollbar pb-24 lg:pb-8">
           {children}
