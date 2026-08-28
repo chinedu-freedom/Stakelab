@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import UserSidebarLayout from '../../components/UserSidebarLayout';
-import { ClipboardList } from 'lucide-react';
+import { ClipboardList, Loader2 } from 'lucide-react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
 
 export default function TransactionsPage() {
@@ -173,53 +173,75 @@ export default function TransactionsPage() {
 
         {/* Transactions Table Container / Empty State */}
         {loading ? (
-          <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-16 text-center text-slate-400">
-            Loading transaction history...
+          <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-16 text-center text-slate-400 text-xs font-semibold flex items-center justify-center gap-2">
+            <span>Loading transaction history</span>
+            <Loader2 className="w-5 h-5 animate-spin text-[#ff0044]" />
           </div>
         ) : filteredTransactions.length === 0 ? (
           /* Empty State Card Matching Reference Screenshot */
-          <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-16 text-center shadow-2xl flex flex-col items-center justify-center">
-            <div className="w-20 h-20 rounded-2xl bg-[#0e1d3e] border border-[#1c305c] flex items-center justify-center mb-4">
-              <ClipboardList className="w-10 h-10 text-slate-400 stroke-1" />
+          <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-16 text-center shadow-2xl flex flex-col items-center justify-center space-y-3">
+            <div className="w-16 h-16 rounded-2xl bg-[#08142c] border border-[#182848] flex items-center justify-center text-slate-400">
+              <ClipboardList className="w-8 h-8 stroke-1" />
             </div>
-            <p className="text-sm font-semibold text-slate-300 font-sans">
+            <p className="text-sm font-bold text-slate-300 font-sans">
               No Transaction Found
             </p>
           </div>
         ) : (
-          /* Transactions Table */
-          <div className="bg-[#0b162c] border border-[#ff0044]/30 rounded-xl overflow-hidden shadow-2xl">
+          /* Transactions Table (Matching Reference Screenshot) */
+          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl overflow-hidden shadow-2xl">
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-xs">
+              <table className="w-full text-left border-collapse text-xs font-sans">
                 <thead>
-                  <tr className="border-b border-[#ff0044]/30 bg-[#07132a] text-white font-bold uppercase tracking-wider">
-                    <th className="py-4 px-6 border-r border-[#ff0044]/20">Transaction ID</th>
-                    <th className="py-4 px-6 border-r border-[#ff0044]/20">Type</th>
-                    <th className="py-4 px-6 border-r border-[#ff0044]/20">Amount</th>
-                    <th className="py-4 px-6 border-r border-[#ff0044]/20">Balance After</th>
-                    <th className="py-4 px-6 text-right">Date & Time</th>
+                  <tr className="border-b border-[#182848] bg-[#07132a] text-slate-300 font-bold uppercase tracking-wider text-[11px]">
+                    <th className="py-4 px-5">Transaction ID</th>
+                    <th className="py-4 px-5">Type</th>
+                    <th className="py-4 px-5">Amount</th>
+                    <th className="py-4 px-5">Post Balance</th>
+                    <th className="py-4 px-5">Details</th>
+                    <th className="py-4 px-5 text-right">Date & Time</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#16274a]">
-                  {filteredTransactions.map((tx) => (
-                    <tr key={tx.id} className="hover:bg-[#0e1d3e]/60 text-slate-200 transition-all">
-                      <td className="py-4 px-6 font-mono text-slate-300 border-r border-[#ff0044]/10">
-                        {tx.id.substring(0, 8)}...
-                      </td>
-                      <td className="py-4 px-6 font-bold text-white border-r border-[#ff0044]/10">
-                        {tx.type}
-                      </td>
-                      <td className="py-4 px-6 font-righteous text-emerald-400 border-r border-[#ff0044]/10">
-                        ${parseFloat(tx.amount).toFixed(2)}
-                      </td>
-                      <td className="py-4 px-6 font-righteous text-white border-r border-[#ff0044]/10">
-                        ${parseFloat(tx.balance_after).toFixed(2)}
-                      </td>
-                      <td className="py-4 px-6 text-slate-400 text-right">
-                        {new Date(tx.created_at).toLocaleString()}
-                      </td>
-                    </tr>
-                  ))}
+                <tbody className="divide-y divide-[#142343]">
+                  {filteredTransactions.map((tx) => {
+                    const isMinus = ['WITHDRAWAL', 'STAKE', 'SPIN_FEE'].includes(tx.type);
+                    const amountVal = parseFloat(tx.amount || 0);
+
+                    return (
+                      <tr key={tx.id} className="hover:bg-[#0e1d3e]/80 text-slate-200 transition-colors">
+                        <td className="py-4 px-5 font-mono text-slate-300 font-bold">
+                          {tx.id.length > 12 ? `${tx.id.substring(0, 10)}...` : tx.id}
+                        </td>
+                        <td className="py-4 px-5">
+                          <span
+                            className={`text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-full uppercase border ${
+                              isMinus
+                                ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                            }`}
+                          >
+                            {tx.type}
+                          </span>
+                        </td>
+                        <td
+                          className={`py-4 px-5 font-righteous font-extrabold text-sm ${
+                            isMinus ? 'text-red-400' : 'text-emerald-400'
+                          }`}
+                        >
+                          {isMinus ? '-' : '+'}${amountVal.toFixed(2)}
+                        </td>
+                        <td className="py-4 px-5 font-righteous text-white font-bold">
+                          ${parseFloat(tx.balance_after || 0).toFixed(2)}
+                        </td>
+                        <td className="py-4 px-5 text-slate-300 text-[11px] max-w-xs truncate">
+                          {tx.description || tx.remark || 'Transaction Completed'}
+                        </td>
+                        <td className="py-4 px-5 text-slate-400 text-right whitespace-nowrap text-[11px]">
+                          {new Date(tx.created_at).toLocaleString()}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

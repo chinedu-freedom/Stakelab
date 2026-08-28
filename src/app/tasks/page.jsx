@@ -170,7 +170,8 @@ export default function UserTasksPage() {
         <div className="space-y-4">
           {loading ? (
             <div className="py-12 flex items-center justify-center text-slate-400 text-xs font-semibold gap-2">
-              <Loader2 className="w-5 h-5 animate-spin text-[#fe780b]" /> Loading tasks...
+              <span>Loading tasks</span>
+              <Loader2 className="w-5 h-5 animate-spin text-[#fe780b]" />
             </div>
           ) : tasks.length === 0 ? (
             <div className="py-12 bg-[#0a1835] border border-[#1e3463] rounded-2xl text-center text-slate-400 text-xs font-semibold">

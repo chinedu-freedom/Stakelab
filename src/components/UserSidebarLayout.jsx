@@ -241,11 +241,11 @@ export default function UserSidebarLayout({ children }) {
                 <h4 className="text-sm font-bold text-white mb-2 tracking-wide font-sans text-center">
                   {user?.full_name?.trim() || user?.username || user?.email}
                 </h4>
-                {/* Stacked Balance Layout */}
+                {/* Stacked Staking Balance Layout */}
                 <div className="space-y-0.5">
-                  <div className="text-xs font-semibold text-slate-200 text-center">Balance</div>
+                  <div className="text-xs font-semibold text-slate-200 text-center">Staking Balance</div>
                   <div className="text-base font-extrabold text-white text-center font-sans tracking-tight">
-                    ${user?.balance ? Number(user.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+                    ${(user?.balance !== undefined && user?.balance !== null) ? Number(user.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                   </div>
                 </div>
               </div>

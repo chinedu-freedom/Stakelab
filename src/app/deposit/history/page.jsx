@@ -5,52 +5,52 @@ import Link from 'next/link';
 import UserSidebarLayout from '../../../components/UserSidebarLayout';
 import { useAuth } from '../../../context/AuthContext';
 import api from '../../../lib/api';
-import { ClipboardList, ArrowDownLeft } from 'lucide-react';
+import { ClipboardList, ArrowDownLeft, Loader2 } from 'lucide-react';
 
 export default function DepositHistoryPage() {
   const { user } = useAuth();
   const [deposits, setDeposits] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchDeposits = async () => {
-    try {
-      setLoading(true);
-      const res = await api.get('/deposits');
-      if (res.data.success) {
-        setDeposits(res.data.deposits || []);
-      }
-    } catch (err) {
-      console.error('Failed to load deposit history:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchDeposits();
+    setLoading(true);
+    api.get('/user/deposits')
+      .then((res) => {
+        if (res.data.success) {
+          setDeposits(res.data.deposits || []);
+        }
+      })
+      .catch(() => null)
+      .finally(() => setLoading(false));
   }, []);
 
   return (
     <UserSidebarLayout>
-      <div className="space-y-6 max-w-7xl mx-auto">
-        {/* Page Header Bar */}
-        <div className="flex items-center justify-between gap-4">
-          <h1 className="text-xl font-extrabold text-white font-righteous tracking-wide">
-            Deposit History
-          </h1>
+      <div className="space-y-8 max-w-6xl mx-auto font-sans">
+        {/* Top Header Pill Banner */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#0a1835] border border-[#182848] rounded-2xl p-6 shadow-2xl">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-white font-righteous tracking-wide flex items-center gap-2">
+              <ClipboardList className="w-6 h-6 text-[#ff0044]" /> Deposit History Log
+            </h1>
+            <p className="text-xs text-slate-400 font-medium mt-1">
+              Real-time audit log of all your completed and pending deposit requests.
+            </p>
+          </div>
 
           <Link
             href="/deposit"
-            className="btn-stakelab px-4 sm:px-5 py-2 rounded-lg text-xs font-bold font-righteous uppercase transition-all shadow-md shadow-red-500/20 flex items-center gap-2 shrink-0"
+            className="bg-gradient-to-tr from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-slate-950 font-black px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20 shrink-0 flex items-center gap-1.5"
           >
-            <ArrowDownLeft className="w-4 h-4" /> Deposit Now
+            + Deposit Funds
           </Link>
         </div>
 
         {/* Deposit Table Container or Empty State (Matching Reference Screenshot) */}
         {loading ? (
-          <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-16 text-center text-slate-400">
-            Loading deposit history...
+          <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-16 text-center text-slate-400 text-xs font-semibold flex items-center justify-center gap-2">
+            <span>Loading deposit history</span>
+            <Loader2 className="w-5 h-5 animate-spin text-[#ff0044]" />
           </div>
         ) : deposits.length === 0 ? (
           /* Empty State Card */

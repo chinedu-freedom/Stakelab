@@ -5,7 +5,7 @@ import Link from 'next/link';
 import UserSidebarLayout from '../../../components/UserSidebarLayout';
 import { useAuth } from '../../../context/AuthContext';
 import api from '../../../lib/api';
-import { ClipboardList, ArrowUpRight } from 'lucide-react';
+import { ClipboardList, ArrowUpRight, Loader2 } from 'lucide-react';
 
 export default function WithdrawHistoryPage() {
   const { user } = useAuth();
@@ -49,8 +49,9 @@ export default function WithdrawHistoryPage() {
 
         {/* Withdrawal Table Container or Empty State (Matching Reference Screenshot) */}
         {loading ? (
-          <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-16 text-center text-slate-400">
-            Loading withdrawal log...
+          <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-16 text-center text-slate-400 text-xs font-semibold flex items-center justify-center gap-2">
+            <span>Loading withdrawal log</span>
+            <Loader2 className="w-5 h-5 animate-spin text-[#ff0044]" />
           </div>
         ) : withdrawals.length === 0 ? (
           /* Empty State Card */

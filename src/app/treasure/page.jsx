@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import UserSidebarLayout from '../../components/UserSidebarLayout';
 import { useAuth } from '../../context/AuthContext';
-import { Ticket, Key, Gift, Info, Send, Wallet, History, ArrowRight, Loader2 } from 'lucide-react';
+import { Ticket, Key, Gift, Info, Send, Wallet, History, ArrowRight, Loader2, X } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../lib/api';
 
@@ -17,6 +17,7 @@ export default function LuckyTreasurePage() {
   const [loading, setLoading] = useState(true);
   const [claiming, setClaiming] = useState(false);
   const [isTelegramModalOpen, setIsTelegramModalOpen] = useState(true);
+  const [claimedModalData, setClaimedModalData] = useState(null);
 
   const fetchClaims = async () => {
     try {
@@ -59,10 +60,16 @@ export default function LuckyTreasurePage() {
       setClaiming(true);
       const res = await api.post('/user/claim-gift-code', { code: giftCode.trim() });
       if (res.data && res.data.success) {
-        toast.success(res.data.message || 'Gift code claimed successfully!');
+        const rewardAmt = res.data.amount || res.data.giftCode?.amount || 100.00;
+        setClaimedModalData({ amount: rewardAmt, code: giftCode.trim() });
         setGiftCode('');
         fetchClaims();
         if (refreshUser) refreshUser();
+
+        // Auto close after 3 seconds
+        setTimeout(() => {
+          setClaimedModalData(null);
+        }, 3000);
       }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to claim gift code.');
@@ -187,7 +194,8 @@ export default function LuckyTreasurePage() {
           <div className="bg-[#0a1835] border border-[#1e3463] rounded-2xl shadow-xl overflow-hidden">
             {loading ? (
               <div className="py-12 flex items-center justify-center text-slate-400 text-xs font-semibold gap-2">
-                <Loader2 className="w-5 h-5 animate-spin text-[#fe780b]" /> Loading redemptions...
+                <span>Loading redemptions</span>
+                <Loader2 className="w-5 h-5 animate-spin text-[#fe780b]" />
               </div>
             ) : claims.length === 0 ? (
               <div className="py-12 flex flex-col items-center justify-center text-center p-6 space-y-2">
@@ -229,6 +237,53 @@ export default function LuckyTreasurePage() {
       </div>
 
       <TelegramModal isOpen={isTelegramModalOpen} setIsOpen={setIsTelegramModalOpen} />
+
+      {/* Celebratory Gift Code Claim Success Modal (Matching Reference Image) */}
+      {claimedModalData && (
+        <div
+          onClick={() => setClaimedModalData(null)}
+          className="fixed inset-0 z-[100] w-full h-full min-h-screen bg-black/80 backdrop-blur-md flex items-center justify-center p-4 cursor-pointer animate-in fade-in duration-200 overflow-y-auto"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-sm bg-[#09152e] border border-[#1d335f] rounded-3xl p-6 sm:p-8 shadow-2xl text-center font-sans space-y-5 animate-in zoom-in-95 duration-200 cursor-default"
+          >
+            {/* Close Button (X) */}
+            <button
+              type="button"
+              onClick={() => setClaimedModalData(null)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1.5 rounded-full bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Glowing Icon Circle with Celebratory Gift Popper */}
+            <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center shadow-[0_0_35px_rgba(56,189,248,0.5)] text-3xl transform hover:scale-105 transition-transform">
+              🎁
+            </div>
+
+            {/* Title & Subtitle */}
+            <div className="space-y-1.5">
+              <h2 className="text-xl sm:text-2xl font-extrabold text-white font-righteous tracking-wide flex items-center justify-center gap-2">
+                🎉 Gift Code Claimed!
+              </h2>
+              <p className="text-xs text-slate-300 leading-relaxed font-sans">
+                Congratulations! Your bonus has been claimed.
+              </p>
+            </div>
+
+            {/* Bonus Credit Added Container (Exact Match to Screenshot) */}
+            <div className="bg-[#050e24] border border-[#1d335f] rounded-2xl p-4 sm:p-5 text-center space-y-1 shadow-inner">
+              <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest block font-sans">
+                BONUS CREDIT ADDED
+              </span>
+              <div className="text-2xl sm:text-3xl font-black font-righteous text-sky-400 tracking-tight">
+                + ${parseFloat(claimedModalData.amount || 0).toFixed(2)}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </UserSidebarLayout>
   );
 }

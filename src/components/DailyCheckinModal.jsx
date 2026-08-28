@@ -156,7 +156,7 @@ export default function DailyCheckinModal() {
         if (refreshUser) refreshUser();
         setTimeout(() => {
           setIsOpen(false);
-        }, 1200);
+        }, 3000);
       }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to claim daily reward.');
@@ -215,7 +215,8 @@ export default function DailyCheckinModal() {
         {/* 7 Days Reward Cards Grid */}
         {loading ? (
           <div className="py-8 flex items-center justify-center text-slate-400 text-xs gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-[#fe780b]" /> Loading rewards...
+            <span>Loading rewards</span>
+            <Loader2 className="w-5 h-5 animate-spin text-[#fe780b]" />
           </div>
         ) : (
           <div className="space-y-3">

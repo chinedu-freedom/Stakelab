@@ -251,13 +251,23 @@ export default function CreateStakingPage() {
 
                       {/* Stake Button */}
                       <div className="pt-2 text-center">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenModal(plan)}
-                          className="w-full py-2.5 sm:py-3.5 bg-gradient-to-r from-[#ff0044] via-[#fe500b] to-[#fe880b] hover:opacity-90 text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-lg shadow-red-500/20 transition-all font-righteous cursor-pointer active:scale-95"
-                        >
-                          Stake
-                        </button>
+                        {plan.status === 'UNAVAILABLE' || plan.status === 'INACTIVE' || plan.badge === 'UNAVAILABLE' ? (
+                          <button
+                            type="button"
+                            disabled
+                            className="w-full py-2.5 sm:py-3.5 bg-slate-800 text-slate-500 font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-none cursor-not-allowed font-righteous border border-slate-700"
+                          >
+                            Unavailable
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenModal(plan)}
+                            className="w-full py-2.5 sm:py-3.5 bg-gradient-to-r from-[#ff0044] via-[#fe500b] to-[#fe880b] hover:opacity-90 text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-lg shadow-red-500/20 transition-all font-righteous cursor-pointer active:scale-95"
+                          >
+                            Stake
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

@@ -373,7 +373,8 @@ export default function LuckySpinPage() {
           <div className="bg-[#0a1835] border border-[#1e3463] rounded-2xl shadow-xl overflow-hidden">
             {loading ? (
               <div className="py-12 flex items-center justify-center text-slate-400 text-xs font-semibold gap-2">
-                <Loader2 className="w-5 h-5 animate-spin text-[#fe780b]" /> Loading recent wins...
+                <span>Loading recent wins</span>
+                <Loader2 className="w-5 h-5 animate-spin text-[#fe780b]" />
               </div>
             ) : spinData.recentWins.length === 0 ? (
               <div className="py-12 text-center text-slate-400 text-xs font-semibold">
