@@ -119,7 +119,7 @@ export default function StakingPage() {
             href="/staking/create"
             className="border border-red-500/80 text-red-400 font-bold px-5 py-2 rounded text-xs font-righteous hover:bg-red-500/15 transition-all shadow-md shadow-red-500/10 cursor-pointer inline-block"
           >
-            Stake Now
+            Stake
           </Link>
         </div>
 

@@ -213,24 +213,34 @@ export default function CreateStakingPage() {
                         {/* Features List */}
                         <div className="space-y-4 my-8 font-sans">
                           <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
-                            <span className="text-slate-400 font-semibold">Daily Return</span>
-                            <span className="font-bold text-emerald-400 font-mono text-lg">{dailyReturn.toFixed(1)}%</span>
-                          </div>
-
-                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
-                            <span className="text-slate-400 font-semibold">Minimum Deposit</span>
+                            <span className="text-slate-400 font-semibold">Minimum Staking</span>
                             <span className="font-bold text-white font-mono">${minAmt.toLocaleString()}</span>
                           </div>
 
                           <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
-                            <span className="text-slate-400 font-semibold">Maximum Deposit</span>
+                            <span className="text-slate-400 font-semibold">Maximum Staking</span>
                             <span className="font-bold text-white font-mono">${maxAmt.toLocaleString()}</span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                            <span className="text-slate-400 font-semibold">Daily Profits rate</span>
+                            <span className="font-bold text-emerald-400 font-mono text-lg">{dailyReturn.toFixed(1)}% Daily</span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                            <span className="text-slate-400 font-semibold">Compounding rate</span>
+                            <span className="font-bold text-emerald-400 font-mono text-lg">{dailyReturn.toFixed(1)}%</span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                            <span className="text-slate-400 font-semibold">Staking Duration</span>
+                            <span className="font-bold text-white font-mono">{days} Days</span>
                           </div>
 
                           <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
                             <span className="text-slate-400 font-semibold">Capital Return</span>
                             <span className={`font-bold ${plan.capital_return !== false ? 'text-emerald-400' : 'text-slate-500'}`}>
-                              {plan.capital_return !== false ? 'YES' : 'NO'}
+                              {plan.capital_return !== false ? 'Yes' : 'No'}
                             </span>
                           </div>
                         </div>
@@ -241,9 +251,9 @@ export default function CreateStakingPage() {
                         <button
                           type="button"
                           onClick={() => handleOpenModal(plan)}
-                          className="w-full btn-stakelab py-4 rounded-xl text-white font-sans text-base sm:text-lg tracking-wider uppercase font-extrabold transition-all shadow-xl shadow-red-500/25 cursor-pointer"
+                          className="w-full btn-stakelab py-4 rounded-xl text-white font-sans text-base sm:text-lg tracking-wider font-extrabold transition-all shadow-xl shadow-red-500/25 cursor-pointer"
                         >
-                          STAKE
+                          Stake
                         </button>
                       </div>
                     </div>
@@ -354,14 +364,14 @@ export default function CreateStakingPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full btn-stakelab py-3.5 rounded-xl text-white font-sans text-sm tracking-wider uppercase font-bold transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 mt-4 cursor-pointer"
+                  className="w-full btn-stakelab py-3.5 rounded-xl text-white font-sans text-sm tracking-wider font-bold transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 mt-4 cursor-pointer"
                 >
                   {submitting ? (
                     <span className="flex items-center justify-center gap-2">
                       Processing Stake <Loader2 className="w-4 h-4 animate-spin" />
                     </span>
                   ) : (
-                    'Stake Now'
+                    'Stake'
                   )}
                 </button>
               </form>
