@@ -32,27 +32,38 @@ export default function AboutUsPage() {
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-black text-white font-righteous tracking-wide leading-tight">
-              About <span className="text-gradient-stakelab">EverStake</span> Platform
+              About <span className="text-gradient-stakelab">EverStake</span>
             </h1>
 
-            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-              <span className="font-bold text-white">EverStake</span> is a global cryptocurrency staking and yield platform dedicated to making digital asset growth simple, efficient, and accessible for everyone. Since its launch, EverStake has helped millions of users monetize their digital assets by providing intelligent yield engines, reliable staking pools, and an ecosystem designed for both beginners and experienced investors.
-            </p>
+            <div className="space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+              <p>
+                <span className="font-bold text-white">EverStake</span> is a global, institutional-grade digital asset staking infrastructure provider focused on making blockchain participation secure, reliable, and accessible.
+              </p>
+              <p className="text-xs sm:text-sm text-slate-400">
+                Founded in 2018 by a team of blockchain engineers, EverStake operates non-custodial validators across more than 130 Proof-of-Stake (PoS) blockchain networks, supporting the security and decentralization of leading blockchain ecosystems. Today, the infrastructure secures more than $7 billion in staked assets on behalf of over 1.6 million retail and institutional users worldwide.
+              </p>
+              <p className="text-xs sm:text-sm text-slate-400">
+                At EverStake, we believe that participation in the blockchain economy should not require investors and asset holders to compromise between security, operational efficiency, and performance. Our infrastructure is designed to simplify the staking experience while maintaining institutional standards for reliability, transparency, and risk management.
+              </p>
+              <p className="text-xs sm:text-sm text-slate-400">
+                Our approach combines enterprise-grade validator infrastructure, blockchain-native expertise, continuous network monitoring, and disciplined operational processes. By providing non-custodial staking infrastructure, we enable users to retain control of their digital assets while delegating the technical complexity of validator operations to a specialized infrastructure provider.
+              </p>
+            </div>
           </div>
 
           {/* 3 High-Impact Stat Badges */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 pt-8 border-t border-[#182848]/80">
             <div className="bg-[#060f22]/80 border border-[#182848] rounded-2xl p-5 text-center">
-              <div className="text-2xl sm:text-3xl font-black text-white font-righteous">2M+</div>
-              <div className="text-xs font-bold text-[#ff0044] uppercase tracking-wider mt-1">Global Active Users</div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-righteous">1.6M+</div>
+              <div className="text-xs font-bold text-[#ff0044] uppercase tracking-wider mt-1">Retail & Institutional Users</div>
             </div>
             <div className="bg-[#060f22]/80 border border-[#182848] rounded-2xl p-5 text-center">
-              <div className="text-2xl sm:text-3xl font-black text-white font-righteous">$50M+</div>
-              <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider mt-1">Staking Volume</div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-righteous">$7B+</div>
+              <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider mt-1">Secured Staked Assets</div>
             </div>
             <div className="bg-[#060f22]/80 border border-[#182848] rounded-2xl p-5 text-center">
-              <div className="text-2xl sm:text-3xl font-black text-white font-righteous">99.9%</div>
-              <div className="text-xs font-bold text-amber-400 uppercase tracking-wider mt-1">Node Network Uptime</div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-righteous">130+</div>
+              <div className="text-xs font-bold text-amber-400 uppercase tracking-wider mt-1">PoS Blockchain Networks</div>
             </div>
           </div>
         </div>

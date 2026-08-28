@@ -75,6 +75,7 @@ export default function LandingPage() {
 
   // Calculator & Staking Plans state
   const [dbPlans, setDbPlans] = useState([]);
+  const [activeTier, setActiveTier] = useState('Flexible Tier');
   const [calcAmount, setCalcAmount] = useState(1000);
   const [selectedPlan, setSelectedPlan] = useState('silver');
   const [isCompounding, setIsCompounding] = useState(true);
@@ -99,6 +100,11 @@ export default function LandingPage() {
     };
     fetchDbPlans();
   }, []);
+
+  const displayPlans = dbPlans.filter((p) => {
+    if (!p.tier) return activeTier === 'Flexible Tier';
+    return p.tier === activeTier;
+  });
 
   // FAQ Accordion state
   const [activeFaq, setActiveFaq] = useState(0);
@@ -219,56 +225,44 @@ export default function LandingPage() {
     return `$${val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
+  const defaultPlansList = [
+    { id: 'default-1', title: 'KRYPTEX-BASIC POOL', min_amount: 30, max_amount: 9999, daily_return_percent: 7.5, duration_days: 20, capital_return: true },
+    { id: 'default-2', title: 'KRYPTEX-PRO POOL', min_amount: 100, max_amount: 25000, daily_return_percent: 12.5, duration_days: 30, capital_return: true },
+    { id: 'default-3', title: 'KRYPTEX-VIP POOL', min_amount: 500, max_amount: 100000, daily_return_percent: 18.0, duration_days: 45, capital_return: true },
+  ];
+
+  const availablePlans = dbPlans.length > 0 ? dbPlans : defaultPlansList;
+  const activeCalcPlan = availablePlans.find((p) => p.id === selectedPlan || p.title === selectedPlan) || availablePlans[0];
+
   const calculateReturn = () => {
-    let rate = 0.015; // 1.5% daily
-    let days = 30;
+    const plan = activeCalcPlan;
+    const days = plan?.duration_days || 30;
+    const ratePercent = parseFloat(plan?.daily_return_percent || 1.5);
+    const rate = ratePercent / 100;
+    const amount = Math.max(0, parseFloat(calcAmount || 0));
 
-    const matchedDbPlan = dbPlans.find(
-      (p) => p.name?.toLowerCase() === selectedPlan.toLowerCase() || p.plan_name?.toLowerCase() === selectedPlan.toLowerCase()
-    );
-
-    if (matchedDbPlan) {
-      days = matchedDbPlan.duration_days || matchedDbPlan.duration || 30;
-      rate = parseFloat(matchedDbPlan.daily_rate || matchedDbPlan.daily_return_rate || matchedDbPlan.daily_profit || 1.5) / 100;
-    } else {
-      if (selectedPlan === 'silver') {
-        days = 30;
-        rate = calcAmount >= 251 ? 0.025 : calcAmount >= 101 ? 0.020 : 0.015;
-      } else if (selectedPlan === 'golden') {
-        days = 90;
-        rate = calcAmount >= 2001 ? 0.035 : calcAmount >= 501 ? 0.030 : 0.025;
-      } else if (selectedPlan === 'platinum') {
-        days = 180;
-        rate = calcAmount >= 5001 ? 0.050 : calcAmount >= 1001 ? 0.040 : 0.035;
-      }
-    }
+    const simpleProfit = amount * rate * days;
+    const compoundingTotal = amount * Math.pow(1 + rate, days);
+    const compoundingProfit = compoundingTotal - amount;
+    const compoundingBonus = Math.max(0, compoundingProfit - simpleProfit);
 
     if (isCompounding) {
-      // Compounding Interest: FV = PV * (1 + r)^n
-      const fv = calcAmount * Math.pow(1 + rate, days);
-      const compoundProfit = fv - calcAmount;
-      const simpleProfit = calcAmount * rate * days;
-      const compoundingBonus = compoundProfit - simpleProfit;
-
       return {
-        ratePercent: (rate * 100).toFixed(1),
+        ratePercent: ratePercent.toFixed(1),
         days,
         isCompounding: true,
-        profit: compoundProfit.toFixed(2),
-        total: fv.toFixed(2),
-        simpleProfit: simpleProfit.toFixed(2),
-        compoundingBonus: compoundingBonus.toFixed(2),
+        profit: compoundingProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        total: compoundingTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        compoundingBonus: compoundingBonus.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
       };
     } else {
-      // Non-compounding Simple Profit: P * r * n
-      const profit = calcAmount * rate * days;
+      const totalReturn = amount + simpleProfit;
       return {
-        ratePercent: (rate * 100).toFixed(1),
+        ratePercent: ratePercent.toFixed(1),
         days,
         isCompounding: false,
-        profit: profit.toFixed(2),
-        total: (calcAmount + profit).toFixed(2),
-        simpleProfit: profit.toFixed(2),
+        profit: simpleProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        total: totalReturn.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
         compoundingBonus: '0.00',
       };
     }
@@ -551,11 +545,11 @@ export default function LandingPage() {
               <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
                 About <span className="text-gradient-stakelab">Us</span>
               </h2>
-              <p className="text-slate-300 text-base leading-relaxed">
-                We are an international financial company engaged in investment activities, which are related to trading on financial markets and cryptocurrency exchanges performed by qualified professional traders.
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                EverStake is a global, institutional-grade digital asset staking infrastructure provider focused on making blockchain participation secure, reliable, and accessible.
               </p>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Our goal is to provide our investors with a reliable source of high income, while minimizing any possible risks and offering a high-quality service, allowing us to automate and simplify the relations between the investors and the trustees. We work towards increasing your profit margin by profitable investment.
+              <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                Founded in 2018 by a team of blockchain engineers, EverStake operates non-custodial validators across more than 130 Proof-of-Stake (PoS) blockchain networks, supporting the security and decentralization of leading blockchain ecosystems. Today, the infrastructure secures more than $7 billion in staked assets on behalf of over 1.6 million retail and institutional users worldwide.
               </p>
             </div>
           </div>
@@ -569,23 +563,42 @@ export default function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
               Our Stake <span className="text-gradient-stakelab">Investment Plan</span>
             </h2>
-            <p className="text-slate-400 text-sm">
-              Secure your future by discovering the benefits of our stake investment plan, designed to build wealth and ensure financial stability.
+            <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+              Grow your digital assets through a structured staking strategy designed for reliability, sustainable rewards, and long-term financial growth.
             </p>
           </div>
 
+          {/* Tier Selection Tabs (Flexible Tier vs Dynamic Tier) */}
+          <div className="flex justify-center items-center gap-3 mb-10">
+            {['Flexible Tier', 'Dynamic Tier'].map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveTier(tab)}
+                aria-pressed={activeTier === tab}
+                className={`px-6 py-2.5 rounded-full font-righteous text-xs uppercase tracking-wider font-bold transition-all shadow-md cursor-pointer select-none ${
+                  activeTier === tab
+                    ? 'bg-gradient-to-r from-[#fe500b] to-[#ff0044] text-white shadow-red-500/30 scale-105'
+                    : 'bg-[#0a1835] hover:bg-[#12244a] border border-[#182848] text-slate-400 hover:text-white'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
           <div className="grid md:grid-cols-3 gap-8 items-stretch pt-4">
-            {(dbPlans.length > 0
-              ? dbPlans
+            {(displayPlans.length > 0
+              ? displayPlans
               : [
-                  { title: 'Flexi Starter', min_amount: 10, max_amount: 500, daily_return_percent: 0.05, duration_days: 7 },
-                  { title: 'Yield Booster', min_amount: 500, max_amount: 5000, daily_return_percent: 0.1, duration_days: 30 },
-                  { title: 'Vault Pro', min_amount: 5000, max_amount: 25000, daily_return_percent: 0.2, duration_days: 90 },
+                  { title: 'KRYPTEX-BASIC POOL', min_amount: 30, max_amount: 9999, daily_return_percent: 7.5, duration_days: 20, capital_return: true },
+                  { title: 'KRYPTEX-PRO POOL', min_amount: 100, max_amount: 25000, daily_return_percent: 12.5, duration_days: 30, capital_return: true },
+                  { title: 'KRYPTEX-VIP POOL', min_amount: 500, max_amount: 100000, daily_return_percent: 18.0, duration_days: 45, capital_return: true },
                 ]
             ).map((plan, idx) => {
               const minAmt = parseFloat(plan.min_amount || 0);
               const maxAmt = parseFloat(plan.max_amount || 0);
-              const ratePercent = parseFloat(plan.daily_return_percent || 0);
+              const dailyReturn = parseFloat(plan.daily_return_percent || 0);
               const days = plan.duration_days || 30;
 
               return (
@@ -619,37 +632,49 @@ export default function LandingPage() {
                           <div className="absolute -right-2 -bottom-2 w-0 h-0 border-t-[8px] border-t-[#a3002b] border-r-[8px] border-r-transparent" />
                         </div>
 
-                        {/* Pool Details Table */}
-                        <div className="space-y-4 pt-2">
-                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
-                            <span className="text-slate-400 font-semibold">Daily Return</span>
-                            <span className="font-extrabold text-[#fe780b] text-lg font-righteous">{ratePercent}%</span>
+                        {/* Features List (Exact Match to /staking/create) */}
+                        <div className="space-y-4 my-8 font-sans">
+                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                            <span className="text-slate-400 font-semibold">Minimum Staking</span>
+                            <span className="font-bold text-white font-mono">${minAmt.toLocaleString()}</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
-                            <span className="text-slate-400 font-semibold">Minimum Deposit</span>
-                            <span className="font-bold text-white">${minAmt.toLocaleString()}</span>
+                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                            <span className="text-slate-400 font-semibold">Maximum Staking</span>
+                            <span className="font-bold text-white font-mono">${maxAmt.toLocaleString()}</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
-                            <span className="text-slate-400 font-semibold">Maximum Deposit</span>
-                            <span className="font-bold text-white">${maxAmt.toLocaleString()}</span>
+                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                            <span className="text-slate-400 font-semibold">Daily Profits rate</span>
+                            <span className="font-bold text-emerald-400 font-mono text-lg">{dailyReturn.toFixed(1)}% Daily</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
+                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                            <span className="text-slate-400 font-semibold">Compounding rate</span>
+                            <span className="font-bold text-emerald-400 font-mono text-lg">{dailyReturn.toFixed(1)}%</span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
                             <span className="text-slate-400 font-semibold">Staking Duration</span>
-                            <span className="font-bold text-white">{days} Days</span>
+                            <span className="font-bold text-white font-mono">{days} Days</span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                            <span className="text-slate-400 font-semibold">Capital Return</span>
+                            <span className={`font-bold ${plan.capital_return !== false ? 'text-emerald-400' : 'text-slate-500'}`}>
+                              {plan.capital_return !== false ? 'Yes' : 'No'}
+                            </span>
                           </div>
                         </div>
                       </div>
 
-                      {/* CTA Button: STAKE NOW */}
-                      <div className="pt-8 text-center">
+                      {/* Stake Button */}
+                      <div className="pt-4 text-center">
                         <Link
-                          href="/register"
-                          className="btn-stakelab w-full max-w-[200px] mx-auto py-3.5 text-center text-xs font-bold block shadow-lg shadow-red-500/30 rounded-md font-righteous uppercase tracking-wider hover:scale-105 transition-transform"
+                          href="/staking/create"
+                          className="w-full btn-stakelab py-4 rounded-xl text-white font-sans text-base sm:text-lg tracking-wider font-extrabold transition-all shadow-xl shadow-red-500/25 cursor-pointer block"
                         >
-                          STAKE NOW
+                          Stake
                         </Link>
                       </div>
                     </div>
@@ -675,19 +700,28 @@ export default function LandingPage() {
                 <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
                   Select Staking Plan
                 </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['silver', 'golden', 'platinum'].map((p) => (
-                    <button
-                      key={p}
-                      onClick={() => setSelectedPlan(p)}
-                      className={`py-2.5 rounded-xl text-xs font-bold capitalize border transition-all ${selectedPlan === p
-                          ? 'bg-brand-gradient text-white border-transparent'
-                          : 'bg-[#0b0f19] border-[#1c243f] text-slate-400 hover:text-white'
+                <div className="flex flex-wrap gap-2">
+                  {availablePlans.map((p) => {
+                    const isSelected = activeCalcPlan?.id === p.id || activeCalcPlan?.title === p.title;
+                    return (
+                      <button
+                        key={p.id || p.title}
+                        type="button"
+                        onClick={() => {
+                          setSelectedPlan(p.id || p.title);
+                          const minVal = parseFloat(p.min_amount || 30);
+                          setCalcAmount(minVal);
+                        }}
+                        className={`py-2.5 px-4 rounded-xl text-xs font-bold font-sans border transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-gradient-to-r from-[#fe500b] to-[#ff0044] text-white border-transparent shadow-lg shadow-red-500/20'
+                            : 'bg-[#0b0f19] border-[#1c243f] text-slate-400 hover:text-white hover:border-slate-700'
                         }`}
-                    >
-                      {p}
-                    </button>
-                  ))}
+                      >
+                        {p.title}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -885,10 +919,10 @@ export default function LandingPage() {
             <div className="lg:col-span-6 space-y-8">
               <div className="space-y-3">
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white font-righteous leading-tight">
-                  Earn Money Through <span className="text-white">Referrals</span>
+                  Earn Through <span className="text-gradient-stakelab">Referrals!</span>
                 </h2>
-                <p className="text-slate-300 text-xs sm:text-sm max-w-md leading-relaxed">
-                  Grow your wealth with others by exploring our rewarding referral commission program.
+                <p className="text-slate-300 text-xs sm:text-sm max-w-lg leading-relaxed">
+                  Expand your network and unlock additional rewards through the EverStake Referral Program. Invite others to discover our staking services and earn commissions in accordance with our referral program terms.
                 </p>
               </div>
 
@@ -934,85 +968,89 @@ export default function LandingPage() {
       </section>
 
       {/* 7. HOW IT WORKS SECTION */}
-      <section id="how-it-works" className="pt-24 pb-32 border-b border-[#1c243f] relative overflow-hidden bg-[#07132b]">
-        {/* Left Vertical Outlined Side Text */}
-        {/* <div className="absolute left-6 top-1/2 -translate-y-1/2 hidden xl:block select-none pointer-events-none z-0">
-          <div className="[writing-mode:vertical-lr] rotate-180 font-righteous text-6xl lg:text-7xl font-extrabold tracking-widest text-transparent text-stroke-white opacity-10 uppercase">
-            HOW IT WORKS
-          </div>
-        </div> */}
-
+      <section id="how-it-works" className="py-24 border-b border-[#1c243f] relative overflow-hidden bg-[#060e20]">
         <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 text-center relative z-10">
           {/* Header */}
-          <div className="max-w-2xl mx-auto mb-12 space-y-3">
+          <div className="max-w-3xl mx-auto mb-16 space-y-4">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white font-righteous">
-              How It <span className="text-white">Works</span>
+              How It <span className="text-gradient-stakelab">Works!</span>
             </h2>
-            <p className="text-slate-300 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
-              We've simplified the staking process into four simple steps, making it easy and hassle-free to stake with us.
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto font-sans">
+              We’ve simplified the staking process into four straightforward steps, making it easy to participate in digital asset staking with EverStake.
             </p>
           </div>
 
-          {/* 4 Capsule Cards Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 items-start">
+          {/* 4 Professional Institutional Step Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 items-stretch relative">
             {(dynamicHowItWorks.length > 0
               ? dynamicHowItWorks
               : [
                   {
-                    num: '1',
-                    title: 'Sign Up Account',
-                    desc: 'First, you need to sign up for our system.',
-                    icon: '/images/step1.png',
+                    num: '01',
+                    title: 'Create Your Account',
+                    desc: 'Register your EverStake account and complete the required verification steps.',
+                    icon: 'UserPlus',
                   },
                   {
-                    num: '2',
-                    title: 'Deposit',
-                    desc: 'Then deposit to your wallet.',
-                    icon: '/images/step2.png',
+                    num: '02',
+                    title: 'Fund Your Wallet',
+                    desc: 'Deposit your eligible digital assets into your EverStake wallet.',
+                    icon: 'Wallet',
                   },
                   {
-                    num: '3',
-                    title: 'Stake',
-                    desc: 'Purchase plan and stake money as per your plan.',
-                    icon: '/images/step3.png',
+                    num: '03',
+                    title: 'Start Staking',
+                    desc: 'Select an available staking option and allocate your assets according to your chosen plan. Where supported, staking rewards can be automatically reinvested to facilitate compounding.',
+                    icon: 'Coins',
                   },
                   {
-                    num: '4',
-                    title: 'Withdraw Money',
-                    desc: 'Finally, you can withdraw your money.',
-                    icon: '/images/step4.png',
+                    num: '04',
+                    title: 'Withdraw Your Assets',
+                    badge: 'When eligible',
+                    desc: 'Request a withdrawal and transfer your available assets to your preferred wallet or exchange, subject to applicable network and platform conditions.',
+                    icon: 'ArrowDownLeft',
                   },
                 ]
             ).map((step, idx) => {
+              const iconsList = [UserPlus, Wallet, Coins, ArrowDownLeft];
+              const FallbackIcon = iconsList[idx] || UserPlus;
+
               return (
                 <div
                   key={idx}
-                  className={`flex flex-col items-center transition-all duration-300 ${
-                    idx % 2 === 1 ? 'lg:translate-y-20' : ''
-                  }`}
+                  className="relative bg-[#09152e]/90 backdrop-blur-xl border border-[#1a2d59] hover:border-[#ff0044] rounded-3xl p-6 sm:p-8 flex flex-col justify-between text-left shadow-xl hover:shadow-2xl hover:shadow-red-500/10 transition-all duration-300 group"
                 >
-                  {/* Top Large Outlined Number */}
-                  <span className="font-righteous text-6xl text-transparent text-stroke-white opacity-40 font-bold block mb-4">
-                    {step.num}
-                  </span>
+                  {/* Top Row: Glowing Step Number Badge & Optional Badge Tag */}
+                  <div>
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#ff0044] via-[#fe500b] to-[#fe880b] p-[1.5px] shadow-lg shadow-red-500/20">
+                        <div className="w-full h-full bg-[#081226] rounded-2xl flex items-center justify-center font-righteous text-white font-extrabold text-lg">
+                          {step.num || `0${idx + 1}`}
+                        </div>
+                      </div>
+                      {step.badge && (
+                        <span className="text-[10px] uppercase tracking-wider font-extrabold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                          {step.badge}
+                        </span>
+                      )}
+                    </div>
 
-                  {/* Capsule Card Container */}
-                  <div
-                    style={{ borderRadius: '9999px' }}
-                    className="w-full max-w-[200px] mx-auto bg-[#0d1e3d] border border-[#1b3464] hover:border-[#ff0044]/70 pt-8 pb-14 px-6 text-center flex flex-col items-center shadow-2xl transition-all duration-300 group"
-                  >
-                    {/* Vibrant Orange-Red Gradient Circle */}
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#ff0044] via-[#fe500b] to-[#fe880b] p-5 flex items-center justify-center shadow-xl shadow-red-500/30 mb-8 group-hover:scale-105 transition-transform duration-300">
-                      <img src={step.icon} alt={step.title} className="w-full h-full object-contain filter drop-shadow-md" />
+                    {/* Step Icon Badge */}
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#fe500b] to-[#ff0044] p-3 flex items-center justify-center text-white shadow-xl shadow-red-500/30 mb-6 group-hover:scale-110 transition-transform duration-300">
+                      {step.icon && typeof step.icon === 'string' && step.icon.startsWith('/') ? (
+                        <img src={step.icon} alt={step.title} className="w-full h-full object-contain filter drop-shadow-md" />
+                      ) : (
+                        <FallbackIcon className="w-7 h-7 text-white" />
+                      )}
                     </div>
 
                     {/* Step Title */}
-                    <h3 className="font-righteous text-xl font-bold text-white mb-3 tracking-wide">
+                    <h3 className="font-righteous text-lg sm:text-xl font-bold text-white mb-3 tracking-wide group-hover:text-[#fe780b] transition-colors">
                       {step.title}
                     </h3>
 
                     {/* Step Description */}
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-[180px]">
+                    <p className="text-slate-300 text-xs sm:text-sm leading-relaxed font-sans">
                       {step.desc}
                     </p>
                   </div>
