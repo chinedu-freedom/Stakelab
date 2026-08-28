@@ -128,7 +128,7 @@ export default function LuckySpinPage() {
     { label: '$20.20', amount: 20.2, color: '#fe780b' },
   ];
 
-  const prizesList = spinData.prizes.length === 8 ? spinData.prizes : defaultPrizes;
+  const prizesList = spinData.prizes && spinData.prizes.length > 0 ? spinData.prizes : defaultPrizes;
 
   const handleSpin = async () => {
     if (spinning) return;
@@ -184,11 +184,11 @@ export default function LuckySpinPage() {
             Spin the lucky wheel to win instant cash rewards configured by the administration!
           </p>
 
-          <div className="pt-2 flex items-center justify-center space-x-3">
-            <span className="px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold">
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5 w-full max-w-sm sm:max-w-none mx-auto">
+            <span className="w-full sm:w-auto px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold whitespace-nowrap flex items-center justify-center shrink-0">
               🎉 {spinData.freeSpins} Free Spins Available
             </span>
-            <span className="px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold">
+            <span className="w-full sm:w-auto px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold whitespace-nowrap flex items-center justify-center shrink-0">
               💰 Spin Cost: ${spinData.costPerSpin}.00
             </span>
           </div>
@@ -200,29 +200,45 @@ export default function LuckySpinPage() {
             {/* Top Pointer Needle */}
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[20px] border-t-[#fe780b] z-40 drop-shadow-lg" />
 
-            {/* Rotating Wheel Disc */}
-            <div
-              className="w-full h-full rounded-full border-4 border-[#fe780b] shadow-2xl relative overflow-hidden transition-transform duration-[4000ms] ease-out"
-              style={{ transform: `rotate(${wheelRotation}deg)` }}
-            >
-              {prizesList.map((p, idx) => {
-                const angle = (360 / prizesList.length) * idx;
-                return (
-                  <div
-                    key={idx}
-                    className="absolute top-0 left-0 w-full h-full origin-center flex items-start justify-center pt-4"
-                    style={{
-                      transform: `rotate(${angle}deg)`,
-                      backgroundColor: p.color || '#1e293b',
-                    }}
-                  >
-                    <span className="text-xs font-bold text-white font-righteous drop-shadow tracking-wider transform rotate-90 mt-6">
-                      {p.label}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
+            {/* Rotating Wheel Disc with Conic Gradient Pie Slices */}
+            {(() => {
+              const totalSlices = prizesList.length || 8;
+              const sliceAngle = 360 / totalSlices;
+              const conicBg = `conic-gradient(${prizesList
+                .map((p, idx) => {
+                  const start = idx * sliceAngle;
+                  const end = (idx + 1) * sliceAngle;
+                  return `${p.color || '#1e293b'} ${start}deg ${end}deg`;
+                })
+                .join(', ')})`;
+
+              return (
+                <div
+                  className="w-full h-full rounded-full border-4 border-[#fe780b] shadow-2xl relative overflow-hidden transition-transform duration-[4000ms] ease-out"
+                  style={{
+                    background: conicBg,
+                    transform: `rotate(${wheelRotation}deg)`,
+                  }}
+                >
+                  {prizesList.map((p, idx) => {
+                    const angle = idx * sliceAngle + sliceAngle / 2;
+                    return (
+                      <div
+                        key={idx}
+                        className="absolute top-0 left-0 w-full h-full pointer-events-none flex items-start justify-center pt-3"
+                        style={{
+                          transform: `rotate(${angle}deg)`,
+                        }}
+                      >
+                        <span className="text-xs font-bold text-white font-righteous drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] tracking-wider transform rotate-90 mt-5">
+                          {p.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
 
             {/* Center Start Button */}
             <button

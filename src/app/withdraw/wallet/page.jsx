@@ -111,13 +111,13 @@ export default function AddWithdrawalWalletPage() {
     <UserSidebarLayout>
       <div className="space-y-8 max-w-5xl mx-auto">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center justify-between gap-4">
           <h1 className="text-xl font-extrabold text-white font-righteous tracking-wide">
             Add Payout Wallet
           </h1>
           <Link
             href="/withdraw"
-            className="btn-stakelab-outline px-4 py-2 text-xs rounded-lg font-bold"
+            className="btn-stakelab-outline px-4 py-2 text-xs rounded-lg font-bold shrink-0"
           >
             ← Back to Withdraw
           </Link>

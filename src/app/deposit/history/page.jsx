@@ -34,14 +34,14 @@ export default function DepositHistoryPage() {
     <UserSidebarLayout>
       <div className="space-y-6 max-w-7xl mx-auto">
         {/* Page Header Bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center justify-between gap-4">
           <h1 className="text-xl font-extrabold text-white font-righteous tracking-wide">
             Deposit History
           </h1>
 
           <Link
             href="/deposit"
-            className="btn-stakelab px-5 py-2 rounded-lg text-xs font-bold font-righteous uppercase transition-all shadow-md shadow-red-500/20 flex items-center gap-2"
+            className="btn-stakelab px-4 sm:px-5 py-2 rounded-lg text-xs font-bold font-righteous uppercase transition-all shadow-md shadow-red-500/20 flex items-center gap-2 shrink-0"
           >
             <ArrowDownLeft className="w-4 h-4" /> Deposit Now
           </Link>
@@ -102,7 +102,13 @@ export default function DepositHistoryPage() {
                         {new Date(dep.created_at).toLocaleString()}
                       </td>
                       <td className="py-4 px-6 text-right font-mono text-slate-400">
-                        {dep.transaction_hash ? `${dep.transaction_hash.substring(0, 10)}...` : 'N/A'}
+                        {dep.transaction_hash ? (
+                          <span className="text-slate-300 font-mono">{dep.transaction_hash.substring(0, 12)}...</span>
+                        ) : (
+                          <span className="text-slate-400 font-sans text-[11px]">
+                            {dep.status === 'PENDING' ? 'Awaiting Network Tx' : `Ref: TRX-${dep.id.substring(0, 8).toUpperCase()}`}
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))}

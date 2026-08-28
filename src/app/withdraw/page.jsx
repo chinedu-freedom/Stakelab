@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import UserSidebarLayout from '../../components/UserSidebarLayout';
 import { useAuth } from '../../context/AuthContext';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
 import api from '../../lib/api';
 import { ShieldCheck, Info, Lock, Wallet, Loader2, Eye, EyeOff, Plus, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -289,20 +290,21 @@ export default function WithdrawPage() {
                 </div>
 
                 {matchingWallets.length > 0 ? (
-                  <div className="flex items-center gap-2 bg-[#06102b] p-3 rounded-lg border border-[#1a2b57]">
-                    <Wallet className="w-4 h-4 text-slate-400 shrink-0" />
-                    <select
-                      value={walletAddress}
-                      onChange={(e) => setWalletAddress(e.target.value)}
-                      className="bg-transparent text-xs font-mono text-white w-full focus:outline-none cursor-pointer"
-                    >
+                  <Select value={walletAddress} onValueChange={setWalletAddress}>
+                    <SelectTrigger className="h-11 bg-[#06102b] border-[#1a2b57] text-white rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Wallet className="w-4 h-4 text-slate-400 shrink-0" />
+                        <SelectValue placeholder="Select Wallet Address" />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent searchable={false} className="bg-[#081226] border-[#ff0044]/30 text-white shadow-2xl">
                       {matchingWallets.map((w) => (
-                        <option key={w.id || w.address} value={w.address} className="bg-[#0b1739] text-white">
+                        <SelectItem key={w.id || w.address} value={w.address} className="font-mono text-xs text-white">
                           {w.label ? `${w.label} - ` : ''}{w.address} ({w.network})
-                        </option>
+                        </SelectItem>
                       ))}
-                    </select>
-                  </div>
+                    </SelectContent>
+                  </Select>
                 ) : (
                   <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3.5 space-y-2">
                     <div className="flex items-center gap-2 text-amber-400 text-xs font-bold font-sans">

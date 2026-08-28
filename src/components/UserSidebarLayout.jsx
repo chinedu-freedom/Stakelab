@@ -25,6 +25,7 @@ import {
   User,
   Bell,
   Key,
+  CalendarCheck,
 } from 'lucide-react';
 
 import PageLoader from './PageLoader';
@@ -142,6 +143,7 @@ export default function UserSidebarLayout({ children }) {
     },
     { label: 'Transaction', path: '/transactions', icon: History },
     { label: 'Account Data', path: '/account', icon: Key },
+    ...(features.dailyCheckin ? [{ label: 'Daily Check-in', action: 'daily-checkin', icon: CalendarCheck }] : []),
     { label: 'My Profile', path: '/profile', icon: User },
     { label: 'Referrals', path: '/referrals', icon: Users },
     {
@@ -307,6 +309,25 @@ export default function UserSidebarLayout({ children }) {
                       </div>
                     )}
                   </div>
+                );
+              }
+
+              if (item.action === 'daily-checkin') {
+                return (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      if (typeof window !== 'undefined') {
+                        window.dispatchEvent(new CustomEvent('open-daily-checkin'));
+                      }
+                    }}
+                    className="w-full px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-3 transition-all text-slate-300 hover:text-white hover:bg-[#0e1d3e] cursor-pointer text-left font-sans"
+                  >
+                    <Icon className="w-4 h-4 text-slate-400" />
+                    <span>{item.label}</span>
+                  </button>
                 );
               }
 
@@ -642,9 +663,9 @@ export default function UserSidebarLayout({ children }) {
 
           {/* 5. Account */}
           <Link
-            href="/user-data"
+            href="/account"
             className={`flex flex-col items-center py-1 px-2 rounded-xl transition-colors ${
-              pathname === '/user-data' ? 'text-[#ff0044] font-bold' : 'text-slate-400 hover:text-white'
+              pathname === '/account' ? 'text-[#ff0044] font-bold' : 'text-slate-400 hover:text-white'
             }`}
           >
             <User className="w-5 h-5" />

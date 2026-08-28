@@ -110,22 +110,27 @@ input[type=number] {
   font-weight: 900;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+/* Globally Hide Scrollbars (Vertical & Horizontal) Across All Browsers & Operating Systems */
+* {
+  -ms-overflow-style: none !important;  /* IE & Edge */
+  scrollbar-width: none !important;  /* Firefox */
 }
 
-::-webkit-scrollbar-track {
-  background: #0b0f19;
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1c243f;
-  border-radius: 4px;
+  display: none !important;
+  background: transparent !important;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #ff0044;
+::-webkit-scrollbar-track {
+  display: none !important;
+  background: transparent !important;
 }
 
 @keyframes spinSlow {

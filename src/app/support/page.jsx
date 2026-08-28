@@ -53,23 +53,23 @@ export default function SupportTicketsPage() {
     <UserSidebarLayout>
       <div className="space-y-6 max-w-7xl mx-auto">
         {/* Page Header Bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h1 className="text-xl font-extrabold text-white font-righteous tracking-wide">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h1 className="text-xl font-extrabold text-white font-righteous tracking-wide whitespace-nowrap">
             Support Tickets
           </h1>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
             <button
               type="button"
               onClick={handleOpenWhatsApp}
-              className="bg-[#25D366] hover:bg-[#20ba59] text-white px-4 py-2.5 rounded-lg text-xs font-bold font-sans uppercase transition-all shadow-md shadow-emerald-500/20 flex items-center gap-2 cursor-pointer"
+              className="bg-[#25D366] hover:bg-[#20ba59] text-white px-4 py-2.5 rounded-lg text-xs font-bold font-sans uppercase transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto"
             >
               <MessageCircle className="w-4 h-4 text-white" /> WhatsApp Support
             </button>
 
             <Link
               href="/support/create"
-              className="btn-stakelab px-5 py-2.5 rounded-lg text-xs font-bold font-righteous uppercase transition-all shadow-md shadow-red-500/20 flex items-center gap-2"
+              className="btn-stakelab px-5 py-2.5 rounded-lg text-xs font-bold font-righteous uppercase transition-all shadow-md shadow-red-500/20 flex items-center justify-center gap-2 w-full sm:w-auto text-center"
             >
               <Plus className="w-4 h-4" /> Open Ticket
             </Link>

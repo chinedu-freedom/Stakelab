@@ -110,14 +110,14 @@ export default function StakingPage() {
     <UserSidebarLayout>
       <div className="space-y-6 max-w-7xl mx-auto">
         {/* Page Header Bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center justify-between gap-4">
           <h1 className="text-xl font-extrabold text-white font-righteous tracking-wide">
             My Staking
           </h1>
 
           <Link
             href="/staking/create"
-            className="border border-red-500/80 text-red-400 font-bold px-5 py-2 rounded text-xs font-righteous hover:bg-red-500/15 transition-all shadow-md shadow-red-500/10 cursor-pointer inline-block"
+            className="border border-red-500/80 text-red-400 font-bold px-5 py-2 rounded text-xs font-righteous hover:bg-red-500/15 transition-all shadow-md shadow-red-500/10 cursor-pointer shrink-0"
           >
             Stake
           </Link>

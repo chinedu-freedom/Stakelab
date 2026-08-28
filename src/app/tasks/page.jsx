@@ -186,36 +186,40 @@ export default function UserTasksPage() {
                   key={task.id}
                   className="bg-[#0a1835] border border-[#1e3463] hover:border-[#2e4c88] rounded-2xl p-5 shadow-xl transition-all space-y-3"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-center space-x-3.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center space-x-3.5 min-w-0">
                       <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
                         <Gift className="w-6 h-6" />
                       </div>
-                      <div>
-                        <h3 className="text-sm font-bold text-white font-righteous">{task.task_name}</h3>
-                        <p className="text-xs text-slate-300 mt-0.5">{task.description}</p>
-                        <div className="flex items-center space-x-2 mt-1">
-                          <span className="text-xs font-extrabold text-emerald-400 font-righteous">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-sm sm:text-base font-bold text-white font-righteous whitespace-nowrap truncate">
+                          {task.task_name}
+                        </h3>
+                        <p className="text-xs text-slate-300 mt-0.5 whitespace-nowrap truncate">
+                          {task.description}
+                        </p>
+                        <div className="flex items-center space-x-2 mt-1 whitespace-nowrap">
+                          <span className="text-xs font-extrabold text-emerald-400 font-righteous shrink-0">
                             +${parseFloat(task.reward_amount).toFixed(2)} Cash
                           </span>
-                          <span className="text-[11px] text-slate-400">
+                          <span className="text-[11px] text-slate-400 shrink-0">
                             • {reqRef} invites required
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Action Button */}
-                    <div className="shrink-0">
+                    {/* Action Button - Placed at the bottom on mobile screens */}
+                    <div className="w-full sm:w-auto shrink-0 flex items-center justify-end">
                       {task.isClaimed ? (
-                        <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-1.5">
+                        <span className="w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-1.5">
                           <CheckCircle2 className="w-4 h-4" /> Claimed
                         </span>
                       ) : task.isReady ? (
                         <button
                           onClick={() => handleClaim(task.id)}
                           disabled={claimingId === task.id}
-                          className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-90 text-white font-bold text-xs shadow-lg shadow-red-500/20 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                          className="w-full sm:w-auto justify-center px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-90 text-white font-bold text-xs shadow-lg shadow-red-500/20 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                         >
                           {claimingId === task.id ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -226,7 +230,7 @@ export default function UserTasksPage() {
                           )}
                         </button>
                       ) : (
-                        <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1.5">
+                        <span className="w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1.5">
                           <Lock className="w-3.5 h-3.5" /> Locked
                         </span>
                       )}

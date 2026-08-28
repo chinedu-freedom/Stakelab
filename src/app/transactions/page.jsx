@@ -13,6 +13,8 @@ export default function TransactionsPage() {
   const [trxNumber, setTrxNumber] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
   const [currencyFilter, setCurrencyFilter] = useState('All');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   const fetchTransactions = async () => {
     try {
@@ -54,19 +56,30 @@ export default function TransactionsPage() {
     if (currencyFilter !== 'All' && tx.currency && tx.currency.toLowerCase() !== currencyFilter.toLowerCase()) {
       return false;
     }
+    // 4. Date range filter
+    if (startDate) {
+      const txDate = new Date(tx.created_at);
+      const start = new Date(startDate);
+      if (txDate < start) return false;
+    }
+    if (endDate) {
+      const txDate = new Date(tx.created_at);
+      const end = new Date(endDate + 'T23:59:59');
+      if (txDate > end) return false;
+    }
     return true;
   });
 
   return (
     <UserSidebarLayout>
-      <div className="space-y-6 max-w-7xl mx-auto">
-        {/* Page Header Title */}
-        <h1 className="text-xl font-extrabold text-white font-righteous tracking-wide">
+      <div className="space-y-6 max-w-7xl mx-auto font-sans">
+        {/* Page Title */}
+        <h1 className="text-xl font-extrabold text-white tracking-wide font-sans">
           Transactions
         </h1>
 
-        {/* Filter Controls Row (Transaction Number, Type, Currency - Live Filtering, NO Remark, NO Filter Button) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end bg-[#07132a] border border-[#142343] p-4 sm:p-5 rounded-xl shadow-lg">
+        {/* Filter Controls Row (Transaction Number, Type, Currency, Date Pickers) */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end bg-[#07132a] border border-[#142343] p-4 sm:p-5 rounded-xl shadow-lg">
           {/* Control 1: Transaction Number Input */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
@@ -116,8 +129,45 @@ export default function TransactionsPage() {
                 <SelectItem value="USDT">USDT</SelectItem>
                 <SelectItem value="BTC">BTC</SelectItem>
                 <SelectItem value="ETH">ETH</SelectItem>
+                <SelectItem value="TRX">TRX</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Control 4: Interactive Date Range Pickers */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+              Filter by Date
+            </label>
+            <div className="flex items-center gap-1.5 h-11 bg-[#060f22] border border-[#182848] rounded-lg px-3 focus-within:border-[#ff0044] transition-all">
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                onClick={(e) => {
+                  try {
+                    if (e.target.showPicker) e.target.showPicker();
+                  } catch (err) {}
+                }}
+                style={{ colorScheme: 'dark' }}
+                className="bg-transparent border-0 outline-none text-xs text-white font-sans cursor-pointer w-full"
+                title="Start Date"
+              />
+              <span className="text-slate-500 font-bold text-xs">–</span>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                onClick={(e) => {
+                  try {
+                    if (e.target.showPicker) e.target.showPicker();
+                  } catch (err) {}
+                }}
+                style={{ colorScheme: 'dark' }}
+                className="bg-transparent border-0 outline-none text-xs text-white font-sans cursor-pointer w-full"
+                title="End Date"
+              />
+            </div>
           </div>
         </div>
 

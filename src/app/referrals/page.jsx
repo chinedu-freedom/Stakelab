@@ -197,7 +197,7 @@ export default function ReferralsPage() {
               <div className="bg-[#07132a] border border-[#182848] rounded-xl p-5 shadow-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-[#182848] pb-3">
                   <h3 className="text-sm font-extrabold text-white font-sans flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#ff0044]" /> 1 Level (Direct Invites)
+                    <span className="w-2 h-2 rounded-full bg-[#ff0044]" /> 1 Level<span className="hidden sm:inline"> (Direct Invites)</span>
                   </h3>
                   <span className="text-xs text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/20">
                     10.00% Commission
@@ -279,7 +279,7 @@ export default function ReferralsPage() {
               <div className="bg-[#07132a] border border-[#182848] rounded-xl p-5 shadow-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-[#182848] pb-3">
                   <h3 className="text-sm font-extrabold text-white font-sans flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#fe780b]" /> 2 Level (Indirect Level 2)
+                    <span className="w-2 h-2 rounded-full bg-[#fe780b]" /> 2 Level<span className="hidden sm:inline"> (Indirect Level 2)</span>
                   </h3>
                   <span className="text-xs text-amber-400 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/20">
                     5.00% Commission
@@ -361,7 +361,7 @@ export default function ReferralsPage() {
               <div className="bg-[#07132a] border border-[#182848] rounded-xl p-5 shadow-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-[#182848] pb-3">
                   <h3 className="text-sm font-extrabold text-white font-sans flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-purple-500" /> 3 Level (Indirect Level 3)
+                    <span className="w-2 h-2 rounded-full bg-purple-500" /> 3 Level<span className="hidden sm:inline"> (Indirect Level 3)</span>
                   </h3>
                   <span className="text-xs text-purple-400 font-bold bg-purple-500/10 px-2.5 py-0.5 rounded border border-purple-500/20">
                     3.00% Commission

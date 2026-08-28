@@ -208,7 +208,11 @@ export default function AccountSettingsPage() {
               },
               {
                 label: 'Daily Check-in',
-                link: '/tasks',
+                onClick: () => {
+                  if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('open-daily-checkin'));
+                  }
+                },
                 bgColor: 'bg-gradient-to-tr from-blue-500 to-sky-400 shadow-blue-500/20',
                 icon: CalendarCheck,
               },
@@ -238,7 +242,23 @@ export default function AccountSettingsPage() {
               },
               {
                 label: 'Download App',
-                link: '#',
+                onClick: async () => {
+                  try {
+                    const response = await api.get('/app-download', { responseType: 'blob' });
+                    const blob = new Blob([response.data], { type: 'application/vnd.android.package-archive' });
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'EverStake-v2.4.0.apk');
+                    document.body.appendChild(link);
+                    link.click();
+                    if (link.parentNode) link.parentNode.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                    toast.success('EverStake Mobile App downloaded successfully!');
+                  } catch (err) {
+                    toast.error(err.response?.data?.message || 'Failed to download app file.');
+                  }
+                },
                 bgColor: 'bg-gradient-to-tr from-cyan-600 to-blue-500 shadow-cyan-500/20',
                 icon: Download,
               },
@@ -269,6 +289,14 @@ export default function AccountSettingsPage() {
                   </span>
                 </div>
               );
+
+              if (action.onClick) {
+                return (
+                  <div key={idx} onClick={action.onClick}>
+                    {content}
+                  </div>
+                );
+              }
 
               if (action.isExternal) {
                 return (
@@ -395,7 +423,7 @@ export default function AccountSettingsPage() {
             <div>
               <div className="bg-[#0e1d3e] border-b border-[#182848] px-6 py-4">
                 <h2 className="text-base font-extrabold text-white font-righteous flex items-center gap-2">
-                  <HelpCircle className="w-4 h-4 text-blue-400" /> Platform Navigation & Support
+                  <HelpCircle className="w-4 h-4 text-blue-400" /> Navigation & Support
                 </h2>
                 <p className="text-xs text-slate-400 mt-0.5">Quick access to support, information, and session logout.</p>
               </div>
@@ -416,10 +444,9 @@ export default function AccountSettingsPage() {
                 </Link>
 
                 {/* About EverStake */}
-                <button
-                  type="button"
-                  onClick={() => setAboutModalOpen(true)}
-                  className="w-full flex items-center justify-between p-5 text-xs font-bold text-slate-200 hover:bg-[#0e1d3e] transition-colors group text-left cursor-pointer"
+                <Link
+                  href="/about"
+                  className="w-full flex items-center justify-between p-5 text-xs font-bold text-slate-200 hover:bg-[#0e1d3e] transition-colors group cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center text-amber-400">
@@ -428,7 +455,7 @@ export default function AccountSettingsPage() {
                     <span className="uppercase tracking-wider">About EverStake Platform</span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                </button>
+                </Link>
 
                 {/* Sign Out Button */}
                 <button
@@ -448,57 +475,6 @@ export default function AccountSettingsPage() {
             </div>
           </div>
         </div>
-
-        {/* About EverStake Modal */}
-        {aboutModalOpen && (
-          <div
-            onClick={() => setAboutModalOpen(false)}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md cursor-pointer animate-in fade-in duration-200"
-          >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-lg bg-[#0a1835] border border-[#1e3463] rounded-3xl p-6 sm:p-8 shadow-2xl text-white font-sans space-y-5 animate-in zoom-in-95 duration-200 cursor-default"
-            >
-              <button
-                onClick={() => setAboutModalOpen(false)}
-                className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="space-y-2">
-                <h3 className="text-xl font-extrabold text-white font-righteous tracking-wide flex items-center gap-2">
-                  <Info className="w-5 h-5 text-[#ff0044]" /> About EverStake Platform
-                </h3>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  <span className="font-bold text-white">EverStake</span> is a premier crypto yield protocol offering high-performance, automated staking pools with institutional-grade security, instant payouts, and zero lockup friction.
-                </p>
-              </div>
-
-              <div className="bg-[#060f22] p-4 rounded-2xl border border-[#182848] space-y-2 text-xs text-slate-300">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Protocol Network:</span>
-                  <span className="font-bold text-white">Multichain (BEP20 / TRC20 / ERC20)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Security Architecture:</span>
-                  <span className="font-bold text-emerald-400">Institutional-Grade Encrypted Vault</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Daily Payout Engine:</span>
-                  <span className="font-bold text-amber-400">Automated Smart Distribution</span>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setAboutModalOpen(false)}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-[#ff0044] to-[#fe780b] text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-red-500/20"
-              >
-                Close Information
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </UserSidebarLayout>
   );

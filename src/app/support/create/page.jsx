@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import UserSidebarLayout from '../../../components/UserSidebarLayout';
 import { useAuth } from '../../../context/AuthContext';
+import api from '../../../lib/api';
 import { X, MessageCircle, Loader2 } from 'lucide-react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../../components/ui/select';
 import { toast } from 'sonner';
@@ -11,6 +13,7 @@ import { toast } from 'sonner';
 export default function CreateTicketPage() {
   const router = useRouter();
   const { user } = useAuth();
+  const [mounted, setMounted] = useState(false);
 
   const [subject, setSubject] = useState('');
   const [priority, setPriority] = useState('High');
@@ -23,6 +26,7 @@ export default function CreateTicketPage() {
   const [whatsappLink, setWhatsappLink] = useState('https://wa.me/1234567890');
 
   useEffect(() => {
+    setMounted(true);
     // Show WhatsApp support modal automatically when user lands on create ticket page
     setWhatsappModalOpen(true);
 
@@ -94,16 +98,16 @@ export default function CreateTicketPage() {
   return (
     <UserSidebarLayout>
       <div className="space-y-6 max-w-5xl mx-auto">
-        {/* Page Title & WhatsApp Direct Button */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h1 className="text-xl font-extrabold text-white font-righteous tracking-wide">
-            Open Ticket
+        {/* Page Header Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h1 className="text-xl font-extrabold text-white font-righteous tracking-wide whitespace-nowrap">
+            Open Support Ticket
           </h1>
 
           <button
             type="button"
             onClick={handleOpenWhatsApp}
-            className="bg-[#25D366] hover:bg-[#20ba59] text-white px-5 py-2.5 rounded-lg text-xs font-bold font-sans uppercase transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto justify-center bg-[#25D366] hover:bg-[#20ba59] text-white px-5 py-2.5 rounded-lg text-xs font-bold font-sans uppercase transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 cursor-pointer"
           >
             <MessageCircle className="w-4 h-4 text-white" /> WhatsApp Direct Message
           </button>
@@ -161,11 +165,11 @@ export default function CreateTicketPage() {
             </div>
 
             {/* Row 3: Buttons Row (+ Add Attachment / Submit) */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 pt-2">
               <button
                 type="button"
                 onClick={handleAddFileRow}
-                className="bg-[#142345] hover:bg-[#1a2c54] text-white text-xs font-semibold px-4 py-2.5 rounded-md border border-[#1e325c] transition-all cursor-pointer flex items-center gap-1.5"
+                className="w-full sm:w-auto justify-center bg-[#142345] hover:bg-[#1a2c54] text-white text-xs font-semibold px-4 py-2.5 rounded-md border border-[#1e325c] transition-all cursor-pointer flex items-center gap-1.5"
               >
                 <span>+ Add Attachment</span>
               </button>
@@ -173,7 +177,7 @@ export default function CreateTicketPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="btn-stakelab px-8 py-2.5 rounded-lg text-white font-righteous text-xs uppercase font-bold tracking-wider transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 disabled:opacity-50"
+                className="w-full sm:w-auto justify-center btn-stakelab px-8 py-2.5 rounded-lg text-white font-righteous text-xs uppercase font-bold tracking-wider transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 disabled:opacity-50"
               >
                 {submitting ? (
                   <span className="flex items-center justify-center gap-2">
@@ -224,10 +228,10 @@ export default function CreateTicketPage() {
         </div>
 
         {/* WhatsApp Direct Support Modal Popup (Full Screen & Click Outside to Close) */}
-        {whatsappModalOpen && (
+        {mounted && whatsappModalOpen && createPortal(
           <div
             onClick={() => setWhatsappModalOpen(false)}
-            className="fixed inset-0 min-h-screen w-full bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
+            className="fixed inset-0 w-full h-full min-h-screen bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[99999] overflow-y-auto"
           >
             <div
               onClick={(e) => e.stopPropagation()}
@@ -274,7 +278,8 @@ export default function CreateTicketPage() {
                 </button>
               </div>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </div>
     </UserSidebarLayout>

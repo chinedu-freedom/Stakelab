@@ -572,17 +572,17 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Tier Selection Tabs (Flexible Tier vs Dynamic Tier) */}
-          <div className="flex justify-center items-center gap-3 mb-10">
+          {/* Tier Selection Tabs (Centered & Full Width on Mobile) */}
+          <div className="flex justify-center items-center gap-3 mb-10 w-full sm:w-auto max-w-md mx-auto">
             {['Flexible Tier', 'Dynamic Tier'].map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTier(tab)}
                 aria-pressed={activeTier === tab}
-                className={`px-6 py-2.5 rounded-full font-righteous text-xs uppercase tracking-wider font-bold transition-all shadow-md cursor-pointer select-none ${
+                className={`flex-1 sm:flex-none text-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-righteous text-xs sm:text-sm uppercase tracking-wider font-bold transition-all shadow-md cursor-pointer select-none ${
                   activeTier === tab
-                    ? 'bg-gradient-to-r from-[#fe500b] to-[#ff0044] text-white shadow-red-500/30 scale-105'
+                    ? 'bg-gradient-to-r from-[#fe500b] to-[#ff0044] text-white shadow-red-500/30 scale-[1.02] sm:scale-105'
                     : 'bg-[#0a1835] hover:bg-[#12244a] border border-[#182848] text-slate-400 hover:text-white'
                 }`}
               >
@@ -606,7 +606,7 @@ export default function LandingPage() {
               const days = plan.duration_days || 30;
 
               return (
-                <div key={idx} className="relative group flex flex-col">
+                <div key={idx} className="relative group flex flex-col max-w-sm sm:max-w-none mx-auto w-full">
                   {/* Outer Gradient Border Wrap with Pointed Shield Bottom */}
                   <div
                     style={{
@@ -619,17 +619,17 @@ export default function LandingPage() {
                       style={{
                         clipPath: 'polygon(0 0, 100% 0, 100% 92%, 50% 100%, 0 92%)',
                       }}
-                      className="w-full bg-[#0c1424] rounded-t-3xl pt-8 pb-16 px-6 sm:px-8 text-slate-100 flex-1 flex flex-col justify-between relative"
+                      className="w-full bg-[#0c1424] rounded-t-3xl pt-5 sm:pt-8 pb-10 sm:pb-16 px-4 sm:px-8 text-slate-100 flex-1 flex flex-col justify-between relative"
                     >
                       {/* Top Header Plan Title */}
                       <div>
-                        <h3 className="font-righteous text-3xl sm:text-4xl font-extrabold text-white text-center tracking-wide uppercase">
+                        <h3 className="font-righteous text-xl sm:text-3xl font-extrabold text-white text-center tracking-wide uppercase">
                           {plan.title}
                         </h3>
 
                         {/* Overhanging Gradient Ribbon Banner (Middle Header) */}
-                        <div className="relative my-6 -mx-6 sm:-mx-8">
-                          <div className="bg-gradient-to-r from-[#fe500b] via-[#ff0044] to-[#fe880b] text-white font-righteous text-lg sm:text-xl font-bold py-3 text-center shadow-lg tracking-wide uppercase">
+                        <div className="relative my-4 sm:my-6 -mx-4 sm:-mx-8">
+                          <div className="bg-gradient-to-r from-[#fe500b] via-[#ff0044] to-[#fe880b] text-white font-righteous text-xs sm:text-base font-bold py-2 sm:py-3 text-center shadow-lg tracking-wide uppercase">
                             Stake for {days} Days
                           </div>
                           <div className="absolute -left-2 -bottom-2 w-0 h-0 border-t-[8px] border-t-[#a3002b] border-l-[8px] border-l-transparent" />
@@ -637,28 +637,28 @@ export default function LandingPage() {
                         </div>
 
                         {/* Features List (Exact Match to /staking/create) */}
-                        <div className="space-y-4 my-8 font-sans">
-                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                        <div className="space-y-2.5 sm:space-y-4 my-4 sm:my-8 font-sans">
+                          <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
                             <span className="text-slate-400 font-semibold">Minimum Staking</span>
                             <span className="font-bold text-white font-mono">${minAmt.toLocaleString()}</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                          <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
                             <span className="text-slate-400 font-semibold">Maximum Staking</span>
                             <span className="font-bold text-white font-mono">${maxAmt.toLocaleString()}</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                          <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
                             <span className="text-slate-400 font-semibold">Daily Profits rate</span>
-                            <span className="font-bold text-emerald-400 font-mono text-lg">{dailyReturn.toFixed(1)}% Daily</span>
+                            <span className="font-bold text-emerald-400 font-mono text-xs sm:text-lg">{dailyReturn.toFixed(1)}% Daily</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                          <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
                             <span className="text-slate-400 font-semibold">Compounding rate</span>
-                            <span className="font-bold text-emerald-400 font-mono text-lg">{dailyReturn.toFixed(1)}%</span>
+                            <span className="font-bold text-emerald-400 font-mono text-xs sm:text-lg">{dailyReturn.toFixed(1)}%</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                          <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
                             <span className="text-slate-400 font-semibold">Capital Return</span>
                             <span className={`font-bold ${plan.capital_return !== false ? 'text-emerald-400' : 'text-slate-500'}`}>
                               {plan.capital_return !== false ? 'Yes' : 'No'}

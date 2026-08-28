@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import UserSidebarLayout from '../../../components/UserSidebarLayout';
 import { useAuth } from '../../../context/AuthContext';
@@ -11,8 +12,13 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '.
 
 export default function CreateStakingPage() {
   const { user, refreshUser } = useAuth();
+  const [mounted, setMounted] = useState(false);
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [activeTier, setActiveTier] = useState('Flexible Tier');
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -147,17 +153,17 @@ export default function CreateStakingPage() {
           </div>
         </div>
 
-        {/* Tier Selector Tabs (Matching User Screenshot) */}
-        <div className="flex items-center gap-3">
+        {/* Tier Selector Tabs (Centered & Full Width on Mobile) */}
+        <div className="flex justify-center items-center gap-3 w-full sm:w-auto max-w-md mx-auto sm:mx-0">
           {['Flexible Tier', 'Dynamic Tier'].map((tab) => (
             <button
               key={tab}
               type="button"
               onClick={() => setActiveTier(tab)}
               aria-pressed={activeTier === tab}
-              className={`px-6 py-2.5 rounded-full font-righteous text-xs uppercase tracking-wider font-bold transition-all shadow-md cursor-pointer select-none ${
+              className={`flex-1 sm:flex-none text-center px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-righteous text-xs sm:text-sm uppercase tracking-wider font-bold transition-all shadow-md cursor-pointer select-none ${
                 activeTier === tab
-                  ? 'bg-gradient-to-r from-[#fe500b] to-[#ff0044] text-white shadow-red-500/30 scale-105'
+                  ? 'bg-gradient-to-r from-[#fe500b] to-[#ff0044] text-white shadow-red-500/30 scale-[1.02] sm:scale-105'
                   : 'bg-[#0a1835] hover:bg-[#12244a] border border-[#182848] text-slate-400 hover:text-white'
               }`}
             >
@@ -182,7 +188,7 @@ export default function CreateStakingPage() {
               const dailyReturn = parseFloat(plan.daily_return_percent || 0);
 
               return (
-                <div key={plan.id} className="relative group flex flex-col">
+                <div key={plan.id} className="relative group flex flex-col max-w-sm sm:max-w-none mx-auto w-full">
                   {/* Outer Shield Border Wrap */}
                   <div
                     style={{
@@ -195,17 +201,17 @@ export default function CreateStakingPage() {
                       style={{
                         clipPath: 'polygon(0 0, 100% 0, 100% 92%, 50% 100%, 0 92%)',
                       }}
-                      className="w-full bg-[#0c1424] rounded-t-3xl pt-8 pb-16 px-6 sm:px-8 text-slate-100 flex-1 flex flex-col justify-between relative"
+                      className="w-full bg-[#0c1424] rounded-t-3xl pt-5 sm:pt-8 pb-10 sm:pb-16 px-4 sm:px-8 text-slate-100 flex-1 flex flex-col justify-between relative"
                     >
                       <div>
                         {/* Title */}
-                        <h3 className="font-righteous text-3xl sm:text-4xl font-extrabold text-white text-center tracking-wide uppercase">
+                        <h3 className="font-righteous text-xl sm:text-3xl font-extrabold text-white text-center tracking-wide uppercase">
                           {plan.title}
                         </h3>
 
                         {/* Ribbon Banner */}
-                        <div className="relative my-6 -mx-6 sm:-mx-8">
-                          <div className="bg-gradient-to-r from-[#fe500b] via-[#ff0044] to-[#fe880b] text-white font-righteous text-lg sm:text-xl font-bold py-3 text-center shadow-lg tracking-wide uppercase">
+                        <div className="relative my-4 sm:my-6 -mx-4 sm:-mx-8">
+                          <div className="bg-gradient-to-r from-[#fe500b] via-[#ff0044] to-[#fe880b] text-white font-righteous text-xs sm:text-base font-bold py-2 sm:py-3 text-center shadow-lg tracking-wide uppercase">
                             Stake for {days} Days
                           </div>
                           <div className="absolute -left-2 -bottom-2 w-0 h-0 border-t-[8px] border-t-[#a3002b] border-l-[8px] border-l-transparent" />
@@ -213,28 +219,28 @@ export default function CreateStakingPage() {
                         </div>
 
                         {/* Features List */}
-                        <div className="space-y-4 my-8 font-sans">
-                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                        <div className="space-y-2.5 sm:space-y-4 my-4 sm:my-8 font-sans">
+                          <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
                             <span className="text-slate-400 font-semibold">Minimum Staking</span>
                             <span className="font-bold text-white font-mono">${minAmt.toLocaleString()}</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                          <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
                             <span className="text-slate-400 font-semibold">Maximum Staking</span>
                             <span className="font-bold text-white font-mono">${maxAmt.toLocaleString()}</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                          <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
                             <span className="text-slate-400 font-semibold">Daily Profits rate</span>
-                            <span className="font-bold text-emerald-400 font-mono text-lg">{dailyReturn.toFixed(1)}% Daily</span>
+                            <span className="font-bold text-emerald-400 font-mono text-xs sm:text-lg">{dailyReturn.toFixed(1)}% Daily</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                          <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
                             <span className="text-slate-400 font-semibold">Compounding rate</span>
-                            <span className="font-bold text-emerald-400 font-mono text-lg">{dailyReturn.toFixed(1)}%</span>
+                            <span className="font-bold text-emerald-400 font-mono text-xs sm:text-lg">{dailyReturn.toFixed(1)}%</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                          <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
                             <span className="text-slate-400 font-semibold">Capital Return</span>
                             <span className={`font-bold ${plan.capital_return !== false ? 'text-emerald-400' : 'text-slate-500'}`}>
                               {plan.capital_return !== false ? 'Yes' : 'No'}
@@ -248,7 +254,7 @@ export default function CreateStakingPage() {
                         <button
                           type="button"
                           onClick={() => handleOpenModal(plan)}
-                          className="w-full btn-stakelab py-4 rounded-xl text-white font-sans text-base sm:text-lg tracking-wider font-extrabold transition-all shadow-xl shadow-red-500/25 cursor-pointer"
+                          className="w-full py-2.5 sm:py-3.5 bg-gradient-to-r from-[#ff0044] via-[#fe500b] to-[#fe880b] hover:opacity-90 text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-lg shadow-red-500/20 transition-all font-righteous cursor-pointer active:scale-95"
                         >
                           Stake
                         </button>
@@ -262,9 +268,9 @@ export default function CreateStakingPage() {
         )}
 
         {/* Stake Now Modal */}
-        {selectedPlan && (
-          <div className="fixed inset-0 z-[100] w-full h-full min-h-screen flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 font-sans overflow-y-auto">
-            <div className="bg-[#09152b] border border-[#1b2b4d] rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-5">
+        {mounted && selectedPlan && createPortal(
+          <div className="fixed inset-0 z-[99999] w-full h-full min-h-screen flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 font-sans overflow-y-auto">
+            <div className="bg-[#09152b] border border-[#1b2b4d] rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-5 my-auto">
               <div className="flex justify-between items-start border-b border-[#182848] pb-4">
                 <div>
                   <h3 className="text-lg font-bold text-white font-righteous">
@@ -308,44 +314,46 @@ export default function CreateStakingPage() {
                     <label className="text-xs font-semibold text-slate-300">
                       Enter Stake Amount (USD)
                     </label>
-                    <span className="text-[10px] text-slate-400">
-                      Min: ${parseFloat(selectedPlan.min_amount).toLocaleString()} | Max: ${parseFloat(selectedPlan.max_amount).toLocaleString()}
+                    <span className="text-[11px] text-slate-400 font-mono">
+                      Limit: ${parseFloat(selectedPlan.min_amount || 0).toLocaleString()} - ${parseFloat(selectedPlan.max_amount || 0).toLocaleString()}
                     </span>
                   </div>
-                  <div className="relative">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
-                      $
-                    </span>
-                    <input
-                      type="number"
-                      step="any"
-                      required
-                      min={parseFloat(selectedPlan.min_amount)}
-                      max={parseFloat(selectedPlan.max_amount)}
-                      value={stakeAmount}
-                      onChange={(e) => setStakeAmount(e.target.value)}
-                      placeholder={`${selectedPlan.min_amount}`}
-                      className="w-full bg-[#071020] border border-[#1b2b4d] rounded-xl py-2.5 pl-8 pr-4 text-white font-bold text-sm placeholder-slate-600 focus:outline-none focus:border-[#ff0044] transition-all"
-                    />
-                  </div>
+                  <input
+                    type="number"
+                    step="any"
+                    value={stakeAmount}
+                    onChange={(e) => setStakeAmount(e.target.value)}
+                    placeholder={`Min $${selectedPlan.min_amount}...`}
+                    className="w-full h-11 bg-[#071020] border border-[#1b2b4d] rounded-xl px-4 text-white text-xs font-mono placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-[#ff0044] transition-all"
+                  />
                 </div>
 
-                {/* Dynamic Return Calculation Summary Box */}
-                <div className="bg-[#050c18] border border-[#1b2b4d] rounded-2xl p-4 space-y-2.5 text-xs font-sans">
+                {/* Staking Summary Cards */}
+                <div className="bg-[#071020] border border-[#182848] rounded-xl p-3.5 space-y-2 text-xs">
                   <div className="flex items-center justify-between text-slate-400">
-                    <span>Daily Return ({parseFloat(selectedPlan.daily_return_percent || 0).toFixed(1)}%):</span>
-                    <span className="font-bold text-white font-mono">${dailyProfit.toFixed(2)} / day</span>
+                    <span>Staking Lockup:</span>
+                    <span className="text-white font-bold font-mono">{selectedPlan.duration_days} Days</span>
                   </div>
 
                   <div className="flex items-center justify-between text-slate-400">
-                    <span>Total Net Profit ({days} Days):</span>
-                    <span className="font-bold text-emerald-400 font-mono">+${totalProfit.toFixed(2)}</span>
+                    <span>Daily Profit Rate:</span>
+                    <span className="text-emerald-400 font-bold font-mono">+{parseFloat(selectedPlan.daily_return_percent || 0).toFixed(1)}% / day</span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-slate-400">
+                    <span>Daily Profit Payout:</span>
+                    <span className="text-emerald-400 font-bold font-mono">+${dailyProfitUSD.toFixed(2)} / day</span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-slate-400">
+                    <span>Total Net Profit ({selectedPlan.duration_days} days):</span>
+                    <span className="text-emerald-400 font-bold font-mono">+${totalProfitUSD.toFixed(2)}</span>
                   </div>
 
                   <div className="flex items-center justify-between text-slate-400">
                     <span>Capital Return at Maturity:</span>
                     <span className={`font-bold font-mono ${isCapitalReturn ? 'text-blue-400' : 'text-slate-500'}`}>
-                      {isCapitalReturn ? `+$${P.toFixed(2)} (100% Back)` : 'None (Profit Only)'}
+                      {isCapitalReturn ? `100% Refundable` : 'Non-Refundable'}
                     </span>
                   </div>
 
@@ -373,7 +381,8 @@ export default function CreateStakingPage() {
                 </button>
               </form>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </div>
     </UserSidebarLayout>
