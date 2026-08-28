@@ -122,18 +122,7 @@ export default function AccountSettingsPage() {
 
         {/* 5 Balances & Account Stats Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-          {/* 1. Main Wallet Balance */}
-          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between shadow-lg">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-slate-400">Main Balance</span>
-              <Wallet className="w-4 h-4 text-[#ff0044]" />
-            </div>
-            <div className="text-base sm:text-lg font-black text-white font-righteous mt-2">
-              {showBalances ? `$${parseFloat(user?.balance || 0).toFixed(2)}` : '••••••'}
-            </div>
-          </div>
-
-          {/* 2. Staking Balance */}
+          {/* 1. Staking Balance */}
           <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between shadow-lg">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-semibold text-slate-400">Staking Balance</span>
@@ -141,6 +130,17 @@ export default function AccountSettingsPage() {
             </div>
             <div className="text-base sm:text-lg font-black text-white font-righteous mt-2">
               {showBalances ? `$${parseFloat(user?.staking_balance || 0).toFixed(2)}` : '••••••'}
+            </div>
+          </div>
+
+          {/* 2. Earning Balance */}
+          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between shadow-lg">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-slate-400">Earning Balance</span>
+              <Wallet className="w-4 h-4 text-[#ff0044]" />
+            </div>
+            <div className="text-base sm:text-lg font-black text-white font-righteous mt-2">
+              {showBalances ? `$${parseFloat(user?.balance || 0).toFixed(2)}` : '••••••'}
             </div>
           </div>
 
