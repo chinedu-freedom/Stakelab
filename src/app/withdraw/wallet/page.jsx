@@ -238,7 +238,7 @@ export default function AddWithdrawalWalletPage() {
               >
                 {submitting ? (
                   <span className="flex items-center justify-center gap-2">
-                    Verifying & Saving... <Loader2 className="w-4 h-4 animate-spin" />
+                    Verifying & Saving <Loader2 className="w-4 h-4 animate-spin" />
                   </span>
                 ) : (
                   'Save & Link Payout Wallet'

@@ -111,7 +111,7 @@ export default function TicketDetailsPage({ params }) {
               >
                 {submitting ? (
                   <span className="flex items-center justify-center gap-2">
-                    Submitting Reply... <Loader2 className="w-4 h-4 animate-spin" />
+                    Submitting Reply <Loader2 className="w-4 h-4 animate-spin" />
                   </span>
                 ) : (
                   <>
