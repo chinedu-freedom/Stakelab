@@ -178,7 +178,7 @@ export default function DailyCheckinModal() {
   return (
     <div
       onClick={() => setIsOpen(false)}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm cursor-pointer animate-fadeIn"
+      className="fixed inset-0 z-[100] w-full h-full min-h-screen flex items-center justify-center p-4 bg-black/80 backdrop-blur-md cursor-pointer animate-fadeIn overflow-y-auto"
     >
       {/* Modal Dialog Box */}
       <div

@@ -300,7 +300,7 @@ export default function DepositPage() {
         {dynamicInvoice && (
           <div
             onClick={() => setDynamicInvoice(null)}
-            className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] w-full h-full min-h-screen bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
           >
             <div
               onClick={(e) => e.stopPropagation()}

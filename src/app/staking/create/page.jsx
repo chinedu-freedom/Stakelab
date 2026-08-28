@@ -256,7 +256,7 @@ export default function CreateStakingPage() {
 
         {/* Stake Now Modal */}
         {selectedPlan && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200 font-sans">
+          <div className="fixed inset-0 z-[100] w-full h-full min-h-screen flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 font-sans overflow-y-auto">
             <div className="bg-[#09152b] border border-[#1b2b4d] rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-5">
               <div className="flex justify-between items-start border-b border-[#182848] pb-4">
                 <div>

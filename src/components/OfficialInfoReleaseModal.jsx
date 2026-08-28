@@ -40,7 +40,7 @@ export default function OfficialInfoReleaseModal() {
   return (
     <div
       onClick={() => setIsOpen(false)}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md cursor-pointer animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] w-full h-full min-h-screen flex items-center justify-center p-4 bg-black/80 backdrop-blur-md cursor-pointer animate-in fade-in duration-200 overflow-y-auto"
     >
       <div
         onClick={(e) => e.stopPropagation()}

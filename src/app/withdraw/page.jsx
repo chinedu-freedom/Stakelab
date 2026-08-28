@@ -382,7 +382,7 @@ export default function WithdrawPage() {
       {showPinModal && (
         <div
           onClick={() => setShowPinModal(false)}
-          className="fixed inset-0 min-h-screen w-full bg-black/80 backdrop-blur-sm z-50 overflow-y-auto flex items-center justify-center p-4"
+          className="fixed inset-0 z-[100] w-full h-full min-h-screen bg-black/80 backdrop-blur-md overflow-y-auto flex items-center justify-center p-4"
         >
           <div
             onClick={(e) => e.stopPropagation()}

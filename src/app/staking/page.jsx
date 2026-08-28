@@ -182,7 +182,7 @@ export default function StakingPage() {
         {showModal && (
           <div
             onClick={() => setShowModal(false)}
-            className="fixed inset-0 min-h-screen w-full bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
+            className="fixed inset-0 z-[100] w-full h-full min-h-screen bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
           >
             <div
               onClick={(e) => e.stopPropagation()}
