@@ -285,7 +285,7 @@ export default function AccountDataPage() {
           </div>
         </div>
 
-        {/* Shortcuts */}
+        {/* 12 Quick Platform Shortcuts Grid (Matching Reference Screenshot 2) */}
         <div className="bg-[#0a1835] border border-[#182848] rounded-3xl p-6 shadow-xl space-y-4">
           <div className="flex items-center justify-between border-b border-[#182848] pb-3">
             <h2 className="text-sm font-extrabold text-white font-righteous tracking-wide uppercase flex items-center gap-2">
@@ -295,22 +295,43 @@ export default function AccountDataPage() {
             <span className="text-[11px] text-slate-400 font-medium">Instant Access</span>
           </div>
 
-          <div className="grid grid-cols-4 gap-4 pt-1">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 pt-1">
             {[
-              { label: 'Deposit', link: '/deposit', icon: Wallet, bgColor: 'bg-[#f59e0b]' },
-              { label: 'Withdraw', link: '/withdraw', icon: RotateCcw, bgColor: 'bg-[#122246] border border-[#1e3463]' },
-              { label: 'Stake', link: '/staking/create', icon: Layers, bgColor: 'bg-gradient-to-r from-[#fe500b] to-[#ff0044]' },
-              { label: 'My Staking', link: '/staking', icon: DollarSign, bgColor: 'bg-[#122246] border border-[#1e3463]' },
+              { label: 'Deposit', link: '/deposit', icon: Wallet, style: 'w-12 h-12 rounded-full bg-[#f59e0b] shadow-amber-500/20' },
+              { label: 'Withdraw', link: '/withdraw', icon: RotateCcw, style: 'w-12 h-12 rounded-full bg-[#122246] border border-[#1e3463]' },
+              { label: 'Stake', link: '/staking/create', icon: Layers, style: 'w-12 h-12 rounded-full bg-gradient-to-r from-[#fe500b] to-[#ff0044] shadow-red-500/30' },
+              { label: 'My Staking', link: '/staking', icon: DollarSign, style: 'w-12 h-12 rounded-full bg-[#122246] border border-[#1e3463]' },
+              { label: 'Daily Check-in', link: '/tasks', icon: CalendarCheck, style: 'w-12 h-12 rounded-xl bg-[#2563eb] shadow-blue-500/20' },
+              { label: 'Tasks', link: '/tasks', icon: ClipboardList, style: 'w-12 h-12 rounded-xl bg-[#059669] shadow-emerald-500/20' },
+              { label: 'Lucky Spin', link: '/spin', icon: Disc, style: 'w-12 h-12 rounded-xl bg-[#7c3aed] shadow-purple-500/20' },
+              { label: 'Transaction Log', link: '/transactions', icon: FileText, style: 'w-12 h-12 rounded-xl bg-[#ea580c] shadow-orange-500/20' },
+              { label: 'Bonus Code', link: '/treasure', icon: Gift, style: 'w-12 h-12 rounded-xl bg-[#dc2626] shadow-red-500/20' },
+              { label: 'Download App', link: '#', icon: Download, style: 'w-12 h-12 rounded-xl bg-[#0284c7] shadow-sky-500/20' },
+              { label: 'Referrals', link: '/referrals', icon: Users, style: 'w-12 h-12 rounded-xl bg-[#9333ea] shadow-purple-500/20' },
+              { label: 'WhatsApp Group', link: 'https://chat.whatsapp.com', external: true, icon: MessageCircle, style: 'w-12 h-12 rounded-full bg-[#25d366] shadow-emerald-500/30' },
             ].map((action, idx) => {
               const Icon = action.icon;
-              return (
-                <Link key={idx} href={action.link} className="flex flex-col items-center group cursor-pointer">
-                  <div className={`w-12 h-12 rounded-full ${action.bgColor} flex items-center justify-center shadow-lg transition-transform group-hover:scale-110`}>
+              const content = (
+                <div className="flex flex-col items-center group cursor-pointer">
+                  <div className={`${action.style} flex items-center justify-center shadow-lg transition-transform group-hover:scale-110`}>
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <span className="text-[11px] font-semibold text-slate-300 mt-2 text-center group-hover:text-white transition-colors">
                     {action.label}
                   </span>
+                </div>
+              );
+
+              if (action.external) {
+                return (
+                  <a key={idx} href={action.link} target="_blank" rel="noopener noreferrer">
+                    {content}
+                  </a>
+                );
+              }
+              return (
+                <Link key={idx} href={action.link}>
+                  {content}
                 </Link>
               );
             })}
