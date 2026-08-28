@@ -120,7 +120,6 @@ export default function DepositPage() {
             amount: amountNum,
             method: selectedGateway.name,
           });
-          toast.success('Dynamic OxaPay payment address generated!');
         } else {
           toast.success('Deposit request submitted successfully! Pending admin verification.');
           setAmount('');
@@ -274,7 +273,7 @@ export default function DepositPage() {
                 </div>
               </div>
 
-              {/* Deposit Confirm Red-Orange Gradient Button */}
+              {/* Deposit Confirm Button */}
               <button
                 type="submit"
                 disabled={submitting}
@@ -282,7 +281,7 @@ export default function DepositPage() {
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> Generating Automated Deposit Address...
+                    <Loader2 className="w-4 h-4 animate-spin" /> Processing...
                   </>
                 ) : (
                   'Deposit Now →'
@@ -297,11 +296,11 @@ export default function DepositPage() {
           </div>
         </div>
 
-        {/* Dynamic OxaPay Invoice Modal */}
+        {/* Dynamic Payment Invoice Modal */}
         {dynamicInvoice && (
           <div
             onClick={() => setDynamicInvoice(null)}
-            className="fixed inset-0 min-h-screen w-full bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto"
+            className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           >
             <div
               onClick={(e) => e.stopPropagation()}
@@ -309,7 +308,7 @@ export default function DepositPage() {
             >
               <div className="flex justify-between items-center pb-3 border-b border-[#16274a]">
                 <h3 className="text-sm font-bold text-white font-righteous">
-                  OxaPay Dynamic Payment Address
+                  Automated Payment Address
                 </h3>
                 <button
                   onClick={() => setDynamicInvoice(null)}
