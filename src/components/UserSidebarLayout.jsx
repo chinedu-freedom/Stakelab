@@ -51,8 +51,15 @@ export default function UserSidebarLayout({ children }) {
   useEffect(() => {
     if (!loading && !user && typeof window !== 'undefined') {
       window.location.href = '/login';
+      return;
     }
-  }, [user, loading]);
+    if (!loading && user && typeof window !== 'undefined') {
+      const isComplete = Boolean(user.country && user.mobile && user.address && user.city && user.state && user.zip_code);
+      if (!isComplete && pathname !== '/user-data') {
+        window.location.href = '/user-data';
+      }
+    }
+  }, [user, loading, pathname]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
