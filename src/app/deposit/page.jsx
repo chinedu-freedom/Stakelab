@@ -274,54 +274,18 @@ export default function DepositPage() {
                 </div>
               </div>
 
-              {/* Wallet Address & Copy Box */}
-              <div className="space-y-2">
-                <label className="block text-xs font-semibold text-slate-300 font-sans">
-                  Deposit Wallet Address ({selectedGateway?.badge})
-                </label>
-                <div className="flex items-center gap-2 bg-[#06102b] p-3 rounded-lg border border-[#1a2b57]">
-                  <input
-                    type="text"
-                    readOnly
-                    value={selectedGateway?.address || '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'}
-                    className="bg-transparent text-xs font-mono text-white w-full focus:outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={copyAddress}
-                    className="p-1.5 rounded bg-[#16274a] text-[#ff0044] hover:bg-[#ff0044] hover:text-white transition-all shrink-0 cursor-pointer"
-                  >
-                    {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Transaction Hash Input */}
-              <div className="space-y-2">
-                <label className="block text-xs font-semibold text-slate-300 font-sans">
-                  Transaction Hash / ID
-                </label>
-                <input
-                  type="text"
-                  value={txHash}
-                  onChange={(e) => setTxHash(e.target.value)}
-                  placeholder="Paste blockchain transaction hash"
-                  className="w-full h-11 bg-[#06102b] border border-[#1a2b57] rounded-lg px-3 text-white text-xs font-mono focus:border-[#ff0044] focus:outline-none transition-all"
-                />
-              </div>
-
-              {/* Deposit Confirm Red-Orange Gradient Button (Exact Match to Screenshot) */}
+              {/* Deposit Confirm Red-Orange Gradient Button */}
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-95 text-white font-righteous font-bold py-3.5 rounded-lg text-sm tracking-wider uppercase transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 cursor-pointer"
+                className="w-full btn-stakelab py-3.5 rounded-xl text-white font-sans text-xs tracking-wider uppercase font-bold transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
               >
                 {submitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" /> Processing Deposit
-                  </span>
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Generating Automated Deposit Address...
+                  </>
                 ) : (
-                  'Deposit Confirm'
+                  'Deposit Now →'
                 )}
               </button>
 
