@@ -145,15 +145,12 @@ export default function DepositPage() {
           </div>
         </div>
 
-        {/* Main 2-Column Container Grid (Matching Exact Screenshot Layout) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Left Column: Payment Gateways Selector & Backend Deposit Rules (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
-            {/* Gateways Card Container */}
             <div className="bg-[#0b1739] border border-[#1a2b57] rounded-xl p-5 shadow-2xl space-y-3">
               <div className="divide-y divide-[#16274a]">
-                {visibleGateways.map((gw) => {
+                {gateways.map((gw) => {
                   const isSelected = selectedGateway?.id === gw.id;
                   return (
                     <div
@@ -179,7 +176,6 @@ export default function DepositPage() {
                         <span className="text-xs font-semibold font-sans">{gw.name}</span>
                       </div>
 
-                      {/* Gateway Badge Logo / Text */}
                       <span className="text-[11px] font-righteous font-bold tracking-wider px-2.5 py-1 rounded bg-[#06102b] border border-[#1a2b57] text-[#4a90e2]">
                         {gw.badge}
                       </span>
@@ -187,19 +183,8 @@ export default function DepositPage() {
                   );
                 })}
               </div>
-
-              {/* Show All Payment Options Accordion Toggle */}
-              <button
-                type="button"
-                onClick={() => setShowAllOptions(!showAllOptions)}
-                className="w-full pt-3 text-xs font-bold text-slate-300 hover:text-white flex items-center justify-between border-t border-[#16274a] transition-all cursor-pointer"
-              >
-                <span>{showAllOptions ? 'Show Less Payment Options' : 'Show All Payment Options'}</span>
-                {showAllOptions ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-              </button>
             </div>
 
-            {/* Backend Configured Deposit Rules Box (Configured from Admin Dashboard) */}
             <div className="bg-[#0b1739] border border-[#1a2b57] rounded-xl p-5 shadow-xl space-y-3">
               <h3 className="text-xs font-bold text-white font-righteous flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" /> Official Deposit Rules & Security Policy
