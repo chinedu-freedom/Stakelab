@@ -102,8 +102,12 @@ export default function LandingPage() {
   }, []);
 
   const displayPlans = dbPlans.filter((p) => {
-    if (!p.tier) return activeTier === 'Flexible Tier';
-    return p.tier === activeTier;
+    const planTier = (p.tier || '').trim().toLowerCase();
+    const currentTier = activeTier.trim().toLowerCase();
+    if (currentTier.includes('dynamic')) {
+      return planTier.includes('dynamic');
+    }
+    return !planTier || planTier.includes('flex');
   });
 
   // FAQ Accordion state

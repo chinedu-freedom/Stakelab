@@ -112,12 +112,14 @@ export default function CreateStakingPage() {
     }
   };
 
-  const filteredPlans = plans.filter((p) => {
-    if (!p.tier) return true;
-    return p.tier.toLowerCase() === activeTier.toLowerCase();
+  const displayPlans = plans.filter((p) => {
+    const planTier = (p.tier || '').trim().toLowerCase();
+    const currentTier = activeTier.trim().toLowerCase();
+    if (currentTier.includes('dynamic')) {
+      return planTier.includes('dynamic');
+    }
+    return !planTier || planTier.includes('flex');
   });
-
-  const displayPlans = filteredPlans.length > 0 ? filteredPlans : plans;
 
   // Stake Modal Live Calculation
   const P = parseFloat(stakeAmount || 0);
@@ -242,7 +244,7 @@ export default function CreateStakingPage() {
                       </div>
 
                       {/* Stake Button */}
-                      <div className="pt-4 text-center">
+                      <div className="pt-2 text-center">
                         <button
                           type="button"
                           onClick={() => handleOpenModal(plan)}
