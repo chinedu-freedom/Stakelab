@@ -359,7 +359,7 @@ export default function UserSidebarLayout({ children }) {
       <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
         {/* Top Header Navbar (Joins Sidebar from the Right) */}
         <header className="h-16 bg-[#07142d] border-b border-[#142343] shrink-0 z-20 px-4 sm:px-6 flex items-center justify-between">
-          {/* Left Side: Mobile Menu Button */}
+          {/* Left Side: Mobile Menu Button & Mobile Brand Logo */}
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -367,6 +367,22 @@ export default function UserSidebarLayout({ children }) {
             >
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
+
+            {/* Site Name & Logo on Small Screens */}
+            <Link href="/dashboard" className="lg:hidden flex items-center space-x-2">
+              {customLogo ? (
+                <img src={customLogo} alt="EverStake Logo" className="h-8 max-w-[140px] object-contain" />
+              ) : (
+                <>
+                  <div className="w-7 h-7 rounded bg-gradient-to-r from-[#ff0044] to-[#fe780b] flex items-center justify-center font-righteous text-white font-bold text-sm shadow-md shadow-red-500/20">
+                    E
+                  </div>
+                  <span className="text-lg font-extrabold text-white font-righteous tracking-wide">
+                    Ever<span className="text-gradient-stakelab">Stake</span>
+                  </span>
+                </>
+              )}
+            </Link>
           </div>
 
           {/* Right Side: User Profile Header Badge & Daily Rewards Trigger */}
@@ -493,16 +509,15 @@ export default function UserSidebarLayout({ children }) {
               )}
             </div>
 
-
-
+            {/* Profile Avatar Button - Shows ONLY image icon without border on small screens */}
             <div className="relative" ref={profileRef}>
               <button
                 type="button"
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center space-x-3 bg-[#0c1a38] hover:bg-[#12234a] border border-[#18294d] rounded-full pl-1.5 pr-3 py-1 cursor-pointer transition-all focus:outline-none select-none"
+                className="flex items-center space-x-3 sm:bg-[#0c1a38] sm:hover:bg-[#12234a] sm:border sm:border-[#18294d] sm:rounded-full sm:pl-1.5 sm:pr-3 sm:py-1 cursor-pointer transition-all focus:outline-none select-none"
               >
-                <div className="w-8 h-8 rounded-full bg-[#16274a] text-slate-200 flex items-center justify-center border border-[#233863] shrink-0">
-                  <User className="w-4 h-4 text-slate-200" />
+                <div className="w-9 h-9 sm:w-8 sm:h-8 rounded-full sm:bg-[#16274a] text-slate-200 flex items-center justify-center sm:border sm:border-[#233863] shrink-0">
+                  <User className="w-5 h-5 sm:w-4 sm:h-4 text-slate-200" />
                 </div>
                 <div className="text-left hidden sm:block">
                   <div className="text-xs font-bold text-white leading-tight truncate max-w-[150px]">
@@ -512,7 +527,7 @@ export default function UserSidebarLayout({ children }) {
                     {user?.email || ''}
                   </div>
                 </div>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${profileDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`hidden sm:block w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${profileDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {/* Dropdown Menu Panel (Exact Match to User Screenshot) */}
