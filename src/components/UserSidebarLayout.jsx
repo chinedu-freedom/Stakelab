@@ -54,7 +54,7 @@ export default function UserSidebarLayout({ children }) {
       return;
     }
     if (!loading && user && typeof window !== 'undefined') {
-      const isComplete = Boolean(user.country && user.mobile && user.address && user.city && user.state && user.zip_code);
+      const isComplete = Boolean(user.profile_complete || (user.country && user.mobile));
       if (!isComplete && pathname !== '/user-data') {
         window.location.href = '/user-data';
       }
@@ -141,7 +141,7 @@ export default function UserSidebarLayout({ children }) {
       ],
     },
     { label: 'Transaction', path: '/transactions', icon: History },
-    { label: 'Account Data', path: '/user-data', icon: Key },
+    { label: 'Account Data', path: '/account', icon: Key },
     { label: 'My Profile', path: '/profile', icon: User },
     { label: 'Referrals', path: '/referrals', icon: Users },
     {

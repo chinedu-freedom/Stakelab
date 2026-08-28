@@ -7,7 +7,7 @@ import { countries } from '../../lib/countries';
 import api from '../../lib/api';
 import { toast } from 'sonner';
 import PageLoader from '../../components/PageLoader';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
+import SearchableCountrySelect from '../../components/SearchableCountrySelect';
 
 export default function UserDataPage() {
   const router = useRouter();
@@ -156,32 +156,10 @@ export default function UserDataPage() {
                 <label className="block text-xs font-semibold text-slate-300 mb-1.5 font-sans">
                   Country <span className="text-red-500">*</span>
                 </label>
-                <Select
-                  value={selectedCountry.name}
-                  onValueChange={(val) => {
-                    const found = countries.find((c) => c.name === val);
-                    if (found) setSelectedCountry(found);
-                  }}
-                >
-                  <SelectTrigger className="w-full bg-[#06122b] border border-[#14264a] text-white rounded-lg h-11 px-3 text-xs font-medium focus:ring-1 focus:ring-[#ff0044]">
-                    <SelectValue placeholder="Select Country">
-                      <span className="flex items-center gap-1.5 truncate">
-                        <span className="text-sm">{selectedCountry.flag}</span>
-                        <span className="truncate">{selectedCountry.name}</span>
-                      </span>
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#091630] border border-[#182848] text-white max-h-52 overflow-y-auto no-scrollbar z-50">
-                    {countries.map((c) => (
-                      <SelectItem key={c.code} value={c.name} className="hover:bg-[#142852] focus:bg-[#142852] text-xs py-2">
-                        <span className="flex items-center gap-2">
-                          <span className="text-sm">{c.flag}</span>
-                          <span>{c.name}</span>
-                        </span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SearchableCountrySelect
+                  value={selectedCountry}
+                  onChange={(c) => setSelectedCountry(c)}
+                />
               </div>
 
               {/* Mobile */}
