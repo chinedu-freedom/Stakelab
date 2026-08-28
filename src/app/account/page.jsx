@@ -180,15 +180,7 @@ export default function AccountSettingsPage() {
 
         {/* 12 Quick Action Shortcuts Grid */}
         <div className="bg-[#0a1835] border border-[#182848] rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
-          <div className="flex items-center justify-between border-b border-[#182848] pb-3">
-            <h2 className="text-sm font-extrabold text-white font-righteous tracking-wide uppercase flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#fe780b] animate-ping" />
-              Quick Platform Shortcuts
-            </h2>
-            <span className="text-[11px] text-slate-400 font-medium">Instant Access</span>
-          </div>
-
-          <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-6 pt-1">
+          <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-6">
             {[
               {
                 label: 'Deposit',
