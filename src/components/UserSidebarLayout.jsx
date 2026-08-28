@@ -49,6 +49,12 @@ export default function UserSidebarLayout({ children }) {
   const notifRef = useRef(null);
 
   useEffect(() => {
+    if (!loading && !user && typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
+  }, [user, loading]);
+
+  useEffect(() => {
     const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
         setProfileDropdownOpen(false);
@@ -224,7 +230,7 @@ export default function UserSidebarLayout({ children }) {
                 </div>
                 {/* User Name */}
                 <h4 className="text-sm font-bold text-white mb-2 tracking-wide font-sans text-center">
-                  {user?.full_name?.trim() || user?.username || user?.email?.split('@')[0] || 'Investor'}
+                  {user?.full_name?.trim() || user?.username || user?.email}
                 </h4>
                 {/* Stacked Balance Layout */}
                 <div className="space-y-0.5">
@@ -493,7 +499,7 @@ export default function UserSidebarLayout({ children }) {
                 </div>
                 <div className="text-left hidden sm:block">
                   <div className="text-xs font-bold text-white leading-tight truncate max-w-[150px]">
-                    {user?.full_name?.trim() || user?.username || user?.email?.split('@')[0] || 'Investor'}
+                    {user?.full_name?.trim() || user?.username || user?.email}
                   </div>
                   <div className="text-[10px] text-slate-400 leading-tight truncate max-w-[150px]">
                     {user?.email || ''}
