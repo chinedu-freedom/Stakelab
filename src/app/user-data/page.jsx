@@ -255,9 +255,24 @@ export default function UserDataPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3.5 bg-gradient-to-r from-[#ff0044] via-[#fe500b] to-[#fe880b] hover:opacity-95 text-white font-bold text-sm uppercase tracking-wider rounded-lg shadow-lg shadow-red-500/20 transition-all font-righteous cursor-pointer"
+                className="w-full btn-stakelab py-3.5 rounded-lg text-white font-righteous text-sm tracking-wider uppercase font-bold transition-all shadow-lg shadow-red-500/20 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
               >
-                {submitting ? 'Submitting...' : 'Submit'}
+                {submitting ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-white" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <rect width="6" height="14" x="1" y="4" fill="currentColor">
+                      <animate id="SVG9ovaHbIP" fill="freeze" attributeName="opacity" begin="0;SVGa89dAd4w.end-0.25s" dur="0.75s" values="1;.2" />
+                    </rect>
+                    <rect width="6" height="14" x="9" y="4" fill="currentColor" opacity=".4">
+                      <animate fill="freeze" attributeName="opacity" begin="SVG9ovaHbIP.begin+0.15s" dur="0.75s" values="1;.2" />
+                    </rect>
+                    <rect width="6" height="14" x="17" y="4" fill="currentColor" opacity=".3">
+                      <animate id="SVGa89dAd4w" fill="freeze" attributeName="opacity" begin="SVG9ovaHbIP.begin+0.3s" dur="0.75s" values="1;.2" />
+                    </rect>
+                  </svg>
+                ) : (
+                  'Submit'
+                )}
               </button>
             </div>
           </form>

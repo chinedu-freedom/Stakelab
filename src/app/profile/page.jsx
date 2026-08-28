@@ -364,10 +364,18 @@ export default function MyProfilePage() {
                 className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#ff0044] to-[#fe780b] text-white text-xs font-bold uppercase tracking-wider hover:opacity-95 transition-all shadow-lg shadow-red-500/20 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {savingProfile ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Saving Profile...</span>
-                  </>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-white" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <rect width="6" height="14" x="1" y="4" fill="currentColor">
+                      <animate id="SVG9ovaHbIP" fill="freeze" attributeName="opacity" begin="0;SVGa89dAd4w.end-0.25s" dur="0.75s" values="1;.2" />
+                    </rect>
+                    <rect width="6" height="14" x="9" y="4" fill="currentColor" opacity=".4">
+                      <animate fill="freeze" attributeName="opacity" begin="SVG9ovaHbIP.begin+0.15s" dur="0.75s" values="1;.2" />
+                    </rect>
+                    <rect width="6" height="14" x="17" y="4" fill="currentColor" opacity=".3">
+                      <animate id="SVGa89dAd4w" fill="freeze" attributeName="opacity" begin="SVG9ovaHbIP.begin+0.3s" dur="0.75s" values="1;.2" />
+                    </rect>
+                  </svg>
                 ) : (
                   <>
                     <Check className="w-4 h-4" />
