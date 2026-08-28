@@ -87,7 +87,9 @@ export default function RegisterPage() {
       } else {
         const errMsg = res?.message || 'Failed to create account';
         if (errMsg.toLowerCase().includes('email')) {
-          setErrors({ email: errMsg });
+          setErrors({ email: 'User with this email already exists' });
+        } else {
+          toast.error(errMsg);
         }
       }
     } catch (err) {
