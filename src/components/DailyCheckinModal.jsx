@@ -167,7 +167,7 @@ export default function DailyCheckinModal() {
 
   if (!isOpen) return null;
 
-  const displayDay = statusData.claimedToday ? statusData.currentStreak - 1 || 1 : statusData.currentStreak;
+  const displayDay = statusData.claimedToday ? statusData.currentStreak || 1 : (statusData.currentStreak || 0) + 1;
   const rewardsList = statusData.rewards.length > 0 ? statusData.rewards : [
     { day: 1, amount: 0.1, status: 'available' },
     { day: 2, amount: 0.2, status: 'locked' },
