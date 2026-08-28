@@ -514,10 +514,10 @@ export default function UserSidebarLayout({ children }) {
               <button
                 type="button"
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center space-x-3 sm:bg-[#0c1a38] sm:hover:bg-[#12234a] sm:border sm:border-[#18294d] sm:rounded-full sm:pl-1.5 sm:pr-3 sm:py-1 cursor-pointer transition-all focus:outline-none select-none"
+                className="flex items-center space-x-3 p-1 sm:p-0 sm:bg-[#0c1a38] sm:hover:bg-[#12234a] sm:border sm:border-[#18294d] sm:rounded-full sm:pl-1.5 sm:pr-3 sm:py-1 cursor-pointer transition-all focus:outline-none select-none"
               >
-                <div className="w-9 h-9 sm:w-8 sm:h-8 rounded-full sm:bg-[#16274a] text-slate-200 flex items-center justify-center sm:border sm:border-[#233863] shrink-0">
-                  <User className="w-5 h-5 sm:w-4 sm:h-4 text-slate-200" />
+                <div className="sm:w-8 sm:h-8 sm:rounded-full sm:bg-[#16274a] text-slate-200 flex items-center justify-center sm:border sm:border-[#233863] shrink-0">
+                  <User className="w-6 h-6 sm:w-4 sm:h-4 text-slate-200" />
                 </div>
                 <div className="text-left hidden sm:block">
                   <div className="text-xs font-bold text-white leading-tight truncate max-w-[150px]">
