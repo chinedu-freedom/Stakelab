@@ -245,7 +245,7 @@ export default function UserSidebarLayout({ children }) {
                 <div className="space-y-0.5">
                   <div className="text-xs font-semibold text-slate-200 text-center">Staking Balance</div>
                   <div className="text-base font-extrabold text-white text-center font-sans tracking-tight">
-                    ${(user?.balance !== undefined && user?.balance !== null) ? Number(user.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+                    ${(user?.staked_balance !== undefined && user?.staked_balance !== null) ? Number(user.staked_balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                   </div>
                 </div>
               </div>
