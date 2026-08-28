@@ -266,9 +266,9 @@ export default function DailyCheckinModal() {
 }
 
 function RewardCard({ reward, currentStreak, claimedToday }) {
-  const isCurrentDay = reward.day === currentStreak;
-  const isClaimed = reward.day < currentStreak || (isCurrentDay && claimedToday);
-  const isAvailable = isCurrentDay && !claimedToday;
+  const activeDay = claimedToday ? currentStreak : currentStreak + 1;
+  const isClaimed = reward.day <= currentStreak;
+  const isAvailable = reward.day === activeDay && !claimedToday;
 
   return (
     <div
