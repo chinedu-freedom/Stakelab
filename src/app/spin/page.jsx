@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import UserSidebarLayout from '../../components/UserSidebarLayout';
 import { useAuth } from '../../context/AuthContext';
-import { Disc, Gift, History, Loader2, Sparkles, Trophy, HelpCircle, X } from 'lucide-react';
+import { Disc, Gift, History, Loader2, Sparkles, Trophy, HelpCircle, X, Volume2, VolumeX } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../lib/api';
 import HowToPlayModal from '../../components/HowToPlayModal';
@@ -21,6 +21,82 @@ export default function LuckySpinPage() {
   const [wheelRotation, setWheelRotation] = useState(0);
   const [resultModal, setResultModal] = useState(null);
   const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
+
+  // Toggleable Spin Sound Effects State & AudioContext
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const audioCtxRef = useRef(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('spin_sound_enabled');
+    if (stored !== null) {
+      setSoundEnabled(stored === 'true');
+    }
+  }, []);
+
+  const toggleSound = () => {
+    const nextVal = !soundEnabled;
+    setSoundEnabled(nextVal);
+    localStorage.setItem('spin_sound_enabled', String(nextVal));
+    toast.info(nextVal ? 'Spin sound turned ON' : 'Spin sound MUTED');
+  };
+
+  const playTickSound = () => {
+    if (!soundEnabled) return;
+    try {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(750, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.04);
+
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.04);
+    } catch (e) {
+      // Audio playback fallback
+    }
+  };
+
+  const playWinFanfare = () => {
+    if (!soundEnabled) return;
+    try {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      const notes = [523.25, 659.25, 783.99, 1046.5];
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.08);
+
+        gain.gain.setValueAtTime(0.2, ctx.currentTime + idx * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.08 + 0.25);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + idx * 0.08);
+        osc.stop(ctx.currentTime + idx * 0.08 + 0.25);
+      });
+    } catch (e) {
+      // Audio playback fallback
+    }
+  };
 
   const confettiCanvasRef = useRef(null);
   const confettiRef = useRef(null);
@@ -146,6 +222,17 @@ export default function LuckySpinPage() {
 
         setWheelRotation((prev) => prev + targetAngle);
 
+        // Sound Ticks Engine during 4s wheel rotation
+        let tickCount = 0;
+        const totalTicks = 24;
+        const tickInterval = setInterval(() => {
+          tickCount++;
+          playTickSound();
+          if (tickCount >= totalTicks) {
+            clearInterval(tickInterval);
+          }
+        }, 150);
+
         setTimeout(() => {
           setResultModal({
             isWin: res.data.isWin,
@@ -155,6 +242,7 @@ export default function LuckySpinPage() {
           });
 
           if (res.data.isWin) {
+            playWinFanfare();
             confettiRef.current?.launch(150);
           }
 
@@ -183,6 +271,30 @@ export default function LuckySpinPage() {
           <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
             Spin the lucky wheel to win instant cash rewards configured by the administration!
           </p>
+
+          {/* Top Control Badges: Sound Toggle & How to Play */}
+          <div className="absolute top-4 right-4 flex items-center gap-2 z-20">
+            <button
+              type="button"
+              onClick={toggleSound}
+              className={`p-2 rounded-full border transition-all cursor-pointer shadow-md ${
+                soundEnabled
+                  ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30'
+                  : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:bg-slate-800'
+              }`}
+              title={soundEnabled ? 'Spin sound is ON (Click to Mute)' : 'Spin sound is MUTED (Click to Turn ON)'}
+            >
+              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsHowToPlayOpen(true)}
+              className="p-2 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 transition-all cursor-pointer shadow-md"
+              title="How to Play"
+            >
+              <HelpCircle className="w-4 h-4" />
+            </button>
+          </div>
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5 w-full max-w-sm sm:max-w-none mx-auto">
             <span className="w-full sm:w-auto px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold whitespace-nowrap flex items-center justify-center shrink-0">
