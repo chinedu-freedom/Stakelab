@@ -14,6 +14,7 @@ export default function CreateStakingPage() {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [activeTier, setActiveTier] = useState('Flexible Tier');
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [selectedWallet, setSelectedWallet] = useState('main');
   const [stakeAmount, setStakeAmount] = useState('');
@@ -100,63 +101,87 @@ export default function CreateStakingPage() {
         toast.success(res.data.message || `Successfully staked $${amountNum} in ${selectedPlan.title}!`);
         setSelectedPlan(null);
         setStakeAmount('');
-        refreshUser();
+        if (refreshUser) refreshUser();
       } else {
-        toast.error(res.data?.message || 'Staking failed');
+        toast.error(res.data?.message || 'Staking failed.');
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to process stake. Please check your balance.');
+      toast.error(err.response?.data?.message || 'Staking transaction failed.');
     } finally {
       setSubmitting(false);
     }
   };
 
-  const amtNum = parseFloat(stakeAmount) || 0;
-  const returnRate = selectedPlan ? parseFloat(selectedPlan.daily_return_percent || selectedPlan.apy_percent || 0) : 0;
-  const durationDays = selectedPlan ? parseInt(selectedPlan.duration_days || 30) : 30;
-  const dailyProfitCalc = (amtNum * returnRate) / 100;
-  const totalReturnCalc = dailyProfitCalc * durationDays;
+  const filteredPlans = plans.filter((p) => {
+    if (!p.tier) return true;
+    return p.tier.toLowerCase() === activeTier.toLowerCase();
+  });
+
+  const displayPlans = filteredPlans.length > 0 ? filteredPlans : plans;
+
+  // Stake Modal Live Calculation
+  const P = parseFloat(stakeAmount || 0);
+  const r = selectedPlan ? parseFloat(selectedPlan.daily_return_percent || 0) / 100 : 0;
+  const days = selectedPlan ? parseInt(selectedPlan.duration_days || 1) : 1;
+  const isCapitalReturn = selectedPlan ? selectedPlan.capital_return !== false : true;
+
+  const dailyProfit = P * r;
+  const totalProfit = dailyProfit * days;
+  const capitalBack = isCapitalReturn ? P : 0;
+  const estimatedTotalReturn = totalProfit + capitalBack;
 
   return (
     <UserSidebarLayout>
-      <div className="space-y-6 max-w-7xl mx-auto pb-12">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="max-w-7xl mx-auto space-y-8 font-sans pb-16">
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#0a1835] border border-[#182848] rounded-2xl p-6 shadow-xl">
           <div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-white font-righteous tracking-wide">
-              Staking & Investment Pools
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-righteous tracking-wide flex items-center gap-2">
+              Staking <span className="text-gradient-stakelab">Pools</span>
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
-              Select a pool to earn guaranteed daily yield synced directly with your wallet.
+            <p className="text-xs sm:text-sm text-slate-400 mt-1 font-sans">
+              Choose your preferred staking tier and lockup period to generate high daily crypto yield.
             </p>
           </div>
-
-          <Link
-            href="/staking"
-            className="border border-[#182848] text-slate-300 hover:text-white font-bold px-4 py-2 rounded-xl text-xs bg-[#0a1835] hover:bg-[#12244d] transition-all cursor-pointer shadow-md"
-          >
-            My Active Investments →
-          </Link>
         </div>
 
+        {/* Tier Selector Tabs (Matching User Screenshot) */}
+        <div className="flex items-center gap-3">
+          {['Flexible Tier', 'Dynamic Tier'].map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTier(tab)}
+              aria-pressed={activeTier === tab}
+              className={`px-6 py-2.5 rounded-full font-righteous text-xs uppercase tracking-wider font-bold transition-all shadow-md cursor-pointer select-none ${
+                activeTier === tab
+                  ? 'bg-gradient-to-r from-[#fe500b] to-[#ff0044] text-white shadow-red-500/30 scale-105'
+                  : 'bg-[#0a1835] hover:bg-[#12244a] border border-[#182848] text-slate-400 hover:text-white'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* Staking Plan Cards Grid */}
         {loading ? (
-          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-16 text-center text-slate-400 font-sans">
-            Loading active pools from server...
-          </div>
-        ) : plans.length === 0 ? (
-          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-16 text-center text-slate-400 font-sans">
-            No active staking pools currently available.
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-96 bg-[#0a1835] border border-[#182848] rounded-3xl animate-pulse" />
+            ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch pt-4">
-            {plans.map((plan) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {displayPlans.map((plan) => {
+              const days = plan.duration_days || 30;
               const minAmt = parseFloat(plan.min_amount || 0);
               const maxAmt = parseFloat(plan.max_amount || 0);
-              const ratePercent = parseFloat(plan.daily_return_percent || 0);
-              const days = plan.duration_days || 30;
+              const dailyReturn = parseFloat(plan.daily_return_percent || 0);
 
               return (
                 <div key={plan.id} className="relative group flex flex-col">
-                  {/* Outer Gradient Border Wrap with Pointed Shield Bottom */}
+                  {/* Outer Shield Border Wrap */}
                   <div
                     style={{
                       clipPath: 'polygon(0 0, 100% 0, 100% 92%, 50% 100%, 0 92%)',
@@ -171,12 +196,12 @@ export default function CreateStakingPage() {
                       className="w-full bg-[#0c1424] rounded-t-3xl pt-8 pb-16 px-6 sm:px-8 text-slate-100 flex-1 flex flex-col justify-between relative"
                     >
                       <div>
-                        {/* Top Header Plan Title */}
+                        {/* Title */}
                         <h3 className="font-righteous text-3xl sm:text-4xl font-extrabold text-white text-center tracking-wide uppercase">
                           {plan.title}
                         </h3>
 
-                        {/* Overhanging Gradient Ribbon Banner (Middle Header) */}
+                        {/* Ribbon Banner */}
                         <div className="relative my-6 -mx-6 sm:-mx-8">
                           <div className="bg-gradient-to-r from-[#fe500b] via-[#ff0044] to-[#fe880b] text-white font-righteous text-lg sm:text-xl font-bold py-3 text-center shadow-lg tracking-wide uppercase">
                             Stake for {days} Days
@@ -185,36 +210,38 @@ export default function CreateStakingPage() {
                           <div className="absolute -right-2 -bottom-2 w-0 h-0 border-t-[8px] border-t-[#a3002b] border-r-[8px] border-r-transparent" />
                         </div>
 
-                        {/* Pool Details Table */}
-                        <div className="space-y-4 pt-2">
-                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
+                        {/* Features List */}
+                        <div className="space-y-4 my-8 font-sans">
+                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
                             <span className="text-slate-400 font-semibold">Daily Return</span>
-                            <span className="font-extrabold text-[#fe780b] text-lg font-righteous">{ratePercent}%</span>
+                            <span className="font-bold text-emerald-400 font-mono text-lg">{dailyReturn.toFixed(1)}%</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
+                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
                             <span className="text-slate-400 font-semibold">Minimum Deposit</span>
-                            <span className="font-bold text-white">${minAmt.toLocaleString()}</span>
+                            <span className="font-bold text-white font-mono">${minAmt.toLocaleString()}</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
+                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
                             <span className="text-slate-400 font-semibold">Maximum Deposit</span>
-                            <span className="font-bold text-white">${maxAmt.toLocaleString()}</span>
+                            <span className="font-bold text-white font-mono">${maxAmt.toLocaleString()}</span>
                           </div>
 
-                          <div className="flex justify-between items-center text-sm sm:text-base pb-2.5 border-b border-[#18233c]">
-                            <span className="text-slate-400 font-semibold">Staking Duration</span>
-                            <span className="font-bold text-white">{days} Days</span>
+                          <div className="flex justify-between items-center text-sm sm:text-base border-b border-slate-800/80 pb-2.5">
+                            <span className="text-slate-400 font-semibold">Capital Return</span>
+                            <span className={`font-bold ${plan.capital_return !== false ? 'text-emerald-400' : 'text-slate-500'}`}>
+                              {plan.capital_return !== false ? 'YES' : 'NO'}
+                            </span>
                           </div>
                         </div>
                       </div>
 
-                      {/* STAKE Button */}
-                      <div className="pt-8 text-center">
+                      {/* Stake Button */}
+                      <div className="pt-4 text-center">
                         <button
                           type="button"
                           onClick={() => handleOpenModal(plan)}
-                          className="btn-stakelab w-full max-w-[200px] mx-auto py-3.5 text-center text-xs font-bold block shadow-lg shadow-red-500/30 rounded-md font-righteous uppercase tracking-wider hover:scale-105 transition-transform cursor-pointer"
+                          className="w-full btn-stakelab py-4 rounded-xl text-white font-sans text-base sm:text-lg tracking-wider uppercase font-extrabold transition-all shadow-xl shadow-red-500/25 cursor-pointer"
                         >
                           STAKE
                         </button>
@@ -227,16 +254,11 @@ export default function CreateStakingPage() {
           </div>
         )}
 
+        {/* Stake Now Modal */}
         {selectedPlan && (
-          <div
-            onClick={() => setSelectedPlan(null)}
-            className="fixed inset-0 min-h-screen w-full bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
-          >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="bg-[#0b162c] border border-[#1a2846] p-6 sm:p-7 rounded-2xl max-w-md w-full space-y-5 relative shadow-2xl my-auto text-slate-100"
-            >
-              <div className="flex justify-between items-center pb-3 border-b border-[#182848]">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200 font-sans">
+            <div className="bg-[#09152b] border border-[#1b2b4d] rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-5">
+              <div className="flex justify-between items-start border-b border-[#182848] pb-4">
                 <div>
                   <h3 className="text-lg font-bold text-white font-righteous">
                     {selectedPlan.title}
@@ -298,6 +320,33 @@ export default function CreateStakingPage() {
                       placeholder={`${selectedPlan.min_amount}`}
                       className="w-full bg-[#071020] border border-[#1b2b4d] rounded-xl py-2.5 pl-8 pr-4 text-white font-bold text-sm placeholder-slate-600 focus:outline-none focus:border-[#ff0044] transition-all"
                     />
+                  </div>
+                </div>
+
+                {/* Dynamic Return Calculation Summary Box */}
+                <div className="bg-[#050c18] border border-[#1b2b4d] rounded-2xl p-4 space-y-2.5 text-xs font-sans">
+                  <div className="flex items-center justify-between text-slate-400">
+                    <span>Daily Return ({parseFloat(selectedPlan.daily_return_percent || 0).toFixed(1)}%):</span>
+                    <span className="font-bold text-white font-mono">${dailyProfit.toFixed(2)} / day</span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-slate-400">
+                    <span>Total Net Profit ({days} Days):</span>
+                    <span className="font-bold text-emerald-400 font-mono">+${totalProfit.toFixed(2)}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-slate-400">
+                    <span>Capital Return at Maturity:</span>
+                    <span className={`font-bold font-mono ${isCapitalReturn ? 'text-blue-400' : 'text-slate-500'}`}>
+                      {isCapitalReturn ? `+$${P.toFixed(2)} (100% Back)` : 'None (Profit Only)'}
+                    </span>
+                  </div>
+
+                  <div className="pt-2 border-t border-[#182848] flex items-center justify-between font-bold">
+                    <span className="text-white text-xs uppercase tracking-wider font-righteous">Estimated Total Return:</span>
+                    <span className="text-base text-gradient-stakelab font-righteous tracking-wide font-black">
+                      ${estimatedTotalReturn.toFixed(2)} USD
+                    </span>
                   </div>
                 </div>
 
