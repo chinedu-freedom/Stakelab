@@ -287,153 +287,164 @@ export default function AccountSettingsPage() {
           </div>
         </div>
 
-        {/* Security & Password Card */}
-        <div className="bg-[#0a1835] border border-[#182848] rounded-3xl overflow-hidden shadow-2xl">
-          <div className="bg-[#0e1d3e] border-b border-[#182848] px-6 py-4">
-            <h2 className="text-base font-extrabold text-white font-righteous flex items-center gap-2">
-              <Lock className="w-4 h-4 text-[#ff0044]" /> Security & Password
-            </h2>
-            <p className="text-xs text-slate-400 mt-0.5">Update and protect your account security password.</p>
+        {/* Security & Support Grid (Side by Side in 1 Row) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+          {/* Security & Password Card */}
+          <div className="bg-[#0a1835] border border-[#182848] rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between">
+            <div>
+              <div className="bg-[#0e1d3e] border-b border-[#182848] px-6 py-4">
+                <h2 className="text-base font-extrabold text-white font-righteous flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-[#ff0044]" /> Security & Password
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">Update and protect your account security password.</p>
+              </div>
+
+              <form onSubmit={handleChangePassword} className="p-6 sm:p-8 space-y-4">
+                {/* Current Password */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                    Current Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showCurrentPassword ? 'text' : 'password'}
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl pl-4 pr-10 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
+                    >
+                      {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* New Password */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                    New Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showNewPassword ? 'text' : 'password'}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Min. 6 characters"
+                      className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl pl-4 pr-10 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
+                    >
+                      {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Confirm Password */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                    Confirm New Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl pl-4 pr-10 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Change Password Button */}
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={changingPassword || !currentPassword || !newPassword}
+                    className="w-full h-11 bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-90 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-red-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    {changingPassword ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                        <span>Updating Password...</span>
+                      </>
+                    ) : (
+                      <span>Update Password</span>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
 
-          <form onSubmit={handleChangePassword} className="p-6 sm:p-8 space-y-4 max-w-xl">
-            {/* Current Password */}
-            <div>
-              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                Current Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showCurrentPassword ? 'text' : 'password'}
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl pl-4 pr-10 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
-                >
-                  {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            {/* New Password */}
-            <div>
-              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                New Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showNewPassword ? 'text' : 'password'}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Min. 6 characters"
-                  className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl pl-4 pr-10 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
-                >
-                  {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Confirm Password */}
-            <div>
-              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                Confirm New Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl pl-4 pr-10 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
-                >
-                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Change Password Button */}
-            <div className="pt-2">
-              <button
-                type="submit"
-                disabled={changingPassword || !currentPassword || !newPassword}
-                className="px-8 h-11 bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-90 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-red-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                {changingPassword ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin text-white" />
-                    <span>Updating Password...</span>
-                  </>
-                ) : (
-                  <span>Update Password</span>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-
-        {/* Lower Section: Support, Help & Sign Out */}
-        <div className="w-full">
           {/* Support & Help Navigation Card */}
-          <div className="bg-[#0a1835] border border-[#182848] rounded-3xl overflow-hidden shadow-xl">
-            <div className="divide-y divide-[#182848]">
-              {/* Help Center */}
-              <Link
-                href="/support"
-                className="flex items-center justify-between p-4 text-xs font-bold text-slate-200 hover:bg-[#0e1d3e] transition-colors group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center text-blue-400">
-                    <HelpCircle className="w-4 h-4" />
-                  </div>
-                  <span className="uppercase tracking-wider">Help Center & Live Support</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
-              </Link>
+          <div className="bg-[#0a1835] border border-[#182848] rounded-3xl overflow-hidden shadow-xl flex flex-col justify-between">
+            <div>
+              <div className="bg-[#0e1d3e] border-b border-[#182848] px-6 py-4">
+                <h2 className="text-base font-extrabold text-white font-righteous flex items-center gap-2">
+                  <HelpCircle className="w-4 h-4 text-blue-400" /> Platform Navigation & Support
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">Quick access to support, information, and session logout.</p>
+              </div>
 
-              {/* About EverStake */}
-              <button
-                type="button"
-                onClick={() => setAboutModalOpen(true)}
-                className="w-full flex items-center justify-between p-4 text-xs font-bold text-slate-200 hover:bg-[#0e1d3e] transition-colors group text-left cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center text-amber-400">
-                    <Info className="w-4 h-4" />
+              <div className="divide-y divide-[#182848]">
+                {/* Help Center */}
+                <Link
+                  href="/support"
+                  className="flex items-center justify-between p-5 text-xs font-bold text-slate-200 hover:bg-[#0e1d3e] transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center text-blue-400">
+                      <HelpCircle className="w-4 h-4" />
+                    </div>
+                    <span className="uppercase tracking-wider">Help Center & Live Support</span>
                   </div>
-                  <span className="uppercase tracking-wider">About EverStake Platform</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
-              </button>
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                </Link>
 
-              {/* Sign Out Button */}
-              <button
-                type="button"
-                onClick={logout}
-                className="w-full flex items-center justify-between p-4 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors group cursor-pointer text-left"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-center text-red-400">
-                    <LogOut className="w-4 h-4" />
+                {/* About EverStake */}
+                <button
+                  type="button"
+                  onClick={() => setAboutModalOpen(true)}
+                  className="w-full flex items-center justify-between p-5 text-xs font-bold text-slate-200 hover:bg-[#0e1d3e] transition-colors group text-left cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center text-amber-400">
+                      <Info className="w-4 h-4" />
+                    </div>
+                    <span className="uppercase tracking-wider">About EverStake Platform</span>
                   </div>
-                  <span className="uppercase tracking-wider">Sign Out</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-red-400 group-hover:translate-x-1 transition-transform" />
-              </button>
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                </button>
+
+                {/* Sign Out Button */}
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="w-full flex items-center justify-between p-5 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors group cursor-pointer text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-center text-red-400">
+                      <LogOut className="w-4 h-4" />
+                    </div>
+                    <span className="uppercase tracking-wider">Sign Out</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-red-400 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
