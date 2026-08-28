@@ -54,9 +54,9 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email, password, remember = false) => {
     try {
-      const res = await api.post('/auth/login', { email, password });
+      const res = await api.post('/auth/login', { email, password, remember_me: Boolean(remember) });
       if (res.data.success) {
         localStorage.setItem('stakelab_token', res.data.token);
         document.cookie = `stakelab_token=${res.data.token}; path=/; max-age=604800; SameSite=Lax`;
