@@ -358,7 +358,7 @@ export default function CreateStakingPage() {
                 >
                   {submitting ? (
                     <span className="flex items-center justify-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin" /> Processing Stake
+                      Processing Stake... <Loader2 className="w-4 h-4 animate-spin" />
                     </span>
                   ) : (
                     'Stake Now'

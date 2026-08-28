@@ -177,7 +177,7 @@ export default function CreateTicketPage() {
               >
                 {submitting ? (
                   <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" /> Submitting
+                    Submitting... <Loader2 className="w-4 h-4 animate-spin" />
                   </span>
                 ) : (
                   '▶ Submit'

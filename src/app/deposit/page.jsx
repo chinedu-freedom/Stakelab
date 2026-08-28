@@ -281,7 +281,7 @@ export default function DepositPage() {
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> Processing...
+                    Processing... <Loader2 className="w-4 h-4 animate-spin" />
                   </>
                 ) : (
                   'Deposit Now →'

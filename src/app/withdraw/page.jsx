@@ -363,7 +363,7 @@ export default function WithdrawPage() {
               >
                 {submitting ? (
                   <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" /> Processing Request
+                    Processing Request... <Loader2 className="w-4 h-4 animate-spin" />
                   </span>
                 ) : (
                   'Confirm Withdrawal'
