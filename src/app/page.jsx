@@ -664,7 +664,7 @@ export default function LandingPage() {
                       </div>
 
                       {/* Stake Button */}
-                      <div className="pt-4 text-center">
+                      <div className="pt-2 text-center">
                         <Link
                           href="/staking/create"
                           className="w-full btn-stakelab py-4 rounded-xl text-white font-sans text-base sm:text-lg tracking-wider font-extrabold transition-all shadow-xl shadow-red-500/25 cursor-pointer block"

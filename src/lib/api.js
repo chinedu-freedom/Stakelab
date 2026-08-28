@@ -42,7 +42,6 @@ api.interceptors.response.use(
       document.cookie = 'sec-prd-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
 
       if (!isAuthPage) {
-        toast.error('Your session has expired. Please log in again.');
         window.location.href = '/login';
       }
     }
