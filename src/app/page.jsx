@@ -1709,19 +1709,19 @@ export default function LandingPage() {
               </div>
               <ul className="space-y-3 text-sm text-slate-200 pt-2">
                 <li>
-                  <a href="#" className="flex items-center gap-2 hover:text-[#ff0044] transition-colors">
+                  <Link href="/privacy-policy" className="flex items-center gap-2 hover:text-[#ff0044] transition-colors">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#ff0044] inline-block"></span> Privacy Policy
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="flex items-center gap-2 hover:text-[#ff0044] transition-colors">
+                  <Link href="/terms-of-service" className="flex items-center gap-2 hover:text-[#ff0044] transition-colors">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#ff0044] inline-block"></span> Terms of Service
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="flex items-center gap-2 hover:text-[#ff0044] transition-colors">
+                  <Link href="/staking-policy" className="flex items-center gap-2 hover:text-[#ff0044] transition-colors">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#ff0044] inline-block"></span> Staking Policy
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>

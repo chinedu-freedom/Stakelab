@@ -249,9 +249,9 @@ export default function RegisterPage() {
                   /> 
                   <span className="text-slate-200">
                     I agree with{' '}
-                    <span className="text-[#ff0044] font-bold hover:underline">Privacy Policy</span> |{' '}
-                    <span className="text-[#ff0044] font-bold hover:underline">Terms of Service</span> |{' '}
-                    <span className="text-[#ff0044] font-bold hover:underline">Staking Policy</span>
+                    <Link href="/privacy-policy" target="_blank" className="text-[#ff0044] font-bold hover:underline">Privacy Policy</Link> |{' '}
+                    <Link href="/terms-of-service" target="_blank" className="text-[#ff0044] font-bold hover:underline">Terms of Service</Link> |{' '}
+                    <Link href="/staking-policy" target="_blank" className="text-[#ff0044] font-bold hover:underline">Staking Policy</Link>
                   </span>
                 </label>
                 {errors.terms && (
