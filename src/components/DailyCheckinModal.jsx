@@ -154,6 +154,9 @@ export default function DailyCheckinModal() {
         confettiRef.current?.launch(140);
         await fetchStatus();
         if (refreshUser) refreshUser();
+        setTimeout(() => {
+          setIsOpen(false);
+        }, 1200);
       }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to claim daily reward.');
