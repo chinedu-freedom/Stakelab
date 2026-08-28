@@ -40,7 +40,12 @@ export default function SearchableCountrySelect({ value, onChange, className = '
         className="w-full h-11 bg-[#06122b] border border-[#14264a] hover:border-[#243f75] text-white rounded-lg px-3.5 text-xs font-medium flex items-center justify-between transition-all outline-none"
       >
         <span className="flex items-center gap-2 truncate">
-          <span className="text-sm">{selectedCountry.flag || '🏳️'}</span>
+          <img
+            src={`https://flagcdn.com/w40/${(selectedCountry?.code || 'us').toLowerCase()}.png`}
+            alt={selectedCountry?.name || 'Country'}
+            className="w-5 h-3.5 object-cover rounded-sm shrink-0 border border-slate-700/60"
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
           <span className="truncate text-slate-200">{selectedCountry.name}</span>
           <span className="text-slate-400 font-mono text-[11px]">({selectedCountry.dialCode})</span>
         </span>
@@ -82,7 +87,12 @@ export default function SearchableCountrySelect({ value, onChange, className = '
                   }`}
                 >
                   <span className="flex items-center gap-2 truncate">
-                    <span className="text-sm">{c.flag || '🏳️'}</span>
+                    <img
+                      src={`https://flagcdn.com/w40/${(c.code || 'us').toLowerCase()}.png`}
+                      alt={c.name}
+                      className="w-5 h-3.5 object-cover rounded-sm shrink-0 border border-slate-700/60"
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
                     <span className="truncate">{c.name}</span>
                   </span>
                   <span className="text-slate-400 font-mono text-[11px] ml-2 shrink-0">{c.dialCode}</span>

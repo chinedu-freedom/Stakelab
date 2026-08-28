@@ -282,7 +282,11 @@ export default function MyProfilePage() {
                     <SelectTrigger className="w-full bg-[#061025] border border-[#182848] text-white rounded-xl h-10 px-4 text-xs font-medium focus:ring-0 focus:border-red-500">
                       <SelectValue placeholder="Select Country">
                         <span className="flex items-center gap-2">
-                          <span className="text-base">{selectedCountry.flag}</span>
+                          <img
+                            src={`https://flagcdn.com/w40/${(selectedCountry?.code || 'us').toLowerCase()}.png`}
+                            alt={selectedCountry?.name || 'Country'}
+                            className="w-4 h-3 object-cover rounded-sm shrink-0 border border-slate-700/60"
+                          />
                           <span>{selectedCountry.name}</span>
                         </span>
                       </SelectValue>
@@ -291,7 +295,11 @@ export default function MyProfilePage() {
                       {countries.map((c) => (
                         <SelectItem key={c.code} value={c.name} className="hover:bg-[#142852] focus:bg-[#142852] text-xs py-2">
                           <span className="flex items-center gap-2">
-                            <span className="text-base">{c.flag}</span>
+                            <img
+                              src={`https://flagcdn.com/w40/${(c.code || 'us').toLowerCase()}.png`}
+                              alt={c.name}
+                              className="w-4 h-3 object-cover rounded-sm shrink-0 border border-slate-700/60"
+                            />
                             <span>{c.name}</span>
                           </span>
                         </SelectItem>
