@@ -114,8 +114,8 @@ export default function AccountSettingsPage() {
           </p>
         </div>
 
-        {/* 5 Balances & Account Stats Grid (1 Card Per Full Line on Mobile, 5-Cols on Desktop) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+        {/* 5 Balances & Account Stats Grid (1 Card Per Line on Mobile, 4 Cards Per Row on Big Screens) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* 1. Staking Balance Card */}
           <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow-xl hover:border-emerald-500/30 transition-all">
             <div className="flex items-center space-x-2.5">
@@ -126,7 +126,7 @@ export default function AccountSettingsPage() {
             </div>
 
             <div className="flex items-center justify-between gap-2 pt-1">
-              <div className="text-lg sm:text-xl lg:text-2xl font-extrabold text-white font-righteous tracking-tight">
+              <div className="text-base sm:text-lg lg:text-xl font-extrabold text-white font-righteous tracking-tight">
                 {showStakingBalance ? `$${parseFloat(user?.staked_balance || 0).toFixed(2)}` : '••••••'}
               </div>
 
@@ -134,7 +134,7 @@ export default function AccountSettingsPage() {
                 <button
                   type="button"
                   onClick={() => setShowStakingBalance(!showStakingBalance)}
-                  className="w-8 h-8 rounded-full bg-[#122449] border border-[#1d366a] hover:bg-[#1b3469] flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
+                  className="w-7 h-7 rounded-full bg-[#122449] border border-[#1d366a] hover:bg-[#1b3469] flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
                   title={showStakingBalance ? 'Hide Balance' : 'Show Balance'}
                 >
                   {showStakingBalance ? <Eye className="w-3.5 h-3.5 text-slate-300" /> : <EyeOff className="w-3.5 h-3.5 text-slate-400" />}
@@ -142,7 +142,7 @@ export default function AccountSettingsPage() {
 
                 <Link
                   href="/deposit"
-                  className="bg-white hover:bg-slate-100 text-slate-950 font-black px-3.5 py-1.5 text-xs rounded-full shadow-lg border border-white transition-all transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center tracking-wide"
+                  className="bg-white hover:bg-slate-100 text-slate-950 font-black px-3 py-1 text-xs rounded-full shadow-lg border border-white transition-all transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center tracking-wide"
                 >
                   Deposit
                 </Link>
@@ -160,7 +160,7 @@ export default function AccountSettingsPage() {
             </div>
 
             <div className="flex items-center justify-between gap-2 pt-1">
-              <div className="text-lg sm:text-xl lg:text-2xl font-extrabold text-white font-righteous tracking-tight">
+              <div className="text-base sm:text-lg lg:text-xl font-extrabold text-white font-righteous tracking-tight">
                 {showEarningBalance ? `$${parseFloat(user?.balance || 0).toFixed(2)}` : '••••••'}
               </div>
 
@@ -168,7 +168,7 @@ export default function AccountSettingsPage() {
                 <button
                   type="button"
                   onClick={() => setShowEarningBalance(!showEarningBalance)}
-                  className="w-8 h-8 rounded-full bg-[#122449] border border-[#1d366a] hover:bg-[#1b3469] flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
+                  className="w-7 h-7 rounded-full bg-[#122449] border border-[#1d366a] hover:bg-[#1b3469] flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
                   title={showEarningBalance ? 'Hide Balance' : 'Show Balance'}
                 >
                   {showEarningBalance ? <Eye className="w-3.5 h-3.5 text-slate-300" /> : <EyeOff className="w-3.5 h-3.5 text-slate-400" />}
@@ -176,7 +176,7 @@ export default function AccountSettingsPage() {
 
                 <Link
                   href="/withdraw"
-                  className="bg-white hover:bg-slate-100 text-slate-950 font-black px-3.5 py-1.5 text-xs rounded-full shadow-lg border border-white transition-all transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center tracking-wide"
+                  className="bg-white hover:bg-slate-100 text-slate-950 font-black px-3 py-1 text-xs rounded-full shadow-lg border border-white transition-all transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center tracking-wide"
                 >
                   Withdraw
                 </Link>
@@ -190,7 +190,7 @@ export default function AccountSettingsPage() {
               <span className="text-xs font-semibold text-slate-400">Total Deposit</span>
               <ArrowDownLeft className="w-4 h-4 text-blue-400" />
             </div>
-            <div className="text-lg sm:text-xl lg:text-2xl font-black text-white font-righteous">
+            <div className="text-lg sm:text-xl lg:text-xl font-black text-white font-righteous">
               ${parseFloat(user?.total_deposit || 0).toFixed(2)}
             </div>
           </div>
@@ -201,18 +201,18 @@ export default function AccountSettingsPage() {
               <span className="text-xs font-semibold text-slate-400">Total Withdraw</span>
               <ArrowUpRight className="w-4 h-4 text-amber-400" />
             </div>
-            <div className="text-lg sm:text-xl lg:text-2xl font-black text-white font-righteous">
+            <div className="text-lg sm:text-xl lg:text-xl font-black text-white font-righteous">
               ${parseFloat(user?.total_withdraw || 0).toFixed(2)}
             </div>
           </div>
 
           {/* 5. Team Members */}
-          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow-xl">
+          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow-xl sm:col-span-2 lg:col-span-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400">Team Members</span>
+              <span className="text-xs font-semibold text-slate-400">Team Members & Referrals</span>
               <Users className="w-4 h-4 text-purple-400" />
             </div>
-            <div className="text-lg sm:text-xl lg:text-2xl font-black text-white font-righteous">
+            <div className="text-lg sm:text-xl lg:text-xl font-black text-white font-righteous">
               {user?.referral_count || 0} Members
             </div>
           </div>
