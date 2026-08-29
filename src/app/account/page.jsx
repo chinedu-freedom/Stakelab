@@ -129,7 +129,7 @@ export default function AccountSettingsPage() {
               <Coins className="w-4 h-4 text-emerald-400" />
             </div>
             <div className="text-base sm:text-lg font-black text-white font-righteous mt-2">
-              {showBalances ? `$${parseFloat(user?.staking_balance || 0).toFixed(2)}` : '••••••'}
+              {showBalances ? `$${parseFloat(user?.staked_balance || 0).toFixed(2)}` : '••••••'}
             </div>
           </div>
 
