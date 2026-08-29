@@ -23,8 +23,14 @@ export default function TelegramModal({ isOpen, setIsOpen }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] w-full h-full min-h-screen flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn font-sans overflow-y-auto">
-      <div className="relative w-full max-w-sm bg-[#09152e] border border-[#1d335f] rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-5">
+    <div
+      onClick={() => setIsOpen(false)}
+      className="fixed inset-0 z-[100] w-full h-full min-h-screen flex items-center justify-center p-4 bg-black/80 backdrop-blur-md cursor-pointer animate-fadeIn font-sans overflow-y-auto"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-sm bg-[#09152e] border border-[#1d335f] rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-5 cursor-default"
+      >
         {/* Close Button */}
         <button
           onClick={() => setIsOpen(false)}

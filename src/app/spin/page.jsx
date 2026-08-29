@@ -425,8 +425,14 @@ export default function LuckySpinPage() {
 
         {/* Result Modal Dialog */}
         {resultModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn font-sans">
-            <div className="relative w-full max-w-sm bg-[#09152e] border border-[#1d335f] rounded-3xl p-6 sm:p-7 shadow-2xl text-center space-y-4">
+          <div
+            onClick={() => setResultModal(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm cursor-pointer animate-fadeIn font-sans"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-sm bg-[#09152e] border border-[#1d335f] rounded-3xl p-6 sm:p-7 shadow-2xl text-center space-y-4 cursor-default"
+            >
               {/* Close X Button */}
               <button
                 onClick={() => setResultModal(null)}

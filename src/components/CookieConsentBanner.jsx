@@ -88,8 +88,14 @@ export default function CookieConsentBanner() {
 
       {/* Full Policy Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#0a1835] border border-[#1e3463] rounded-2xl max-w-2xl w-full max-h-[80vh] flex flex-col shadow-2xl overflow-hidden text-white font-sans">
+        <div
+          onClick={() => setShowModal(false)}
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#0a1835] border border-[#1e3463] rounded-2xl max-w-2xl w-full max-h-[80vh] flex flex-col shadow-2xl overflow-hidden text-white font-sans cursor-default"
+          >
             <div className="p-4 sm:p-5 border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <ShieldCheck className="w-5 h-5 text-[#fe780b]" />
