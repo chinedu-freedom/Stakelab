@@ -17,6 +17,8 @@ export default function VerifyEmailPage() {
   const [resending, setResending] = useState(false);
   const [countdown, setCountdown] = useState(0);
 
+  const [autoSent, setAutoSent] = useState(false);
+
   useEffect(() => {
     if (!loading && !user && typeof window !== 'undefined') {
       window.location.href = '/login';
@@ -25,6 +27,14 @@ export default function VerifyEmailPage() {
       window.location.href = '/dashboard';
     }
   }, [user, loading]);
+
+  // Automatically dispatch a fresh code when user arrives at /verify-email page
+  useEffect(() => {
+    if (!loading && user && !user.email_verified && !autoSent) {
+      setAutoSent(true);
+      handleResendCode();
+    }
+  }, [user, loading, autoSent]);
 
   useEffect(() => {
     let timer;
