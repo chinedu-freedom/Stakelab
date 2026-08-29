@@ -66,10 +66,10 @@ export default function UserDataPage() {
       toast.error('Username is required');
       return;
     }
-    if (!cleanMobile || cleanMobile.length !== 10) {
-      toast.error('Mobile number is required (10 digits)');
-      return;
-    }
+    // if (!cleanMobile || cleanMobile.length !== 9) {
+    //   toast.error('Mobile number is required (9 digits)');
+    //   return;
+    // }
     if (!cleanAddress) {
       toast.error('Address is required');
       return;
@@ -181,7 +181,7 @@ export default function UserDataPage() {
                       if (val.startsWith('0')) val = val.substring(1);
                       setFormData({ ...formData, mobile: val.slice(0, 10) });
                     }}
-                    placeholder="10-digit number"
+                    placeholder="Mobile number"
                     className="w-full h-11 bg-transparent border-0 outline-none px-4 text-xs sm:text-sm text-white font-sans"
                   />
                 </div>

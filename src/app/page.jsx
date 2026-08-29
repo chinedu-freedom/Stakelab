@@ -357,20 +357,63 @@ export default function LandingPage() {
 
   const faqs = [
     {
-      q: 'Why should I trust EverStake?',
-      a: 'At EverStake, we prioritize transparency, security, and customer satisfaction above all else. All stakers assets are backed by multi-sig cold storage and automated smart contract yield execution.',
+      q: 'Why Should I Trust EverStake?',
+      a: `EverStake is built around transparency, security, reliability, and a user-first approach. Our platform is designed to provide a structured and accessible environment for digital-asset staking, supported by secure infrastructure and established operational procedures.
+
+Where applicable, digital assets are protected through security controls such as multi-signature authorization, secure wallet infrastructure, and automated blockchain-based processes. We maintain a strong focus on protecting user assets, maintaining platform integrity, and providing clear information about our staking services and applicable terms.`,
     },
     {
-      q: 'How do I start staking?',
-      a: 'Deposit First, convert your USDT to any wallet currency. Select a staking plan from Silver, Golden, or Platinum. Then complete your stake instantly.',
+      q: 'How Do I Start Staking?',
+      a: `Getting started with EverStake is straightforward:
+
+1. Fund your account by making a supported cryptocurrency deposit.
+2. Select your preferred staking plan from the available options.
+3. Review the plan details, including the staking period, reward rate, and applicable conditions.
+4. Confirm your staking position to activate the selected plan.
+
+Once successfully activated, your staking position will operate according to the terms applicable to the selected plan.`,
     },
     {
-      q: 'What is our Mission and Vision?',
-      a: 'Our mission is to democratize access to financial opportunities and empower individuals to build wealth through innovative technologies and transparent investment solutions. Our vision is to revolutionize wealth accumulation worldwide.',
+      q: 'What Is EverStake’s Mission and Vision?',
+      a: `Our Mission
+
+Our mission is to make digital-asset staking more accessible by providing users with a structured, transparent, and technology-driven platform for participating in blockchain-based financial opportunities.
+
+Our Vision
+
+Our vision is to contribute to the evolution of digital finance by developing reliable staking infrastructure and creating accessible solutions that enable individuals and institutions to participate in the growing blockchain economy.`,
     },
     {
-      q: 'How do I deposit money?',
-      a: 'Start by logging in to your EverStake account. Navigate to the Deposit section, select your preferred crypto network (USDT BEP20/TRC20, BTC, ETH), enter deposit amount, and confirm transfer.',
+      q: 'How Do I Deposit Funds?',
+      a: `Depositing funds into your EverStake account is simple:
+
+1. Log in securely to your EverStake account.
+2. Navigate to the Deposit section.
+3. Select your preferred supported cryptocurrency and network.
+4. Copy the deposit address provided by EverStake.
+5. Send the desired amount from your external wallet or exchange.
+6. Wait for the required blockchain confirmations.
+7. Once the transaction has been successfully confirmed and processed, the funds will appear in your EverStake account.
+
+Supported networks and assets may include USDT (BEP20/TRC20), BTC, and ETH, subject to current platform availability.
+
+Always verify the asset, blockchain network, and receiving address before confirming a transaction. Sending an asset through an unsupported network or to an incorrect address may result in permanent loss of funds.`,
+    },
+    {
+      q: 'How Do I Withdraw My Funds?',
+      a: `Withdrawing funds from EverStake is designed to be simple and straightforward:
+
+1. Log in securely to your EverStake account.
+2. Navigate to the Withdraw section on your dashboard.
+3. Select the cryptocurrency and supported network you wish to use.
+4. Enter the destination wallet address and withdrawal amount.
+5. Carefully review the transaction details, including the asset, network, wallet address, and applicable fees.
+6. Confirm your withdrawal request and complete any required security verification.
+7. Once approved and processed, the funds will be sent to the wallet address you provided.
+
+Withdrawal processing times may vary depending on blockchain network conditions, required confirmations, security checks, and the applicable asset.
+
+Important: Always verify that the destination wallet address and selected network are correct before confirming your withdrawal. Cryptocurrency transactions may be irreversible, and EverStake may be unable to recover assets sent to an incorrect or unsupported address.`,
     },
   ];
 
@@ -1526,7 +1569,7 @@ export default function LandingPage() {
                   </button>
 
                   {isOpen && (
-                    <div className="px-6 pb-6 text-slate-300 text-sm border-t border-[#1c243f]/80 pt-4 leading-relaxed bg-[#0f1526]/50">
+                    <div className="px-6 pb-6 text-slate-300 text-sm border-t border-[#1c243f]/80 pt-4 leading-relaxed bg-[#0f1526]/50 whitespace-pre-line space-y-2">
                       {faq.a}
                     </div>
                   )}

@@ -43,7 +43,7 @@ export default function SearchableCountrySelect({ value, onChange, className = '
           <img
             src={`https://flagcdn.com/w40/${(selectedCountry?.code || 'us').toLowerCase()}.png`}
             alt={selectedCountry?.name || 'Country'}
-            className="w-5 h-3.5 object-cover rounded-sm shrink-0 border border-slate-700/60"
+            className="w-4 h-4 aspect-square object-cover rounded-sm shrink-0 border border-slate-700/60"
             onError={(e) => { e.target.style.display = 'none'; }}
           />
           <span className="truncate text-slate-200">{selectedCountry.name}</span>
@@ -90,7 +90,7 @@ export default function SearchableCountrySelect({ value, onChange, className = '
                     <img
                       src={`https://flagcdn.com/w40/${(c.code || 'us').toLowerCase()}.png`}
                       alt={c.name}
-                      className="w-5 h-3.5 object-cover rounded-sm shrink-0 border border-slate-700/60"
+                      className="w-4 h-4 aspect-square object-cover rounded-sm shrink-0 border border-slate-700/60"
                       onError={(e) => { e.target.style.display = 'none'; }}
                     />
                     <span className="truncate">{c.name}</span>

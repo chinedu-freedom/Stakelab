@@ -342,7 +342,7 @@ export default function AboutUsPage() {
               href="/staking/create"
               className="px-8 py-3.5 rounded-full bg-white text-[#ff0044] hover:bg-slate-100 font-extrabold text-xs uppercase tracking-wider shadow-xl transition-transform active:scale-95 flex items-center gap-2"
             >
-              <span>Explore Mining Plans</span>
+              <span>EXPLORE STAKING PLANS</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 

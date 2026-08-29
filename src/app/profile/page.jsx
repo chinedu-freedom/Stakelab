@@ -296,7 +296,7 @@ export default function MyProfilePage() {
                           <img
                             src={`https://flagcdn.com/w40/${(selectedCountry?.code || 'us').toLowerCase()}.png`}
                             alt={selectedCountry?.name || 'Country'}
-                            className="w-4 h-3 object-cover rounded-sm shrink-0 border border-slate-700/60"
+                            className="w-4 h-4 aspect-square object-cover rounded-sm shrink-0 border border-slate-700/60"
                           />
                           <span>{selectedCountry.name}</span>
                         </span>
@@ -309,7 +309,7 @@ export default function MyProfilePage() {
                             <img
                               src={`https://flagcdn.com/w40/${(c.code || 'us').toLowerCase()}.png`}
                               alt={c.name}
-                              className="w-4 h-3 object-cover rounded-sm shrink-0 border border-slate-700/60"
+                              className="w-4 h-4 aspect-square object-cover rounded-sm shrink-0 border border-slate-700/60"
                             />
                             <span>{c.name}</span>
                           </span>

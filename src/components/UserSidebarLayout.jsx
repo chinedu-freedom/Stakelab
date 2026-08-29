@@ -143,6 +143,7 @@ export default function UserSidebarLayout({ children }) {
     },
     { label: 'Transaction', path: '/transactions', icon: History },
     { label: 'Account Data', path: '/account', icon: Key },
+    { label: 'Security & Password', path: '/change-password', icon: ShieldCheck },
     ...(features.dailyCheckin ? [{ label: 'Daily Check-in', action: 'daily-checkin', icon: CalendarCheck }] : []),
     { label: 'My Profile', path: '/profile', icon: User },
     { label: 'Referrals', path: '/referrals', icon: Users },

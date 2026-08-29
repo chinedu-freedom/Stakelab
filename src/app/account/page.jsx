@@ -18,6 +18,9 @@ import {
   Coins,
   ArrowDownLeft,
   ArrowUpRight,
+  ArrowDown,
+  ArrowUp,
+  Shield,
   Users,
   X,
   RotateCcw,
@@ -32,14 +35,17 @@ import {
   MessageCircle,
   Info,
   Lock,
+  Smartphone,
+  TrendingUp,
 } from 'lucide-react';
 
 export default function AccountSettingsPage() {
   const router = useRouter();
   const { user, refreshUser, logout } = useAuth();
 
-  // --- Balances Eye Toggle State ---
-  const [showBalances, setShowBalances] = useState(true);
+  // --- Balances Eye Toggle States ---
+  const [showStakingBalance, setShowStakingBalance] = useState(true);
+  const [showEarningBalance, setShowEarningBalance] = useState(true);
 
   // --- Password Form State ---
   const [currentPassword, setCurrentPassword] = useState('');
@@ -99,80 +105,114 @@ export default function AccountSettingsPage() {
     <UserSidebarLayout>
       <div className="max-w-6xl mx-auto space-y-6 font-sans animate-in fade-in duration-300 pb-16">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-righteous tracking-wide">
-              Account Settings
-            </h1>
-            <p className="text-slate-400 text-xs sm:text-sm mt-1">
-              Manage your security, balances, quick shortcuts, and platform preferences.
-            </p>
-          </div>
-
-          {/* Eye Toggle All Balances */}
-          <button
-            type="button"
-            onClick={() => setShowBalances(!showBalances)}
-            className="self-start sm:self-auto px-4 py-2 rounded-xl bg-[#0a1835] border border-[#182848] text-slate-300 hover:text-white font-bold text-xs flex items-center gap-2 transition-all cursor-pointer shadow-md select-none"
-          >
-            {showBalances ? <Eye className="w-4 h-4 text-emerald-400" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
-            <span>{showBalances ? 'Hide Balances' : 'Show Balances'}</span>
-          </button>
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-righteous tracking-wide">
+            Account Settings
+          </h1>
+          <p className="text-slate-400 text-xs sm:text-sm mt-1">
+            Manage your security, balances, quick shortcuts, and platform preferences.
+          </p>
         </div>
 
-        {/* 5 Balances & Account Stats Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-          {/* 1. Staking Balance */}
-          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between shadow-lg">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-slate-400">Staking Balance</span>
-              <Coins className="w-4 h-4 text-emerald-400" />
+        {/* 5 Balances & Account Stats Grid (1 Card Per Full Line on Mobile, 5-Cols on Desktop) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+          {/* 1. Staking Balance Card */}
+          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow-xl hover:border-emerald-500/30 transition-all">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#0f2d29] border border-[#1b4d45] flex items-center justify-center text-emerald-400 shrink-0 shadow-inner">
+                <Coins className="w-4 h-4 text-emerald-400" />
+              </div>
+              <span className="text-xs text-slate-400 font-medium">Staking Balance</span>
             </div>
-            <div className="text-base sm:text-lg font-black text-white font-righteous mt-2">
-              {showBalances ? `$${parseFloat(user?.staked_balance || 0).toFixed(2)}` : '••••••'}
+
+            <div className="flex items-center justify-between gap-2 pt-1">
+              <div className="text-lg sm:text-xl lg:text-2xl font-extrabold text-white font-righteous tracking-tight">
+                {showStakingBalance ? `$${parseFloat(user?.staked_balance || 0).toFixed(2)}` : '••••••'}
+              </div>
+
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setShowStakingBalance(!showStakingBalance)}
+                  className="w-8 h-8 rounded-full bg-[#122449] border border-[#1d366a] hover:bg-[#1b3469] flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
+                  title={showStakingBalance ? 'Hide Balance' : 'Show Balance'}
+                >
+                  {showStakingBalance ? <Eye className="w-3.5 h-3.5 text-slate-300" /> : <EyeOff className="w-3.5 h-3.5 text-slate-400" />}
+                </button>
+
+                <Link
+                  href="/deposit"
+                  className="bg-white hover:bg-slate-100 text-slate-950 font-black px-3.5 py-1.5 text-xs rounded-full shadow-lg border border-white transition-all transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center tracking-wide"
+                >
+                  Deposit
+                </Link>
+              </div>
             </div>
           </div>
 
-          {/* 2. Earning Balance */}
-          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between shadow-lg">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-slate-400">Earning Balance</span>
-              <Wallet className="w-4 h-4 text-[#ff0044]" />
+          {/* 2. Earning Balance Card */}
+          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow-xl hover:border-amber-500/30 transition-all">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#242114] border border-[#4d4220] flex items-center justify-center text-amber-400 shrink-0 shadow-inner">
+                <TrendingUp className="w-4 h-4 text-amber-400" />
+              </div>
+              <span className="text-xs text-slate-400 font-medium">Earning Balance</span>
             </div>
-            <div className="text-base sm:text-lg font-black text-white font-righteous mt-2">
-              {showBalances ? `$${parseFloat(user?.balance || 0).toFixed(2)}` : '••••••'}
+
+            <div className="flex items-center justify-between gap-2 pt-1">
+              <div className="text-lg sm:text-xl lg:text-2xl font-extrabold text-white font-righteous tracking-tight">
+                {showEarningBalance ? `$${parseFloat(user?.balance || 0).toFixed(2)}` : '••••••'}
+              </div>
+
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setShowEarningBalance(!showEarningBalance)}
+                  className="w-8 h-8 rounded-full bg-[#122449] border border-[#1d366a] hover:bg-[#1b3469] flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
+                  title={showEarningBalance ? 'Hide Balance' : 'Show Balance'}
+                >
+                  {showEarningBalance ? <Eye className="w-3.5 h-3.5 text-slate-300" /> : <EyeOff className="w-3.5 h-3.5 text-slate-400" />}
+                </button>
+
+                <Link
+                  href="/withdraw"
+                  className="bg-white hover:bg-slate-100 text-slate-950 font-black px-3.5 py-1.5 text-xs rounded-full shadow-lg border border-white transition-all transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center tracking-wide"
+                >
+                  Withdraw
+                </Link>
+              </div>
             </div>
           </div>
 
           {/* 3. Total Deposit */}
-          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between shadow-lg">
+          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow-xl">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-slate-400">Total Deposit</span>
+              <span className="text-xs font-semibold text-slate-400">Total Deposit</span>
               <ArrowDownLeft className="w-4 h-4 text-blue-400" />
             </div>
-            <div className="text-base sm:text-lg font-black text-white font-righteous mt-2">
-              {showBalances ? `$${parseFloat(user?.total_deposit || 0).toFixed(2)}` : '••••••'}
+            <div className="text-lg sm:text-xl lg:text-2xl font-black text-white font-righteous">
+              ${parseFloat(user?.total_deposit || 0).toFixed(2)}
             </div>
           </div>
 
           {/* 4. Total Withdraw */}
-          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between shadow-lg">
+          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow-xl">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-slate-400">Total Withdraw</span>
+              <span className="text-xs font-semibold text-slate-400">Total Withdraw</span>
               <ArrowUpRight className="w-4 h-4 text-amber-400" />
             </div>
-            <div className="text-base sm:text-lg font-black text-white font-righteous mt-2">
-              {showBalances ? `$${parseFloat(user?.total_withdraw || 0).toFixed(2)}` : '••••••'}
+            <div className="text-lg sm:text-xl lg:text-2xl font-black text-white font-righteous">
+              ${parseFloat(user?.total_withdraw || 0).toFixed(2)}
             </div>
           </div>
 
-          {/* 5. Total Members / Referrals */}
-          <div className="col-span-2 sm:col-span-1 bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between shadow-lg">
+          {/* 5. Team Members */}
+          <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow-xl">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-slate-400">Team Members</span>
+              <span className="text-xs font-semibold text-slate-400">Team Members</span>
               <Users className="w-4 h-4 text-purple-400" />
             </div>
-            <div className="text-base sm:text-lg font-black text-white font-righteous mt-2">
+            <div className="text-lg sm:text-xl lg:text-2xl font-black text-white font-righteous">
               {user?.referral_count || 0} Members
             </div>
           </div>
@@ -186,13 +226,13 @@ export default function AccountSettingsPage() {
                 label: 'Deposit',
                 link: '/deposit',
                 bgColor: 'bg-gradient-to-tr from-amber-500 to-yellow-400 shadow-amber-500/20',
-                icon: Wallet,
+                icon: ArrowDown,
               },
               {
-                label: 'Withdraw',
+                label: 'Withdrawal',
                 link: '/withdraw',
                 bgColor: 'bg-gradient-to-tr from-blue-600 to-indigo-500 shadow-blue-500/20',
-                icon: RotateCcw,
+                icon: ArrowUp,
               },
               {
                 label: 'Stake',
@@ -260,7 +300,7 @@ export default function AccountSettingsPage() {
                   }
                 },
                 bgColor: 'bg-gradient-to-tr from-cyan-600 to-blue-500 shadow-cyan-500/20',
-                icon: Download,
+                icon: Smartphone,
               },
               {
                 label: 'Referrals',
@@ -315,164 +355,100 @@ export default function AccountSettingsPage() {
           </div>
         </div>
 
-        {/* Security & Support Grid (Side by Side in 1 Row) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-          {/* Security & Password Card */}
-          <div className="bg-[#0a1835] border border-[#182848] rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between">
-            <div>
-              <div className="bg-[#0e1d3e] border-b border-[#182848] px-6 py-4">
-                <h2 className="text-base font-extrabold text-white font-righteous flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-[#ff0044]" /> Security & Password
-                </h2>
-                <p className="text-xs text-slate-400 mt-0.5">Update and protect your account security password.</p>
-              </div>
-
-              <form onSubmit={handleChangePassword} className="p-6 sm:p-8 space-y-4">
-                {/* Current Password */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Current Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showCurrentPassword ? 'text' : 'password'}
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl pl-4 pr-10 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
-                    >
-                      {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                {/* New Password */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    New Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showNewPassword ? 'text' : 'password'}
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="Min. 6 characters"
-                      className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl pl-4 pr-10 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowNewPassword(!showNewPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
-                    >
-                      {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Confirm Password */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Confirm New Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full h-11 bg-[#060f22] border border-[#182848] rounded-xl pl-4 pr-10 text-white text-xs font-bold focus:outline-none focus:border-[#ff0044] transition-all"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
-                    >
-                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Change Password Button */}
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    disabled={changingPassword || !currentPassword || !newPassword}
-                    className="w-full h-11 bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-90 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-red-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    {changingPassword ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin text-white" />
-                        <span>Updating Password...</span>
-                      </>
-                    ) : (
-                      <span>Update Password</span>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
+        {/* Support & Help Navigation Card */}
+        <div className="bg-[#0a1835] border border-[#182848] rounded-3xl overflow-hidden shadow-xl">
+          <div className="bg-[#0e1d3e] border-b border-[#182848] px-6 py-4">
+            <h2 className="text-base font-extrabold text-white font-righteous flex items-center gap-2">
+              <HelpCircle className="w-4 h-4 text-blue-400" /> Navigation & Support
+            </h2>
+            <p className="text-xs text-slate-400 mt-0.5">Quick access to support, platform policies, information, and session logout.</p>
           </div>
 
-          {/* Support & Help Navigation Card */}
-          <div className="bg-[#0a1835] border border-[#182848] rounded-3xl overflow-hidden shadow-xl flex flex-col justify-between">
-            <div>
-              <div className="bg-[#0e1d3e] border-b border-[#182848] px-6 py-4">
-                <h2 className="text-base font-extrabold text-white font-righteous flex items-center gap-2">
-                  <HelpCircle className="w-4 h-4 text-blue-400" /> Navigation & Support
-                </h2>
-                <p className="text-xs text-slate-400 mt-0.5">Quick access to support, information, and session logout.</p>
+          <div className="divide-y divide-[#182848]">
+            {/* Help Center */}
+            <Link
+              href="/support"
+              className="flex items-center justify-between p-5 text-xs font-bold text-slate-200 hover:bg-[#0e1d3e] transition-colors group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center text-blue-400">
+                  <HelpCircle className="w-4 h-4" />
+                </div>
+                <span className="uppercase tracking-wider">Help Center & Live Support</span>
               </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+            </Link>
 
-              <div className="divide-y divide-[#182848]">
-                {/* Help Center */}
-                <Link
-                  href="/support"
-                  className="flex items-center justify-between p-5 text-xs font-bold text-slate-200 hover:bg-[#0e1d3e] transition-colors group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center text-blue-400">
-                      <HelpCircle className="w-4 h-4" />
-                    </div>
-                    <span className="uppercase tracking-wider">Help Center & Live Support</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                </Link>
-
-                {/* About EverStake */}
-                <Link
-                  href="/about"
-                  className="w-full flex items-center justify-between p-5 text-xs font-bold text-slate-200 hover:bg-[#0e1d3e] transition-colors group cursor-pointer"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center text-amber-400">
-                      <Info className="w-4 h-4" />
-                    </div>
-                    <span className="uppercase tracking-wider">About EverStake Platform</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                </Link>
-
-                {/* Sign Out Button */}
-                <button
-                  type="button"
-                  onClick={logout}
-                  className="w-full flex items-center justify-between p-5 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors group cursor-pointer text-left"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-center text-red-400">
-                      <LogOut className="w-4 h-4" />
-                    </div>
-                    <span className="uppercase tracking-wider">Sign Out</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-red-400 group-hover:translate-x-1 transition-transform" />
-                </button>
+            {/* About EverStake */}
+            <Link
+              href="/about"
+              className="w-full flex items-center justify-between p-5 text-xs font-bold text-slate-200 hover:bg-[#0e1d3e] transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center text-amber-400">
+                  <Info className="w-4 h-4" />
+                </div>
+                <span className="uppercase tracking-wider">About EverStake Platform</span>
               </div>
-            </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+            </Link>
+
+            {/* Privacy Policy */}
+            <Link
+              href="/privacy-policy"
+              className="w-full flex items-center justify-between p-5 text-xs font-bold text-slate-200 hover:bg-[#0e1d3e] transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-400">
+                  <Shield className="w-4 h-4" />
+                </div>
+                <span className="uppercase tracking-wider">Privacy Policy</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+            </Link>
+
+            {/* Terms of Service */}
+            <Link
+              href="/terms-of-service"
+              className="w-full flex items-center justify-between p-5 text-xs font-bold text-slate-200 hover:bg-[#0e1d3e] transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center justify-center text-purple-400">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <span className="uppercase tracking-wider">Terms of Service</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+            </Link>
+
+            {/* Staking Policy */}
+            <Link
+              href="/staking-policy"
+              className="w-full flex items-center justify-between p-5 text-xs font-bold text-slate-200 hover:bg-[#0e1d3e] transition-colors group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center justify-center text-rose-400">
+                  <Layers className="w-4 h-4" />
+                </div>
+                <span className="uppercase tracking-wider">Staking Policy</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+            </Link>
+
+            {/* Sign Out Button */}
+            <button
+              type="button"
+              onClick={logout}
+              className="w-full flex items-center justify-between p-5 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors group cursor-pointer text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-center text-red-400">
+                  <LogOut className="w-4 h-4" />
+                </div>
+                <span className="uppercase tracking-wider">Sign Out</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-red-400 group-hover:translate-x-1 transition-transform" />
+            </button>
           </div>
         </div>
       </div>
