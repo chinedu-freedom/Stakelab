@@ -115,7 +115,7 @@ export default function AccountSettingsPage() {
         </div>
 
         {/* 5 Balances & Account Stats Grid (1 Card Per Line on Mobile, 4 Cards Per Row on Big Screens) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
           {/* 1. Staking Balance Card */}
           <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow-xl hover:border-emerald-500/30 transition-all">
             <div className="flex items-center space-x-2.5">
