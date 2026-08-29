@@ -7,6 +7,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { Eye, EyeOff, Check, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
 import GoogleReCaptcha from '../../../components/GoogleReCaptcha';
+import PageLoader from '../../../components/PageLoader';
 
 function LoginContent() {
   const router = useRouter();
@@ -218,16 +219,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center bg-[#07193b]">
-          <div className="animate-pulse flex flex-col items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#ff0044]/20"></div>
-            <div className="h-4 w-32 bg-slate-700 rounded"></div>
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<PageLoader />}>
       <LoginContent />
     </Suspense>
   );
