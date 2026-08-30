@@ -322,9 +322,15 @@ export default function CreateStakingPage() {
                   </label>
                   <Select value={selectedWallet} onValueChange={setSelectedWallet}>
                     <SelectTrigger className="w-full bg-[#071020] border-[#1b2b4d] text-white rounded-xl h-11 text-xs focus:ring-1 focus:ring-[#ff0044]">
-                      <SelectValue placeholder="Select Source" />
+                      <SelectValue placeholder="Select Source">
+                        {selectedWallet === 'main'
+                          ? `Main Wallet ($${parseFloat(user?.balance || 0).toFixed(2)})`
+                          : selectedWallet === 'profit'
+                          ? `Profit Wallet ($${parseFloat(user?.total_earned || 0).toFixed(2)})`
+                          : 'Select Source'}
+                      </SelectValue>
                     </SelectTrigger>
-                    <SelectContent className="bg-[#0b162c] border-[#1c2e54] text-white" searchPlaceholder="Search source...">
+                    <SelectContent className="bg-[#0b162c] border-[#1c2e54] text-white" searchable={false}>
                       <SelectItem value="main" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">
                         Main Wallet (${parseFloat(user?.balance || 0).toFixed(2)})
                       </SelectItem>
