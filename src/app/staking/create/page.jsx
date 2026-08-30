@@ -251,7 +251,9 @@ export default function CreateStakingPage() {
 
                           <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
                             <span className="text-slate-400 font-semibold">Compounding rate</span>
-                            <span className="font-bold text-emerald-400 font-mono text-xs sm:text-lg">{dailyReturn.toFixed(1)}%</span>
+                            <span className={`font-bold font-mono text-xs sm:text-lg ${plan.is_compounding !== false ? 'text-emerald-400' : 'text-slate-500'}`}>
+                              {plan.is_compounding !== false ? `${dailyReturn.toFixed(1)}%` : 'Disabled'}
+                            </span>
                           </div>
 
                           <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
