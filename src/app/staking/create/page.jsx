@@ -352,12 +352,12 @@ export default function CreateStakingPage() {
 
                   <div className="flex items-center justify-between text-slate-400">
                     <span>Daily Profit Payout:</span>
-                    <span className="text-emerald-400 font-bold font-mono">+${dailyProfitUSD.toFixed(2)} / day</span>
+                    <span className="text-emerald-400 font-bold font-mono">+${dailyProfit.toFixed(2)} / day</span>
                   </div>
 
                   <div className="flex items-center justify-between text-slate-400">
                     <span>Total Net Profit ({selectedPlan.duration_days} days):</span>
-                    <span className="text-emerald-400 font-bold font-mono">+${totalProfitUSD.toFixed(2)}</span>
+                    <span className="text-emerald-400 font-bold font-mono">+${totalProfit.toFixed(2)}</span>
                   </div>
 
                   <div className="flex items-center justify-between text-slate-400">
