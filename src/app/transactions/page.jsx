@@ -12,7 +12,6 @@ export default function TransactionsPage() {
 
   // Live filter states
   const [typeFilter, setTypeFilter] = useState('All');
-  const [currencyFilter, setCurrencyFilter] = useState('All');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
@@ -39,22 +38,18 @@ export default function TransactionsPage() {
     // 1. Type filter
     if (typeFilter !== 'All') {
       if (typeFilter === 'Plus (+)') {
-        if (!['DEPOSIT', 'STAKE_PROFIT', 'CAPITAL_RETURN', 'REFERRAL_COMMISSION', 'ADMIN_CREDIT'].includes(tx.type)) {
+        if (parseFloat(tx.amount || 0) < 0 || ['WITHDRAWAL', 'STAKE', 'ADMIN_DEBIT'].includes(tx.type)) {
           return false;
         }
       } else if (typeFilter === 'Minus (-)') {
-        if (!['WITHDRAWAL', 'STAKE', 'ADMIN_DEBIT'].includes(tx.type)) {
+        if (parseFloat(tx.amount || 0) > 0 || !['WITHDRAWAL', 'STAKE', 'ADMIN_DEBIT'].includes(tx.type)) {
           return false;
         }
       } else if (tx.type !== typeFilter) {
         return false;
       }
     }
-    // 2. Currency filter
-    if (currencyFilter !== 'All' && tx.currency && tx.currency.toLowerCase() !== currencyFilter.toLowerCase()) {
-      return false;
-    }
-    // 3. Date range filter
+    // 2. Date range filter
     if (startDate) {
       const txDate = new Date(tx.created_at);
       const start = new Date(startDate);
@@ -73,7 +68,7 @@ export default function TransactionsPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [typeFilter, currencyFilter, startDate, endDate]);
+  }, [typeFilter, startDate, endDate]);
 
   const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage) || 1;
   const paginatedTransactions = filteredTransactions.slice(
@@ -89,13 +84,13 @@ export default function TransactionsPage() {
           Transactions History
         </h1>
 
-        {/* Filter Controls Bar */}
+        {/* Filter Controls Bar (Type Filter & Date Range Filter) */}
         <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-5 shadow-2xl space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* TYPE Dropdown */}
             <div className="space-y-1.5">
               <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider font-sans">
-                Type
+                Filter by Transaction Type
               </label>
               <Select value={typeFilter} onValueChange={setTypeFilter}>
                 <SelectTrigger className="w-full bg-[#060f22] border-[#182848] text-white rounded-xl h-11 text-xs focus:ring-1 focus:ring-[#ff0044]">
@@ -103,36 +98,21 @@ export default function TransactionsPage() {
                 </SelectTrigger>
                 <SelectContent className="bg-[#0b162c] border-[#1c2e54] text-white" searchPlaceholder="Search type...">
                   <SelectItem value="All" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">All Types</SelectItem>
-                  <SelectItem value="Plus (+)" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Plus (+) Credits Only</SelectItem>
-                  <SelectItem value="Minus (-)" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Minus (-) Debits Only</SelectItem>
-                  <SelectItem value="DEPOSIT" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Deposit</SelectItem>
-                  <SelectItem value="WITHDRAWAL" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Withdrawal</SelectItem>
-                  <SelectItem value="STAKE" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Staking Activation</SelectItem>
-                  <SelectItem value="STAKE_PROFIT" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Daily Yield / Profit</SelectItem>
-                  <SelectItem value="CAPITAL_RETURN" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Capital Return</SelectItem>
-                  <SelectItem value="REFERRAL_COMMISSION" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Referral Bonus</SelectItem>
-                  <SelectItem value="ADMIN_CREDIT" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Admin Credit</SelectItem>
-                  <SelectItem value="ADMIN_DEBIT" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Admin Debit</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* CURRENCY Dropdown */}
-            <div className="space-y-1.5">
-              <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider font-sans">
-                Currency
-              </label>
-              <Select value={currencyFilter} onValueChange={setCurrencyFilter}>
-                <SelectTrigger className="w-full bg-[#060f22] border-[#182848] text-white rounded-xl h-11 text-xs focus:ring-1 focus:ring-[#ff0044]">
-                  <SelectValue placeholder="Select currency" />
-                </SelectTrigger>
-                <SelectContent className="bg-[#0b162c] border-[#1c2e54] text-white" searchPlaceholder="Search currency...">
-                  <SelectItem value="All" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">All Currencies</SelectItem>
-                  <SelectItem value="USDT" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">USDT</SelectItem>
-                  <SelectItem value="BTC" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">BTC</SelectItem>
-                  <SelectItem value="ETH" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">ETH</SelectItem>
-                  <SelectItem value="TRX" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">TRX</SelectItem>
-                  <SelectItem value="SOL" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">SOL</SelectItem>
+                  <SelectItem value="Plus (+)" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2 font-bold text-emerald-400">Plus (+) Credits Only</SelectItem>
+                  <SelectItem value="Minus (-)" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2 font-bold text-red-400">Minus (-) Debits Only</SelectItem>
+                  <SelectItem value="SPIN_WIN" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">SPIN_WIN (Spin Wheel Reward)</SelectItem>
+                  <SelectItem value="DAILY_CHECKIN" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">DAILY_CHECKIN (Daily Check-in)</SelectItem>
+                  <SelectItem value="GIFT_BONUS" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">GIFT_BONUS (Gift Voucher)</SelectItem>
+                  <SelectItem value="TASK_REWARD" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">TASK_REWARD (Task Reward)</SelectItem>
+                  <SelectItem value="TREASURE_BOX" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">TREASURE_BOX (Treasure Reward)</SelectItem>
+                  <SelectItem value="DEPOSIT" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">DEPOSIT (Deposit)</SelectItem>
+                  <SelectItem value="WITHDRAWAL" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">WITHDRAWAL (Withdrawal)</SelectItem>
+                  <SelectItem value="STAKE" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">STAKE (Staking Activation)</SelectItem>
+                  <SelectItem value="STAKE_PROFIT" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">STAKE_PROFIT (Daily Profit)</SelectItem>
+                  <SelectItem value="CAPITAL_RETURN" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">CAPITAL_RETURN (Capital Return)</SelectItem>
+                  <SelectItem value="REFERRAL_COMMISSION" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">REFERRAL_COMMISSION (Referral Bonus)</SelectItem>
+                  <SelectItem value="ADMIN_CREDIT" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">ADMIN_CREDIT (Admin Credit)</SelectItem>
+                  <SelectItem value="ADMIN_DEBIT" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">ADMIN_DEBIT (Admin Debit)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
