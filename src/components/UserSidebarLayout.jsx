@@ -455,7 +455,7 @@ export default function UserSidebarLayout({ children }) {
                             >
                               <div className="font-bold text-white truncate">#{t.ticket_code} - {t.subject}</div>
                               <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
-                                <span>{new Date(t.updated_at).toLocaleDateString()}</span>
+                                <span>{new Date(t.updated_at).toLocaleString()}</span>
                                 <span className="text-emerald-400 font-semibold uppercase">Replied</span>
                               </div>
                             </Link>
@@ -481,7 +481,7 @@ export default function UserSidebarLayout({ children }) {
                             >
                               <div className="font-bold text-emerald-400">+${parseFloat(d.amount).toFixed(2)} USDT</div>
                               <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
-                                <span>{new Date(d.created_at).toLocaleDateString()}</span>
+                                <span>{new Date(d.created_at).toLocaleString()}</span>
                                 <span className={`font-semibold uppercase ${d.status === 'APPROVED' ? 'text-emerald-400' : d.status === 'REJECTED' ? 'text-red-400' : 'text-amber-400'}`}>
                                   {d.status}
                                 </span>
@@ -509,7 +509,7 @@ export default function UserSidebarLayout({ children }) {
                             >
                               <div className="font-bold text-sky-400">-${parseFloat(w.amount).toFixed(2)} USDT</div>
                               <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
-                                <span>{new Date(w.created_at).toLocaleDateString()}</span>
+                                <span>{new Date(w.created_at).toLocaleString()}</span>
                                 <span className={`font-semibold uppercase ${w.status === 'APPROVED' ? 'text-emerald-400' : w.status === 'REJECTED' ? 'text-red-400' : 'text-amber-400'}`}>
                                   {w.status}
                                 </span>

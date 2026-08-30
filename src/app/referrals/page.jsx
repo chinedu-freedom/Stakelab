@@ -249,7 +249,7 @@ export default function ReferralsPage() {
                                 {u.username || u.full_name || u.email}
                               </td>
                               <td className="py-2.5 px-3 text-slate-400">
-                                {new Date(u.created_at).toLocaleDateString()}
+                                {new Date(u.created_at).toLocaleString()}
                               </td>
                               <td className="py-2.5 px-3">
                                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -331,7 +331,7 @@ export default function ReferralsPage() {
                                 {u.username || u.full_name || u.email}
                               </td>
                               <td className="py-2.5 px-3 text-slate-400">
-                                {new Date(u.created_at).toLocaleDateString()}
+                                {new Date(u.created_at).toLocaleString()}
                               </td>
                               <td className="py-2.5 px-3">
                                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -413,7 +413,7 @@ export default function ReferralsPage() {
                                 {u.username || u.full_name || u.email}
                               </td>
                               <td className="py-2.5 px-3 text-slate-400">
-                                {new Date(u.created_at).toLocaleDateString()}
+                                {new Date(u.created_at).toLocaleString()}
                               </td>
                               <td className="py-2.5 px-3">
                                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${

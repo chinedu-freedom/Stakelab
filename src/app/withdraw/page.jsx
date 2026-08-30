@@ -31,9 +31,7 @@ export default function WithdrawPage() {
   const [sendingOtp, setSendingOtp] = useState(false);
   const [savingPin, setSavingPin] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [withdrawNotice, setWithdrawNotice] = useState(
-    '• Safely withdraw your funds using our highly secure process and various withdrawal methods.\n• Minimum withdrawal limit: $2.00.\n• Processing time: 1–24 hours.\n• Security PIN verification is required for all payout requests.'
-  );
+  const [withdrawNotice, setWithdrawNotice] = useState('');
 
   const [globalSettings, setGlobalSettings] = useState({
     minPayout: 2,
@@ -43,9 +41,9 @@ export default function WithdrawPage() {
 
   useEffect(() => {
     api.get('/public/deposit-withdrawal-settings').then((res) => {
-      if (res.data.success && res.data.settings) {
+      if (res.data?.success && res.data?.settings) {
         const s = res.data.settings;
-        if (s.withdrawNotice) setWithdrawNotice(s.withdrawNotice);
+        if (s.withdrawNotice !== undefined) setWithdrawNotice(s.withdrawNotice);
         setGlobalSettings({
           minPayout: parseFloat(s.minPayout || 2),
           maxPayout: parseFloat(s.maxPayout || 50000),
@@ -214,14 +212,16 @@ export default function WithdrawPage() {
             </div>
 
             {/* Backend Configured Withdrawal Rules Box (Configured from Admin Dashboard) */}
-            <div className="bg-[#0b1739] border border-[#1a2b57] rounded-xl p-5 shadow-xl space-y-3">
-              <h3 className="text-xs font-bold text-white font-righteous flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" /> Official Withdrawal Rules & Security Policy
-              </h3>
-              <div className="text-xs text-slate-300 whitespace-pre-line leading-relaxed font-sans bg-[#06102b] p-3.5 rounded-lg border border-[#1a2b57]">
-                {withdrawNotice}
+            {Boolean(withdrawNotice && withdrawNotice.trim() !== '') && (
+              <div className="bg-[#0b1739] border border-[#1a2b57] rounded-xl p-5 shadow-xl space-y-3">
+                <h3 className="text-xs font-bold text-white font-righteous flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" /> Official Withdrawal Rules & Security Policy
+                </h3>
+                <div className="text-xs text-slate-300 whitespace-pre-line leading-relaxed font-sans bg-[#06102b] p-3.5 rounded-lg border border-[#1a2b57]">
+                  {withdrawNotice}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Right Column: Amount, Fee Calculation & Payout Confirmation Card (5 cols) */}

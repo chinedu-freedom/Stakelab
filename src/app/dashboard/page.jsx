@@ -360,7 +360,7 @@ export default function DashboardPage() {
                       <td className="py-3 px-4 font-bold text-white">{tx.type}</td>
                       <td className="py-3 px-4 font-righteous text-emerald-400">${parseFloat(tx.amount).toFixed(2)}</td>
                       <td className="py-3 px-4 font-righteous text-white">${parseFloat(tx.balance_after).toFixed(2)}</td>
-                      <td className="py-3 px-4 text-slate-400">{new Date(tx.created_at).toLocaleDateString()}</td>
+                      <td className="py-3 px-4 text-slate-400 font-mono text-[11px] whitespace-nowrap">{new Date(tx.created_at).toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>

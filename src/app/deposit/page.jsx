@@ -23,9 +23,7 @@ export default function DepositPage() {
   const [txHash, setTxHash] = useState('');
   const [copied, setCopied] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [rechargeNotice, setRechargeNotice] = useState(
-    '• All deposits are verified on the blockchain automatically.\n• Please send exact amounts to official generated wallet address.\n• Minimum deposit limit: $1.00.\n• Deposits below min limits cannot be credited.'
-  );
+  const [rechargeNotice, setRechargeNotice] = useState('');
 
   const [globalSettings, setGlobalSettings] = useState({
     minDeposit: 1,
@@ -35,9 +33,9 @@ export default function DepositPage() {
 
   useEffect(() => {
     api.get('/public/deposit-withdrawal-settings').then((res) => {
-      if (res.data.success && res.data.settings) {
+      if (res.data?.success && res.data?.settings) {
         const s = res.data.settings;
-        if (s.rechargeNotice) setRechargeNotice(s.rechargeNotice);
+        if (s.rechargeNotice !== undefined) setRechargeNotice(s.rechargeNotice);
         setGlobalSettings({
           minDeposit: parseFloat(s.minDeposit || 1),
           maxDeposit: parseFloat(s.maxDeposit || 50000),
@@ -181,14 +179,16 @@ export default function DepositPage() {
               </div>
             </div>
 
-            <div className="bg-[#0b1739] border border-[#1a2b57] rounded-xl p-5 shadow-xl space-y-3">
-              <h3 className="text-xs font-bold text-white font-righteous flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" /> Official Deposit Rules & Security Policy
-              </h3>
-              <div className="text-xs text-slate-300 whitespace-pre-line leading-relaxed font-sans bg-[#06102b] p-3.5 rounded-lg border border-[#1a2b57]">
-                {rechargeNotice}
+            {Boolean(rechargeNotice && rechargeNotice.trim() !== '') && (
+              <div className="bg-[#0b1739] border border-[#1a2b57] rounded-xl p-5 shadow-xl space-y-3">
+                <h3 className="text-xs font-bold text-white font-righteous flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" /> Official Deposit Rules & Security Policy
+                </h3>
+                <div className="text-xs text-slate-300 whitespace-pre-line leading-relaxed font-sans bg-[#06102b] p-3.5 rounded-lg border border-[#1a2b57]">
+                  {rechargeNotice}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Right Column: Amount, Calculation & Confirmation Card (5 cols) */}
