@@ -293,10 +293,16 @@ export default function CreateStakingPage() {
           </div>
         )}
 
-        {/* Stake Now Modal */}
+        {/* Stake Now Modal (Click outside backdrop closes modal) */}
         {mounted && selectedPlan && createPortal(
-          <div className="fixed inset-0 z-[99999] w-full h-full min-h-screen flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 font-sans overflow-y-auto">
-            <div className="bg-[#09152b] border border-[#1b2b4d] rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-5 my-auto">
+          <div
+            onClick={() => setSelectedPlan(null)}
+            className="fixed inset-0 z-[99999] w-full h-full min-h-screen flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 font-sans overflow-y-auto cursor-pointer"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#09152b] border border-[#1b2b4d] rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-5 my-auto cursor-default"
+            >
               <div className="flex justify-between items-start border-b border-[#182848] pb-4">
                 <div>
                   <h3 className="text-lg font-bold text-white font-righteous">
