@@ -6,7 +6,7 @@ import UserSidebarLayout from '../../components/UserSidebarLayout';
 import { useAuth } from '../../context/AuthContext';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
 import api from '../../lib/api';
-import { ShieldCheck, Info, Lock, Wallet, Loader2, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, Info, Lock, Wallet, Loader2, Eye, EyeOff, Plus, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function WithdrawPage() {
