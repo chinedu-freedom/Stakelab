@@ -1787,11 +1787,11 @@ Important: Always verify that the destination wallet address and selected networ
               <ul className="space-y-4 text-sm text-slate-200 pt-2">
                 <li className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-[#ff0044] shrink-0 mt-0.5" />
-                  <span className="leading-snug">15205 North Kierland Blvd.100</span>
+                  <span className="leading-snug">15205 North Kierland Blvd. 100</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-[#ff0044] shrink-0" />
-                  <span>demo@site.com</span>
+                  <a href="mailto:info@everstake.cx" className="hover:text-[#ff0044] transition-colors">info@everstake.cx</a>
                 </li>
                 <li className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-[#ff0044] shrink-0" />
