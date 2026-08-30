@@ -24,6 +24,14 @@ export default function DepositHistoryPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(deposits.length / itemsPerPage) || 1;
+  const paginatedDeposits = deposits.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <UserSidebarLayout>
       <div className="space-y-8 max-w-6xl mx-auto font-sans">
@@ -46,7 +54,7 @@ export default function DepositHistoryPage() {
           </Link>
         </div>
 
-        {/* Deposit Table Container or Empty State (Matching Reference Screenshot) */}
+        {/* Deposit Table Container or Empty State */}
         {loading ? (
           <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-16 text-center text-slate-400 text-xs font-semibold flex items-center justify-center gap-2">
             <span>Loading deposit history</span>
@@ -69,25 +77,25 @@ export default function DepositHistoryPage() {
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="border-b border-[#ff0044]/30 bg-[#07132a] text-white font-bold uppercase tracking-wider">
-                    <th className="py-4 px-6 border-r border-[#ff0044]/20">Gateway</th>
-                    <th className="py-4 px-6 border-r border-[#ff0044]/20">Amount</th>
-                    <th className="py-4 px-6 border-r border-[#ff0044]/20">Status</th>
-                    <th className="py-4 px-6 border-r border-[#ff0044]/20">Date</th>
-                    <th className="py-4 px-6 text-right">Transaction Hash</th>
+                    <th className="py-4 px-4 border-r border-[#ff0044]/20">Gateway</th>
+                    <th className="py-4 px-4 border-r border-[#ff0044]/20">Amount</th>
+                    <th className="py-4 px-4 border-r border-[#ff0044]/20">Status</th>
+                    <th className="py-4 px-4 border-r border-[#ff0044]/20">Date</th>
+                    <th className="py-4 px-4 text-right">Transaction Hash</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#16274a]">
-                  {deposits.map((dep) => (
+                  {paginatedDeposits.map((dep) => (
                     <tr key={dep.id} className="hover:bg-[#0e1d3e]/60 text-slate-200 transition-all">
-                      <td className="py-4 px-6 font-bold text-white border-r border-[#ff0044]/10">
+                      <td className="py-4 px-4 font-bold text-white border-r border-[#ff0044]/10">
                         {dep.payment_method}
                       </td>
-                      <td className="py-4 px-6 font-righteous text-emerald-400 border-r border-[#ff0044]/10">
+                      <td className="py-4 px-4 font-righteous text-emerald-400 border-r border-[#ff0044]/10 whitespace-nowrap">
                         ${parseFloat(dep.amount).toFixed(2)}
                       </td>
-                      <td className="py-4 px-6 border-r border-[#ff0044]/10">
+                      <td className="py-4 px-4 border-r border-[#ff0044]/10">
                         <span
-                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase whitespace-nowrap inline-flex items-center justify-center ${
                             dep.status === 'APPROVED'
                               ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                               : dep.status === 'REJECTED'
@@ -98,16 +106,14 @@ export default function DepositHistoryPage() {
                           {dep.status}
                         </span>
                       </td>
-                      <td className="py-4 px-6 text-slate-400 border-r border-[#ff0044]/10">
+                      <td className="py-4 px-4 text-slate-400 border-r border-[#ff0044]/10 font-mono text-[11px] whitespace-nowrap">
                         {new Date(dep.created_at).toLocaleString()}
                       </td>
-                      <td className="py-4 px-6 text-right font-mono text-slate-400">
-                        {dep.transaction_hash ? (
-                          <span className="text-slate-300 font-mono">{dep.transaction_hash.substring(0, 12)}...</span>
+                      <td className="py-4 px-4 text-right font-mono text-[11px] text-slate-300">
+                        {dep.tx_hash ? (
+                          <span className="truncate max-w-xs block ml-auto">{dep.tx_hash}</span>
                         ) : (
-                          <span className="text-slate-400 font-sans text-[11px]">
-                            {dep.status === 'PENDING' ? 'Awaiting Network Tx' : `Ref: TRX-${dep.id.substring(0, 8).toUpperCase()}`}
-                          </span>
+                          <span className="text-slate-500">N/A</span>
                         )}
                       </td>
                     </tr>
@@ -115,6 +121,34 @@ export default function DepositHistoryPage() {
                 </tbody>
               </table>
             </div>
+
+            {/* 10-Item Pagination Bar */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between p-4 bg-[#07132a] border-t border-[#182848]">
+                <div className="text-xs text-slate-400 font-mono">
+                  Showing {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, deposits.length)} of {deposits.length}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                    className="px-3 py-1.5 rounded-lg bg-[#0e1d3e] border border-[#182848] text-xs font-bold text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#152a57] transition-all cursor-pointer"
+                  >
+                    Previous
+                  </button>
+                  <span className="text-xs text-slate-300 font-bold font-mono px-2">
+                    {currentPage} / {totalPages}
+                  </span>
+                  <button
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                    className="px-3 py-1.5 rounded-lg bg-[#0e1d3e] border border-[#182848] text-xs font-bold text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#152a57] transition-all cursor-pointer"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

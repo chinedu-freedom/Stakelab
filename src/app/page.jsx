@@ -729,15 +729,15 @@ Important: Always verify that the destination wallet address and selected networ
       </section>
 
       {/* 4. INTERACTIVE STAKING CALCULATOR */}
-      <section id="calculator" className="py-20 border-b border-[#1c243f]">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-white">Staking Profit Calculator</h2>
-            <p className="text-slate-400 text-sm mt-2">Select a plan and input your deposit amount to estimate your exact returns.</p>
+      <section id="calculator" className="py-16 sm:py-20 border-b border-[#1c243f]">
+        <div className="max-w-6xl mx-auto px-3 sm:px-8 lg:px-12">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-righteous">Staking Profit Calculator</h2>
+            <p className="text-slate-400 text-xs sm:text-sm mt-2">Select a plan and input your deposit amount to estimate your exact returns.</p>
           </div>
 
-          <div className="stakelab-card p-8 rounded-3xl border border-[#1c243f] grid md:grid-cols-2 gap-8">
-            <div className="space-y-6">
+          <div className="stakelab-card p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-[#1c243f] grid md:grid-cols-2 gap-6 sm:gap-8">
+            <div className="space-y-5 sm:space-y-6">
               <div>
                 <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
                   Select Staking Plan
@@ -779,19 +779,19 @@ Important: Always verify that the destination wallet address and selected networ
                 />
               </div>
 
-              {/* Compounding Return Mode Toggle Switch */}
-              <div className="pt-2">
+              {/* Compounding Return Mode Toggle Switch (Stacked 1 Per Line) */}
+              <div className="pt-1">
                 <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
                   Yield Calculation Method
                 </label>
-                <div className="grid grid-cols-2 gap-2 bg-[#0b0f19] p-1.5 rounded-xl border border-[#1c243f]">
+                <div className="flex flex-col gap-2 bg-[#0b0f19] p-2 rounded-xl border border-[#1c243f]">
                   <button
                     type="button"
                     onClick={() => setIsCompounding(true)}
-                    className={`py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                    className={`w-full py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       isCompounding
                         ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
-                        : 'text-slate-400 hover:text-white'
+                        : 'text-slate-400 hover:text-white hover:bg-[#121a2e]'
                     }`}
                   >
                     <Sparkles className="w-3.5 h-3.5" /> Compounding Yield
@@ -799,10 +799,10 @@ Important: Always verify that the destination wallet address and selected networ
                   <button
                     type="button"
                     onClick={() => setIsCompounding(false)}
-                    className={`py-2 rounded-lg text-xs font-bold transition-all ${
+                    className={`w-full py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       !isCompounding
                         ? 'bg-[#1c243f] text-white shadow-md'
-                        : 'text-slate-400 hover:text-white'
+                        : 'text-slate-400 hover:text-white hover:bg-[#121a2e]'
                     }`}
                   >
                     Simple Return
@@ -811,7 +811,8 @@ Important: Always verify that the destination wallet address and selected networ
               </div>
             </div>
 
-            <div className="bg-[#0b0f19] p-6 rounded-2xl border border-[#1c243f] flex flex-col justify-between space-y-4">
+            {/* Output Calculation Details Card */}
+            <div className="bg-[#0b0f19] p-4 sm:p-6 rounded-2xl border border-[#1c243f] flex flex-col justify-between space-y-4 shadow-xl">
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between pb-2 border-b border-[#1c243f]">
                   <span className="text-slate-400">Lockup Period</span>
@@ -823,7 +824,7 @@ Important: Always verify that the destination wallet address and selected networ
                 </div>
                 <div className="flex justify-between pb-2 border-b border-[#1c243f]">
                   <span className="text-slate-400">Yield Strategy</span>
-                  <span className={`font-extrabold text-xs px-2.5 py-0.5 rounded-full border ${
+                  <span className={`font-extrabold text-xs px-2.5 py-0.5 rounded-full border whitespace-nowrap inline-flex items-center justify-center ${
                     calcRes.isCompounding
                       ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                       : 'bg-blue-500/10 text-blue-400 border-blue-500/30'
@@ -843,12 +844,17 @@ Important: Always verify that the destination wallet address and selected networ
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[#1c243f] flex justify-between items-center">
-                <div>
-                  <span className="text-xs text-slate-400">Total Final Return (FV)</span>
-                  <div className="text-2xl font-black text-white">${calcRes.total}</div>
+              {/* Total Return & Full-Width Stake Now Button */}
+              <div className="pt-4 border-t border-[#1c243f] space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Final Return (FV)</span>
+                  <div className="text-2xl font-black text-white font-righteous">${calcRes.total}</div>
                 </div>
-                <Link href="/register" className="btn-stakelab px-6 py-2.5 text-xs font-bold">
+
+                <Link
+                  href="/register"
+                  className="w-full btn-stakelab py-3.5 rounded-xl text-white font-sans text-sm tracking-wider uppercase font-bold text-center block shadow-lg shadow-red-500/20 transition-all cursor-pointer"
+                >
                   Stake Now
                 </Link>
               </div>

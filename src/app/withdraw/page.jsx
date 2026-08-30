@@ -157,16 +157,16 @@ export default function WithdrawPage() {
           {/* Left Column: Withdrawal Gateway Selector & Official Rules (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
             {/* Balance Card Container */}
-            <div className="bg-[#0b1739] border border-[#1a2b57] rounded-xl p-5 shadow-2xl flex justify-between items-center">
+            <div className="bg-[#0b1739] border border-[#1a2b57] rounded-xl p-5 shadow-2xl space-y-3">
               <div>
                 <div className="text-xs text-slate-400 font-medium">Available Withdrawable Balance</div>
-                <div className="text-2xl font-extrabold text-white font-righteous mt-0.5">
+                <div className="text-2xl font-extrabold text-white font-righteous mt-1">
                   ${parseFloat(user?.balance || 0).toFixed(2)}
                 </div>
               </div>
-              <div className="text-right text-xs text-slate-400 space-y-0.5 font-medium">
-                <div>Min Limit: <strong className="text-white">${minLimit.toFixed(2)}</strong></div>
-                <div>Fee Rate: <strong className="text-[#ff0044]">{feePercent.toFixed(2)}%</strong></div>
+              <div className="pt-3 border-t border-[#1a2b57]/60 flex items-center justify-between text-xs text-slate-400 font-medium">
+                <div>Min Limit: <strong className="text-white font-sans">${minLimit.toFixed(2)}</strong></div>
+                <div>Fee Rate: <strong className="text-[#ff0044] font-sans">{feePercent.toFixed(2)}%</strong></div>
               </div>
             </div>
 

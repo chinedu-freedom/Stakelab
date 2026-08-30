@@ -318,13 +318,13 @@ export default function CreateStakingPage() {
               <form onSubmit={handleConfirmStake} className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                    Select Wallet Source
+                    Select Source
                   </label>
                   <Select value={selectedWallet} onValueChange={setSelectedWallet}>
                     <SelectTrigger className="w-full bg-[#071020] border-[#1b2b4d] text-white rounded-xl h-11 text-xs focus:ring-1 focus:ring-[#ff0044]">
-                      <SelectValue placeholder="Select Wallet" />
+                      <SelectValue placeholder="Select Source" />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#0b162c] border-[#1c2e54] text-white">
+                    <SelectContent className="bg-[#0b162c] border-[#1c2e54] text-white" searchPlaceholder="Search source...">
                       <SelectItem value="main" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">
                         Main Wallet (${parseFloat(user?.balance || 0).toFixed(2)})
                       </SelectItem>
@@ -376,16 +376,16 @@ export default function CreateStakingPage() {
                     <span className="text-emerald-400 font-bold font-mono">+${totalProfit.toFixed(2)}</span>
                   </div>
 
-                  <div className="flex items-center justify-between text-slate-400">
-                    <span>Capital Return at Maturity:</span>
-                    <span className={`font-bold font-mono ${isCapitalReturn ? 'text-blue-400' : 'text-slate-500'}`}>
-                      {isCapitalReturn ? `100% Refundable` : 'Non-Refundable'}
+                  <div className="flex items-center justify-between text-slate-400 gap-2">
+                    <span className="shrink-0">Capital Return at Maturity:</span>
+                    <span className={`font-bold font-mono text-right whitespace-nowrap ${isCapitalReturn ? 'text-blue-400' : 'text-slate-500'}`}>
+                      {isCapitalReturn ? '100% Refundable' : 'Non-Refundable'}
                     </span>
                   </div>
 
-                  <div className="pt-2 border-t border-[#182848] flex items-center justify-between font-bold">
-                    <span className="text-white text-xs uppercase tracking-wider font-righteous">Estimated Total Return:</span>
-                    <span className="text-base text-gradient-stakelab font-righteous tracking-wide font-black">
+                  <div className="pt-2 border-t border-[#182848] flex items-center justify-between font-bold gap-2">
+                    <span className="text-white text-xs uppercase tracking-wider font-righteous shrink-0">Estimated Total Return:</span>
+                    <span className="text-base text-gradient-stakelab font-righteous tracking-wide font-black text-right whitespace-nowrap">
                       ${estimatedTotalReturn.toFixed(2)} USD
                     </span>
                   </div>
@@ -399,10 +399,11 @@ export default function CreateStakingPage() {
                 >
                   {submitting ? (
                     <span className="flex items-center justify-center gap-2">
-                      Processing Stake <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Processing Stake</span>
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
                     </span>
                   ) : (
-                    'Stake'
+                    'Stake Now'
                   )}
                 </button>
               </form>

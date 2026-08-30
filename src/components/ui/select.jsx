@@ -70,7 +70,7 @@ export function SelectValue({ placeholder = 'Select...', children }) {
   );
 }
 
-export function SelectContent({ className = '', searchable = true, searchPlaceholder = 'Search country...', children }) {
+export function SelectContent({ className = '', searchable = true, searchPlaceholder = 'Search...', children }) {
   const { open } = useContext(SelectContext);
   const [searchQuery, setSearchQuery] = useState('');
   const inputRef = useRef(null);
@@ -139,11 +139,21 @@ export function SelectContent({ className = '', searchable = true, searchPlaceho
   );
 }
 
+const extractText = (node) => {
+  if (node === null || node === undefined) return '';
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join('');
+  if (typeof node === 'object' && node.props && node.props.children) {
+    return extractText(node.props.children);
+  }
+  return '';
+};
+
 export function SelectItem({ value, children, className = '' }) {
   const { selectedValue, handleSelect, setSelectedLabel } = useContext(SelectContext);
   const isSelected = selectedValue === value;
 
-  const labelText = typeof children === 'string' ? children : String(children);
+  const labelText = extractText(children);
 
   useEffect(() => {
     if (isSelected && labelText) {

@@ -30,6 +30,14 @@ export default function WithdrawHistoryPage() {
     fetchWithdrawals();
   }, []);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(withdrawals.length / itemsPerPage) || 1;
+  const paginatedWithdrawals = withdrawals.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <UserSidebarLayout>
       <div className="space-y-6 max-w-7xl mx-auto">
@@ -70,25 +78,25 @@ export default function WithdrawHistoryPage() {
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="border-b border-[#ff0044]/30 bg-[#07132a] text-white font-bold uppercase tracking-wider">
-                    <th className="py-4 px-6 border-r border-[#ff0044]/20">Gateway</th>
-                    <th className="py-4 px-6 border-r border-[#ff0044]/20">Amount</th>
-                    <th className="py-4 px-6 border-r border-[#ff0044]/20">Status</th>
-                    <th className="py-4 px-6 border-r border-[#ff0044]/20">Date</th>
-                    <th className="py-4 px-6 text-right">Wallet Address</th>
+                    <th className="py-4 px-4 border-r border-[#ff0044]/20">Gateway</th>
+                    <th className="py-4 px-4 border-r border-[#ff0044]/20">Amount</th>
+                    <th className="py-4 px-4 border-r border-[#ff0044]/20">Status</th>
+                    <th className="py-4 px-4 border-r border-[#ff0044]/20">Date</th>
+                    <th className="py-4 px-4 text-right">Wallet Address</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#16274a]">
-                  {withdrawals.map((w) => (
+                  {paginatedWithdrawals.map((w) => (
                     <tr key={w.id} className="hover:bg-[#0e1d3e]/60 text-slate-200 transition-all">
-                      <td className="py-4 px-6 font-bold text-white border-r border-[#ff0044]/10">
+                      <td className="py-4 px-4 font-bold text-white border-r border-[#ff0044]/10">
                         {w.withdrawal_method}
                       </td>
-                      <td className="py-4 px-6 font-righteous text-red-400 border-r border-[#ff0044]/10">
+                      <td className="py-4 px-4 font-righteous text-red-400 border-r border-[#ff0044]/10 whitespace-nowrap">
                         ${parseFloat(w.amount).toFixed(2)}
                       </td>
-                      <td className="py-4 px-6 border-r border-[#ff0044]/10">
+                      <td className="py-4 px-4 border-r border-[#ff0044]/10">
                         <span
-                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase whitespace-nowrap inline-flex items-center justify-center ${
                             w.status === 'APPROVED'
                               ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                               : w.status === 'REJECTED'
@@ -99,16 +107,14 @@ export default function WithdrawHistoryPage() {
                           {w.status}
                         </span>
                       </td>
-                      <td className="py-4 px-6 text-slate-400 border-r border-[#ff0044]/10">
+                      <td className="py-4 px-4 text-slate-400 border-r border-[#ff0044]/10 font-mono text-[11px] whitespace-nowrap">
                         {new Date(w.created_at).toLocaleString()}
                       </td>
-                      <td className="py-4 px-6 text-right font-mono text-slate-400">
+                      <td className="py-4 px-4 text-right font-mono text-[11px] text-slate-300">
                         {w.wallet_address ? (
-                          <span className="text-slate-300 font-mono">{w.wallet_address.substring(0, 12)}...</span>
+                          <span className="truncate max-w-xs block ml-auto">{w.wallet_address}</span>
                         ) : (
-                          <span className="text-slate-400 font-sans text-[11px]">
-                            {`Ref: WTH-${w.id.substring(0, 8).toUpperCase()}`}
-                          </span>
+                          <span className="text-slate-500">N/A</span>
                         )}
                       </td>
                     </tr>
@@ -116,6 +122,34 @@ export default function WithdrawHistoryPage() {
                 </tbody>
               </table>
             </div>
+
+            {/* 10-Item Pagination Bar */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between p-4 bg-[#07132a] border-t border-[#182848]">
+                <div className="text-xs text-slate-400 font-mono">
+                  Showing {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, withdrawals.length)} of {withdrawals.length}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                    className="px-3 py-1.5 rounded-lg bg-[#0e1d3e] border border-[#182848] text-xs font-bold text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#152a57] transition-all cursor-pointer"
+                  >
+                    Previous
+                  </button>
+                  <span className="text-xs text-slate-300 font-bold font-mono px-2">
+                    {currentPage} / {totalPages}
+                  </span>
+                  <button
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                    className="px-3 py-1.5 rounded-lg bg-[#0e1d3e] border border-[#182848] text-xs font-bold text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#152a57] transition-all cursor-pointer"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

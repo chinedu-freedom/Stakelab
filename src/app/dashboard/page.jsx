@@ -330,7 +330,7 @@ export default function DashboardPage() {
 
 
         {/* Transactions Card / Empty State Section (Matching Reference Image) */}
-        <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-12 text-center shadow-xl">
+        <div className="bg-[#0a1835] border border-[#182848] rounded-xl p-4 sm:p-6 text-center shadow-xl">
           {transactions.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-6">
               {/* Clipboard Document Outline Icon */}
@@ -346,21 +346,21 @@ export default function DashboardPage() {
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="border-b border-[#182848] text-slate-400 font-semibold uppercase">
-                    <th className="py-3 px-4">Transaction ID</th>
-                    <th className="py-3 px-4">Type</th>
-                    <th className="py-3 px-4">Amount</th>
-                    <th className="py-3 px-4">Balance After</th>
-                    <th className="py-3 px-4">Date</th>
+                    <th className="py-4 px-2">Transaction ID</th>
+                    <th className="py-4 px-2">Type</th>
+                    <th className="py-4 px-2">Amount</th>
+                    <th className="py-4 px-2">Balance After</th>
+                    <th className="py-4 px-2">Date</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#182848]">
-                  {transactions.map((tx) => (
+                  {transactions.slice(0, 10).map((tx) => (
                     <tr key={tx.id} className="hover:bg-[#0e1d3e]/50 text-slate-200">
-                      <td className="py-3 px-4 font-mono text-[11px] text-slate-400">{tx.id.substring(0, 8)}...</td>
-                      <td className="py-3 px-4 font-bold text-white">{tx.type}</td>
-                      <td className="py-3 px-4 font-righteous text-emerald-400">${parseFloat(tx.amount).toFixed(2)}</td>
-                      <td className="py-3 px-4 font-righteous text-white">${parseFloat(tx.balance_after).toFixed(2)}</td>
-                      <td className="py-3 px-4 text-slate-400 font-mono text-[11px] whitespace-nowrap">{new Date(tx.created_at).toLocaleString()}</td>
+                      <td className="py-4 px-2 font-mono text-[11px] text-slate-400">{tx.id.substring(0, 8)}...</td>
+                      <td className="py-4 px-2 font-bold text-white whitespace-nowrap">{tx.type}</td>
+                      <td className="py-4 px-2 font-righteous text-emerald-400 whitespace-nowrap">${parseFloat(tx.amount).toFixed(2)}</td>
+                      <td className="py-4 px-2 font-righteous text-white whitespace-nowrap">${parseFloat(tx.balance_after).toFixed(2)}</td>
+                      <td className="py-4 px-2 text-slate-400 font-mono text-[11px] whitespace-nowrap">{new Date(tx.created_at).toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>

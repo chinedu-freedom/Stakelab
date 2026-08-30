@@ -234,16 +234,16 @@ export default function StakingPage() {
                   {/* Field 1: Wallet * */}
                   <div>
                     <label className="block text-xs font-semibold text-slate-300 mb-2 font-sans">
-                      Wallet <span className="text-[#ff0044]">*</span>
+                      Select Source <span className="text-[#ff0044]">*</span>
                     </label>
                     <Select
                       value={selectedWallet}
                       onValueChange={(val) => setSelectedWallet(val)}
                     >
                       <SelectTrigger className="h-12 bg-[#060f22] border-[#182848] text-white">
-                        <SelectValue placeholder="Select Wallet" />
+                        <SelectValue placeholder="Select Source" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent searchPlaceholder="Search source...">
                         <SelectItem value="main">
                           Main Wallet (${parseFloat(user?.balance || 0).toFixed(2)})
                         </SelectItem>

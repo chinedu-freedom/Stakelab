@@ -39,6 +39,28 @@ export default function TicketDetailsPage({ params }) {
     fetchTicketDetails();
   }, [ticketId]);
 
+  const [fileRows, setFileRows] = useState([]);
+
+  const handleAddFileRow = () => {
+    if (fileRows.length >= 5) {
+      toast.error('Maximum 5 files allowed.');
+      return;
+    }
+    setFileRows([...fileRows, { name: 'No file chosen', file: null }]);
+  };
+
+  const handleRemoveFileRow = (index) => {
+    setFileRows(fileRows.filter((_, idx) => idx !== index));
+  };
+
+  const handleFileChange = (index, e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const updated = [...fileRows];
+    updated[index] = { name: file.name, file };
+    setFileRows(updated);
+  };
+
   const handleReplySubmit = async (e) => {
     e.preventDefault();
     if (!replyMessage.trim()) {
@@ -55,6 +77,7 @@ export default function TicketDetailsPage({ params }) {
       if (res.data.success) {
         toast.success('Reply submitted successfully!');
         setReplyMessage('');
+        setFileRows([]);
         fetchTicketDetails();
       }
     } catch (err) {
@@ -77,11 +100,11 @@ export default function TicketDetailsPage({ params }) {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[#182848]">
             <div className="flex items-center gap-3">
               <span
-                className={`px-3 py-1 rounded-full text-xs font-bold text-white uppercase ${
-                  (ticket?.status || 'OPEN') === 'OPEN'
+                className={`px-3 py-1 rounded-full text-[11px] font-bold text-white uppercase whitespace-nowrap inline-flex items-center justify-center ${
+                  ticket?.status === 'OPEN'
                     ? 'bg-emerald-500'
-                    : (ticket?.status || '').toUpperCase() === 'REPLIED'
-                    ? 'bg-indigo-500'
+                    : ticket?.status === 'REPLIED'
+                    ? 'bg-cyan-500'
                     : 'bg-red-500'
                 }`}
               >
@@ -103,11 +126,57 @@ export default function TicketDetailsPage({ params }) {
               className="w-full bg-[#060f22] border border-[#ff0044] rounded-xl p-4 text-white text-xs font-sans placeholder-slate-500 focus:outline-none shadow-inner"
             />
 
-            <div className="flex justify-end">
+            {/* File Upload Info Notice Bar */}
+            <div className="pt-1">
+              <p className="text-cyan-400 text-xs font-medium leading-relaxed">
+                Max 5 files can be uploaded | Maximum upload size is 256MB | Allowed File Extensions: .jpg, .jpeg, .png, .pdf, .doc, .docx
+              </p>
+            </div>
+
+            {/* File Attachment Rows (Rendered BEFORE buttons) */}
+            {fileRows.length > 0 && (
+              <div className="space-y-3 pt-1">
+                {fileRows.map((row, idx) => (
+                  <div key={idx} className="flex items-center gap-0 max-w-md">
+                    <label className="bg-[#ff0044] hover:bg-[#e0003c] text-white text-xs font-bold px-4 py-2 rounded-l-md cursor-pointer shrink-0 transition-all">
+                      Choose file
+                      <input
+                        type="file"
+                        onChange={(e) => handleFileChange(idx, e)}
+                        accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                        className="hidden"
+                      />
+                    </label>
+                    <div className="bg-[#060f22] border-y border-[#182848] text-slate-300 text-xs px-4 py-2 flex-1 truncate">
+                      {row.name}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFileRow(idx)}
+                      className="bg-[#ff0044] hover:bg-[#e0003c] text-white text-xs font-bold px-3.5 py-2 rounded-r-md cursor-pointer shrink-0 transition-all"
+                      title="Remove file"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Buttons Row (+ Add Attachment & Submit Reply) */}
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 pt-2">
+              <button
+                type="button"
+                onClick={handleAddFileRow}
+                className="w-full sm:w-auto justify-center bg-[#142345] hover:bg-[#1a2c54] text-white text-xs font-semibold px-4 py-2.5 rounded-md border border-[#1e325c] transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <span>+ Add Attachment</span>
+              </button>
+
               <button
                 type="submit"
                 disabled={submitting}
-                className="btn-stakelab px-8 py-2.5 rounded-lg text-white font-righteous text-xs uppercase font-bold tracking-wider transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 disabled:opacity-50"
+                className="w-full sm:w-auto justify-center btn-stakelab px-8 py-2.5 rounded-lg text-white font-righteous text-xs uppercase font-bold tracking-wider transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 disabled:opacity-50"
               >
                 {submitting ? (
                   <span className="flex items-center justify-center gap-2">

@@ -144,7 +144,6 @@ export default function UserSidebarLayout({ children }) {
     { label: 'Transaction', path: '/transactions', icon: History },
     { label: 'Account Data', path: '/account', icon: Key },
     { label: 'Security & Password', path: '/change-password', icon: ShieldCheck },
-    ...(features.dailyCheckin ? [{ label: 'Daily Check-in', action: 'daily-checkin', icon: CalendarCheck }] : []),
     { label: 'My Profile', path: '/profile', icon: User },
     { label: 'Referrals', path: '/referrals', icon: Users },
     {
@@ -254,7 +253,7 @@ export default function UserSidebarLayout({ children }) {
           </div>
 
           {/* Navigation items */}
-          <nav className="p-3 space-y-1">
+          <nav className="p-3 pb-32 space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.path;
@@ -425,9 +424,9 @@ export default function UserSidebarLayout({ children }) {
                 )}
               </button>
 
-              {/* User Notifications Dropdown Panel */}
+              {/* User Notifications Dropdown Panel (Centered on Mobile) */}
               {notifDropdownOpen && (
-                <div className="absolute right-0 top-full mt-3 w-80 bg-[#09152e] border border-[#1d335f] rounded-2xl shadow-2xl overflow-hidden z-50 text-xs font-sans animate-in zoom-in-95 duration-200">
+                <div className="fixed left-1/2 -translate-x-1/2 top-16 sm:absolute sm:left-auto sm:right-0 sm:translate-x-0 sm:top-full sm:mt-3 w-[92vw] max-w-sm sm:w-80 bg-[#09152e] border border-[#1d335f] rounded-2xl shadow-2xl overflow-hidden z-50 text-xs font-sans animate-in zoom-in-95 duration-200">
                   <div className="p-3.5 bg-[#0e1d3e] border-b border-[#1d335f] flex items-center justify-between">
                     <h3 className="font-bold text-white font-righteous flex items-center gap-2">
                       <Bell className="w-4 h-4 text-[#fe780b]" /> Notifications
@@ -449,7 +448,7 @@ export default function UserSidebarLayout({ children }) {
                           {notifications.tickets.map((t) => (
                             <Link
                               key={t.id}
-                              href={`/support/tickets/${t.id}`}
+                              href={`/support/${t.id}`}
                               onClick={() => setNotifDropdownOpen(false)}
                               className="block p-2 rounded-lg bg-[#061127] hover:bg-[#0f2249] border border-[#1d335f] transition-all"
                             >
@@ -531,7 +530,7 @@ export default function UserSidebarLayout({ children }) {
               )}
             </div>
 
-            {/* Profile Avatar Button - Shows ONLY image icon without border on small screens */}
+            {/* Profile Avatar Button */}
             <div className="relative" ref={profileRef}>
               <button
                 type="button"
@@ -552,7 +551,7 @@ export default function UserSidebarLayout({ children }) {
                 <ChevronDown className={`hidden sm:block w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${profileDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Dropdown Menu Panel (Exact Match to User Screenshot) */}
+              {/* Dropdown Menu Panel */}
               {profileDropdownOpen && (
                 <div className="absolute right-0 top-full mt-2 w-52 bg-[#08152e] border border-[#18294d] rounded-xl shadow-2xl overflow-hidden z-50 py-1.5 font-sans">
                   <Link
@@ -566,6 +565,15 @@ export default function UserSidebarLayout({ children }) {
 
                   <Link
                     href="/user-data"
+                    onClick={() => setProfileDropdownOpen(false)}
+                    className="px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-[#112349] hover:text-white flex items-center gap-3 transition-colors"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-slate-300" />
+                    <span>KYC Data</span>
+                  </Link>
+
+                  <Link
+                    href="/change-password"
                     onClick={() => setProfileDropdownOpen(false)}
                     className="px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-[#112349] hover:text-white flex items-center gap-3 transition-colors"
                   >

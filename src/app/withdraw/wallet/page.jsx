@@ -156,7 +156,7 @@ export default function AddWithdrawalWalletPage() {
                       {cryptoOptions.find((c) => c.value === selectedCrypto)?.name}
                     </SelectValue>
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent searchPlaceholder="Search payout currency or network...">
                     {cryptoOptions.map((c) => (
                       <SelectItem key={c.value} value={c.value}>
                         {c.name}

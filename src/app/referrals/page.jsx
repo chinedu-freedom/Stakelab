@@ -227,10 +227,18 @@ export default function ReferralsPage() {
                   </div>
                 </div>
 
-                {/* Level 1 Referred Users Table */}
+                {/* Level 1 Referred Users Table (Max 5) */}
                 {level1.users.length > 0 && (
-                  <div className="pt-3 border-t border-[#182848]">
-                    <h4 className="text-xs font-bold text-slate-300 mb-2">Level 1 Members List</h4>
+                  <div className="pt-3 border-t border-[#182848] space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold text-slate-300">Level 1 Members List (Recent 5)</h4>
+                      <Link
+                        href="/referrals/members?level=1"
+                        className="text-[11px] font-bold text-[#ff0044] hover:underline inline-flex items-center gap-1 font-sans"
+                      >
+                        See All Level 1 Members ({level1.users.length}) →
+                      </Link>
+                    </div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-left text-xs border-collapse">
                         <thead>
@@ -243,16 +251,16 @@ export default function ReferralsPage() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-[#182848]">
-                          {level1.users.map((u) => (
+                          {level1.users.slice(0, 5).map((u) => (
                             <tr key={u.id} className="hover:bg-[#0c1a38]/50 text-slate-200">
                               <td className="py-2.5 px-3 font-bold text-white">
                                 {u.username || u.full_name || u.email}
                               </td>
-                              <td className="py-2.5 px-3 text-slate-400">
+                              <td className="py-2.5 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
                                 {new Date(u.created_at).toLocaleString()}
                               </td>
                               <td className="py-2.5 px-3">
-                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap inline-flex items-center justify-center ${
                                   u.is_active ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-700 text-slate-400'
                                 }`}>
                                   {u.is_active ? 'Active' : 'Inactive'}
@@ -309,10 +317,18 @@ export default function ReferralsPage() {
                   </div>
                 </div>
 
-                {/* Level 2 Referred Users Table */}
+                {/* Level 2 Referred Users Table (Max 5) */}
                 {level2.users.length > 0 && (
-                  <div className="pt-3 border-t border-[#182848]">
-                    <h4 className="text-xs font-bold text-slate-300 mb-2">Level 2 Members List</h4>
+                  <div className="pt-3 border-t border-[#182848] space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold text-slate-300">Level 2 Members List (Recent 5)</h4>
+                      <Link
+                        href="/referrals/members?level=2"
+                        className="text-[11px] font-bold text-amber-400 hover:underline inline-flex items-center gap-1 font-sans"
+                      >
+                        See All Level 2 Members ({level2.users.length}) →
+                      </Link>
+                    </div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-left text-xs border-collapse">
                         <thead>
@@ -325,16 +341,16 @@ export default function ReferralsPage() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-[#182848]">
-                          {level2.users.map((u) => (
+                          {level2.users.slice(0, 5).map((u) => (
                             <tr key={u.id} className="hover:bg-[#0c1a38]/50 text-slate-200">
                               <td className="py-2.5 px-3 font-bold text-white">
                                 {u.username || u.full_name || u.email}
                               </td>
-                              <td className="py-2.5 px-3 text-slate-400">
+                              <td className="py-2.5 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
                                 {new Date(u.created_at).toLocaleString()}
                               </td>
                               <td className="py-2.5 px-3">
-                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap inline-flex items-center justify-center ${
                                   u.is_active ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-700 text-slate-400'
                                 }`}>
                                   {u.is_active ? 'Active' : 'Inactive'}
@@ -391,10 +407,18 @@ export default function ReferralsPage() {
                   </div>
                 </div>
 
-                {/* Level 3 Referred Users Table */}
+                {/* Level 3 Referred Users Table (Max 5) */}
                 {level3.users.length > 0 && (
-                  <div className="pt-3 border-t border-[#182848]">
-                    <h4 className="text-xs font-bold text-slate-300 mb-2">Level 3 Members List</h4>
+                  <div className="pt-3 border-t border-[#182848] space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold text-slate-300">Level 3 Members List (Recent 5)</h4>
+                      <Link
+                        href="/referrals/members?level=3"
+                        className="text-[11px] font-bold text-purple-400 hover:underline inline-flex items-center gap-1 font-sans"
+                      >
+                        See All Level 3 Members ({level3.users.length}) →
+                      </Link>
+                    </div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-left text-xs border-collapse">
                         <thead>
@@ -407,16 +431,16 @@ export default function ReferralsPage() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-[#182848]">
-                          {level3.users.map((u) => (
+                          {level3.users.slice(0, 5).map((u) => (
                             <tr key={u.id} className="hover:bg-[#0c1a38]/50 text-slate-200">
                               <td className="py-2.5 px-3 font-bold text-white">
                                 {u.username || u.full_name || u.email}
                               </td>
-                              <td className="py-2.5 px-3 text-slate-400">
+                              <td className="py-2.5 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
                                 {new Date(u.created_at).toLocaleString()}
                               </td>
                               <td className="py-2.5 px-3">
-                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap inline-flex items-center justify-center ${
                                   u.is_active ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-700 text-slate-400'
                                 }`}>
                                   {u.is_active ? 'Active' : 'Inactive'}

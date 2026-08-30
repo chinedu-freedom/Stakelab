@@ -164,31 +164,6 @@ export default function CreateTicketPage() {
               />
             </div>
 
-            {/* Row 3: Buttons Row (+ Add Attachment / Submit) */}
-            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 pt-2">
-              <button
-                type="button"
-                onClick={handleAddFileRow}
-                className="w-full sm:w-auto justify-center bg-[#142345] hover:bg-[#1a2c54] text-white text-xs font-semibold px-4 py-2.5 rounded-md border border-[#1e325c] transition-all cursor-pointer flex items-center gap-1.5"
-              >
-                <span>+ Add Attachment</span>
-              </button>
-
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full sm:w-auto justify-center btn-stakelab px-8 py-2.5 rounded-lg text-white font-righteous text-xs uppercase font-bold tracking-wider transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 disabled:opacity-50"
-              >
-                {submitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    Submitting <Loader2 className="w-4 h-4 animate-spin" />
-                  </span>
-                ) : (
-                  '▶ Submit'
-                )}
-              </button>
-            </div>
-
             {/* File Upload Info Notice Bar */}
             <div className="pt-1">
               <p className="text-cyan-400 text-xs font-medium leading-relaxed">
@@ -224,6 +199,31 @@ export default function CreateTicketPage() {
                 ))}
               </div>
             )}
+
+            {/* Row 3: Buttons Row (+ Add Attachment / Submit) */}
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 pt-2">
+              <button
+                type="button"
+                onClick={handleAddFileRow}
+                className="w-full sm:w-auto justify-center bg-[#142345] hover:bg-[#1a2c54] text-white text-xs font-semibold px-4 py-2.5 rounded-md border border-[#1e325c] transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <span>+ Add Attachment</span>
+              </button>
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full sm:w-auto justify-center btn-stakelab px-8 py-2.5 rounded-lg text-white font-righteous text-xs uppercase font-bold tracking-wider transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 disabled:opacity-50"
+              >
+                {submitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    Submitting <Loader2 className="w-4 h-4 animate-spin" />
+                  </span>
+                ) : (
+                  '▶ Submit'
+                )}
+              </button>
+            </div>
           </form>
         </div>
 
