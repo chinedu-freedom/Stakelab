@@ -186,15 +186,27 @@ export default function CreateStakingPage() {
               const minAmt = parseFloat(plan.min_amount || 0);
               const maxAmt = parseFloat(plan.max_amount || 0);
               const dailyReturn = parseFloat(plan.daily_return_percent || 0);
+              const isUnavailable = plan.is_active === false || plan.status === 'UNAVAILABLE' || plan.status === 'INACTIVE' || plan.badge === 'UNAVAILABLE' || plan.badge === 'INACTIVE';
 
               return (
                 <div key={plan.id} className="relative group flex flex-col max-w-sm sm:max-w-none mx-auto w-full">
+                  {/* Unavailable Pill Badge */}
+                  {isUnavailable && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-slate-700 text-slate-200 border border-slate-500 font-righteous font-bold text-[11px] px-3.5 py-1 rounded-full uppercase tracking-wider shadow-lg">
+                      Unavailable
+                    </div>
+                  )}
+
                   {/* Outer Shield Border Wrap */}
                   <div
                     style={{
                       clipPath: 'polygon(0 0, 100% 0, 100% 92%, 50% 100%, 0 92%)',
                     }}
-                    className="p-[2px] bg-gradient-to-b from-slate-800 via-[#ff0044] to-[#fe780b] rounded-t-3xl flex-1 flex flex-col drop-shadow-2xl hover:scale-[1.02] transition-transform duration-300"
+                    className={`p-[2px] rounded-t-3xl flex-1 flex flex-col drop-shadow-2xl transition-transform duration-300 ${
+                      isUnavailable
+                        ? 'bg-slate-700 opacity-80'
+                        : 'bg-gradient-to-b from-slate-800 via-[#ff0044] to-[#fe780b] hover:scale-[1.02]'
+                    }`}
                   >
                     {/* Inner Dark Card Body */}
                     <div
@@ -211,7 +223,9 @@ export default function CreateStakingPage() {
 
                         {/* Ribbon Banner */}
                         <div className="relative my-4 sm:my-6 -mx-4 sm:-mx-8">
-                          <div className="bg-gradient-to-r from-[#fe500b] via-[#ff0044] to-[#fe880b] text-white font-righteous text-xs sm:text-base font-bold py-2 sm:py-3 text-center shadow-lg tracking-wide uppercase">
+                          <div className={`font-righteous text-xs sm:text-base font-bold py-2 sm:py-3 text-center shadow-lg tracking-wide uppercase ${
+                            isUnavailable ? 'bg-slate-800 text-slate-400' : 'bg-gradient-to-r from-[#fe500b] via-[#ff0044] to-[#fe880b] text-white'
+                          }`}>
                             Stake for {days} Days
                           </div>
                           <div className="absolute -left-2 -bottom-2 w-0 h-0 border-t-[8px] border-t-[#a3002b] border-l-[8px] border-l-transparent" />
@@ -251,11 +265,11 @@ export default function CreateStakingPage() {
 
                       {/* Stake Button */}
                       <div className="pt-2 text-center">
-                        {plan.status === 'UNAVAILABLE' || plan.status === 'INACTIVE' || plan.badge === 'UNAVAILABLE' ? (
+                        {isUnavailable ? (
                           <button
                             type="button"
                             disabled
-                            className="w-full py-2.5 sm:py-3.5 bg-slate-800 text-slate-500 font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-none cursor-not-allowed font-righteous border border-slate-700"
+                            className="w-full py-2.5 sm:py-3.5 bg-slate-800 text-slate-400 font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-none cursor-not-allowed font-righteous border border-slate-700"
                           >
                             Unavailable
                           </button>
