@@ -6,7 +6,7 @@ import UserSidebarLayout from '../../components/UserSidebarLayout';
 import { useAuth } from '../../context/AuthContext';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
 import api from '../../lib/api';
-import { ShieldCheck, Info, Lock, Wallet, Loader2, Eye, EyeOff, Plus, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, Info, Lock, Wallet, Loader2, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function WithdrawPage() {
@@ -277,22 +277,22 @@ export default function WithdrawPage() {
 
               {/* Destination Wallet Address Dropdown / Warning */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-1.5">
                   <label className="text-xs font-semibold text-slate-300 font-sans">
                     Destination Wallet Address <span className="text-[10px] text-slate-400">({selectedGateway.badge})</span>
                   </label>
                   <Link
                     href="/withdraw/wallet"
-                    className="text-[11px] text-[#ff0044] hover:underline font-semibold flex items-center gap-1"
+                    className="text-[11px] text-[#ff0044] hover:underline font-semibold flex items-center gap-1 shrink-0"
                   >
-                    <Plus className="w-3 h-3" /> Add / Manage Wallets ➔
+                    Manage Wallets ➔
                   </Link>
                 </div>
 
                 {matchingWallets.length > 0 ? (
                   <Select value={walletAddress} onValueChange={setWalletAddress}>
-                    <SelectTrigger className="h-11 bg-[#06102b] border-[#1a2b57] text-white rounded-lg">
-                      <div className="flex items-center gap-2">
+                    <SelectTrigger className="h-11 bg-[#06102b] border-[#1a2b57] text-white rounded-lg min-w-0 overflow-hidden">
+                      <div className="flex items-center gap-2 min-w-0 overflow-hidden w-full">
                         <Wallet className="w-4 h-4 text-slate-400 shrink-0" />
                         <SelectValue placeholder="Select Wallet Address" />
                       </div>
@@ -300,7 +300,7 @@ export default function WithdrawPage() {
                     <SelectContent searchable={false} className="bg-[#081226] border-[#ff0044]/30 text-white shadow-2xl">
                       {matchingWallets.map((w) => (
                         <SelectItem key={w.id || w.address} value={w.address} className="font-mono text-xs text-white">
-                          {w.label ? `${w.label} - ` : ''}{w.address} ({w.network})
+                          <span className="truncate">{w.label ? `${w.label} - ` : ''}{w.address} ({w.network})</span>
                         </SelectItem>
                       ))}
                     </SelectContent>

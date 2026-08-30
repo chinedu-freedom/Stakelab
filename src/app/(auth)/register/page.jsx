@@ -108,34 +108,34 @@ export default function RegisterPage() {
 
             {/* Register Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* First Name & Last Name */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="First Name"
-                    className="w-full h-11 bg-[#0c1424] border-0 outline-none focus:outline-none rounded-md px-3.5 text-white placeholder-slate-500 font-sans text-xs sm:text-sm focus:ring-1 focus:ring-[#ff0044] transition-all shadow-inner"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Last Name"
-                    className="w-full h-11 bg-[#0c1424] border-0 outline-none focus:outline-none rounded-md px-3.5 text-white placeholder-slate-500 font-sans text-xs sm:text-sm focus:ring-1 focus:ring-[#ff0044] transition-all shadow-inner"
-                  />
-                </div>
+              {/* First Name */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="First Name"
+                  className="w-full h-11 bg-[#0c1424] border-0 outline-none focus:outline-none rounded-md px-3.5 text-white placeholder-slate-500 font-sans text-xs sm:text-sm focus:ring-1 focus:ring-[#ff0044] transition-all shadow-inner"
+                />
+              </div>
+
+              {/* Last Name */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Last Name"
+                  className="w-full h-11 bg-[#0c1424] border-0 outline-none focus:outline-none rounded-md px-3.5 text-white placeholder-slate-500 font-sans text-xs sm:text-sm focus:ring-1 focus:ring-[#ff0044] transition-all shadow-inner"
+                />
               </div>
 
               {/* Email Address */}

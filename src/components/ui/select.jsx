@@ -51,9 +51,11 @@ export function SelectTrigger({ className = '', children }) {
     <button
       type="button"
       onClick={() => setOpen(!open)}
-      className={`w-full flex items-center justify-between px-4 py-3 bg-[#060f22] border border-[#182848] rounded-xl text-xs font-bold text-white focus:outline-none focus:border-[#ff0044] transition-all cursor-pointer select-none font-sans ${className}`}
+      className={`w-full flex items-center justify-between px-4 py-3 bg-[#060f22] border border-[#182848] rounded-xl text-xs font-bold text-white focus:outline-none focus:border-[#ff0044] transition-all cursor-pointer select-none font-sans overflow-hidden min-w-0 ${className}`}
     >
-      {children}
+      <div className="flex items-center gap-2 min-w-0 overflow-hidden shrink flex-1 text-left">
+        {children}
+      </div>
       <ChevronDown className={`w-4 h-4 ml-2 text-slate-400 transition-transform duration-200 shrink-0 ${open ? 'rotate-180' : ''}`} />
     </button>
   );
@@ -62,7 +64,7 @@ export function SelectTrigger({ className = '', children }) {
 export function SelectValue({ placeholder = 'Select...', children }) {
   const { selectedValue, selectedLabel } = useContext(SelectContext);
   return (
-    <span className="truncate text-white font-sans text-xs font-bold">
+    <span className="truncate block w-full min-w-0 text-white font-sans text-xs font-bold">
       {children !== undefined ? children : (selectedLabel || selectedValue || <span className="text-slate-400 font-normal">{placeholder}</span>)}
     </span>
   );
