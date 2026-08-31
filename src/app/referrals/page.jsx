@@ -147,11 +147,11 @@ export default function ReferralsPage() {
             </div>
           </div>
 
-          {/* Level Selection Tabs (Matching Red Pills from Reference Image) */}
-          <div className="flex items-center gap-3 overflow-x-auto pb-2 border-b border-[#182848]">
+          {/* Level Selection Tabs (Single Line Horizontally Scrollable) */}
+          <div className="flex items-center gap-2.5 overflow-x-auto pb-2 border-b border-[#182848] scrollbar-none whitespace-nowrap flex-nowrap w-full">
             <button
               onClick={() => setActiveTab('all')}
-              className={`px-5 py-2 rounded-xl text-xs font-bold font-sans transition-all shrink-0 cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold font-sans transition-all shrink-0 cursor-pointer whitespace-nowrap ${
                 activeTab === 'all'
                   ? 'bg-gradient-to-r from-[#ff0044] to-[#fe780b] text-white shadow-md shadow-red-500/20'
                   : 'bg-[#07132a] text-slate-400 border border-[#182848] hover:text-white'
@@ -161,7 +161,7 @@ export default function ReferralsPage() {
             </button>
             <button
               onClick={() => setActiveTab('level1')}
-              className={`px-5 py-2 rounded-xl text-xs font-bold font-sans transition-all shrink-0 cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold font-sans transition-all shrink-0 cursor-pointer whitespace-nowrap ${
                 activeTab === 'level1'
                   ? 'bg-gradient-to-r from-[#ff0044] to-[#fe780b] text-white shadow-md shadow-red-500/20'
                   : 'bg-[#07132a] text-slate-400 border border-[#182848] hover:text-white'
@@ -171,7 +171,7 @@ export default function ReferralsPage() {
             </button>
             <button
               onClick={() => setActiveTab('level2')}
-              className={`px-5 py-2 rounded-xl text-xs font-bold font-sans transition-all shrink-0 cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold font-sans transition-all shrink-0 cursor-pointer whitespace-nowrap ${
                 activeTab === 'level2'
                   ? 'bg-gradient-to-r from-[#ff0044] to-[#fe780b] text-white shadow-md shadow-red-500/20'
                   : 'bg-[#07132a] text-slate-400 border border-[#182848] hover:text-white'
@@ -181,7 +181,7 @@ export default function ReferralsPage() {
             </button>
             <button
               onClick={() => setActiveTab('level3')}
-              className={`px-5 py-2 rounded-xl text-xs font-bold font-sans transition-all shrink-0 cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold font-sans transition-all shrink-0 cursor-pointer whitespace-nowrap ${
                 activeTab === 'level3'
                   ? 'bg-gradient-to-r from-[#ff0044] to-[#fe780b] text-white shadow-md shadow-red-500/20'
                   : 'bg-[#07132a] text-slate-400 border border-[#182848] hover:text-white'
@@ -191,16 +191,16 @@ export default function ReferralsPage() {
             </button>
           </div>
 
-          {/* 3 Level Breakdown Cards Grid (Matching Reference Screenshot 2x2 Layout) */}
+          {/* 3 Level Breakdown Cards Grid */}
           <div className="space-y-6">
             {/* Level 1 Card */}
             {(activeTab === 'all' || activeTab === 'level1') && (
               <div className="bg-[#07132a] border border-[#182848] rounded-xl p-5 shadow-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-[#182848] pb-3">
                   <h3 className="text-sm font-extrabold text-white font-sans flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#ff0044]" /> 1 Level<span className="hidden sm:inline"> (Direct Invites)</span>
+                    <span className="w-2 h-2 rounded-full bg-[#ff0044]" /> Level 1<span className="hidden sm:inline"> (Direct Invites)</span>
                   </h3>
-                  <span className="text-xs text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/20">
+                  <span className="text-xs text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/20 whitespace-nowrap">
                     10.00% Commission
                   </span>
                 </div>
@@ -232,12 +232,12 @@ export default function ReferralsPage() {
                 {level1.users?.length > 0 && (
                   <div className="pt-3 border-t border-[#182848] space-y-2">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-bold text-slate-300">Level 1 Members List (Recent 5)</h4>
+                      <h4 className="text-xs font-bold text-slate-300 font-sans">Members List</h4>
                       <Link
                         href="/referrals/members?level=1"
-                        className="text-[11px] font-bold text-[#ff0044] hover:underline inline-flex items-center gap-1 font-sans"
+                        className="text-[11px] font-bold text-[#ff0044] hover:underline inline-flex items-center gap-1 font-sans whitespace-nowrap"
                       >
-                        See All Level 1 Members ({level1.users.length}) →
+                        See All →
                       </Link>
                     </div>
                     <div className="overflow-x-auto">
@@ -245,6 +245,7 @@ export default function ReferralsPage() {
                         <thead>
                           <tr className="bg-[#08152e] text-slate-400 font-semibold uppercase">
                             <th className="py-2.5 px-3">Member</th>
+                            <th className="py-2.5 px-3">Level</th>
                             <th className="py-2.5 px-3">Joined Date</th>
                             <th className="py-2.5 px-3">Status</th>
                             <th className="py-2.5 px-3 text-right">Recharge</th>
@@ -254,23 +255,28 @@ export default function ReferralsPage() {
                         <tbody className="divide-y divide-[#182848]">
                           {level1.users.slice(0, 5).map((u) => (
                             <tr key={u.id} className="hover:bg-[#0c1a38]/50 text-slate-200">
-                              <td className="py-2.5 px-3 font-bold text-white">
+                              <td className="py-2.5 px-3 font-bold text-white whitespace-nowrap">
                                 {u.username || u.full_name || u.email}
+                              </td>
+                              <td className="py-2.5 px-3 whitespace-nowrap">
+                                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#142345] text-slate-300 border border-[#1e325c] whitespace-nowrap inline-block shrink-0">
+                                  Level 1
+                                </span>
                               </td>
                               <td className="py-2.5 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
                                 {new Date(u.created_at || Date.now()).toLocaleString()}
                               </td>
-                              <td className="py-2.5 px-3">
+                              <td className="py-2.5 px-3 whitespace-nowrap">
                                 <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap inline-flex items-center justify-center ${
                                   u.is_active ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-700 text-slate-400'
                                 }`}>
                                   {u.is_active ? 'Active' : 'Inactive'}
                                 </span>
                               </td>
-                              <td className="py-2.5 px-3 text-right font-semibold text-white">
+                              <td className="py-2.5 px-3 text-right font-semibold text-white whitespace-nowrap">
                                 ${parseFloat(u.totalRecharge || 0).toFixed(2)}
                               </td>
-                              <td className="py-2.5 px-3 text-right font-semibold text-emerald-400">
+                              <td className="py-2.5 px-3 text-right font-semibold text-emerald-400 whitespace-nowrap">
                                 ${parseFloat(u.totalStaked || 0).toFixed(2)}
                               </td>
                             </tr>
@@ -288,9 +294,9 @@ export default function ReferralsPage() {
               <div className="bg-[#07132a] border border-[#182848] rounded-xl p-5 shadow-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-[#182848] pb-3">
                   <h3 className="text-sm font-extrabold text-white font-sans flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#fe780b]" /> 2 Level<span className="hidden sm:inline"> (Indirect Level 2)</span>
+                    <span className="w-2 h-2 rounded-full bg-[#fe780b]" /> Level 2<span className="hidden sm:inline"> (Indirect Level 2)</span>
                   </h3>
-                  <span className="text-xs text-amber-400 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/20">
+                  <span className="text-xs text-amber-400 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/20 whitespace-nowrap">
                     5.00% Commission
                   </span>
                 </div>
@@ -322,12 +328,12 @@ export default function ReferralsPage() {
                 {level2.users?.length > 0 && (
                   <div className="pt-3 border-t border-[#182848] space-y-2">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-bold text-slate-300">Level 2 Members List (Recent 5)</h4>
+                      <h4 className="text-xs font-bold text-slate-300 font-sans">Members List</h4>
                       <Link
                         href="/referrals/members?level=2"
-                        className="text-[11px] font-bold text-amber-400 hover:underline inline-flex items-center gap-1 font-sans"
+                        className="text-[11px] font-bold text-amber-400 hover:underline inline-flex items-center gap-1 font-sans whitespace-nowrap"
                       >
-                        See All Level 2 Members ({level2.users.length}) →
+                        See All →
                       </Link>
                     </div>
                     <div className="overflow-x-auto">
@@ -335,6 +341,7 @@ export default function ReferralsPage() {
                         <thead>
                           <tr className="bg-[#08152e] text-slate-400 font-semibold uppercase">
                             <th className="py-2.5 px-3">Member</th>
+                            <th className="py-2.5 px-3">Level</th>
                             <th className="py-2.5 px-3">Joined Date</th>
                             <th className="py-2.5 px-3">Status</th>
                             <th className="py-2.5 px-3 text-right">Recharge</th>
@@ -344,23 +351,28 @@ export default function ReferralsPage() {
                         <tbody className="divide-y divide-[#182848]">
                           {level2.users.slice(0, 5).map((u) => (
                             <tr key={u.id} className="hover:bg-[#0c1a38]/50 text-slate-200">
-                              <td className="py-2.5 px-3 font-bold text-white">
+                              <td className="py-2.5 px-3 font-bold text-white whitespace-nowrap">
                                 {u.username || u.full_name || u.email}
+                              </td>
+                              <td className="py-2.5 px-3 whitespace-nowrap">
+                                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#142345] text-slate-300 border border-[#1e325c] whitespace-nowrap inline-block shrink-0">
+                                  Level 2
+                                </span>
                               </td>
                               <td className="py-2.5 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
                                 {new Date(u.created_at || Date.now()).toLocaleString()}
                               </td>
-                              <td className="py-2.5 px-3">
+                              <td className="py-2.5 px-3 whitespace-nowrap">
                                 <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap inline-flex items-center justify-center ${
                                   u.is_active ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-700 text-slate-400'
                                 }`}>
                                   {u.is_active ? 'Active' : 'Inactive'}
                                 </span>
                               </td>
-                              <td className="py-2.5 px-3 text-right font-semibold text-white">
+                              <td className="py-2.5 px-3 text-right font-semibold text-white whitespace-nowrap">
                                 ${parseFloat(u.totalRecharge || 0).toFixed(2)}
                               </td>
-                              <td className="py-2.5 px-3 text-right font-semibold text-emerald-400">
+                              <td className="py-2.5 px-3 text-right font-semibold text-emerald-400 whitespace-nowrap">
                                 ${parseFloat(u.totalStaked || 0).toFixed(2)}
                               </td>
                             </tr>
@@ -378,9 +390,9 @@ export default function ReferralsPage() {
               <div className="bg-[#07132a] border border-[#182848] rounded-xl p-5 shadow-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-[#182848] pb-3">
                   <h3 className="text-sm font-extrabold text-white font-sans flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-purple-500" /> 3 Level<span className="hidden sm:inline"> (Indirect Level 3)</span>
+                    <span className="w-2 h-2 rounded-full bg-purple-500" /> Level 3<span className="hidden sm:inline"> (Indirect Level 3)</span>
                   </h3>
-                  <span className="text-xs text-purple-400 font-bold bg-purple-500/10 px-2.5 py-0.5 rounded border border-purple-500/20">
+                  <span className="text-xs text-purple-400 font-bold bg-purple-500/10 px-2.5 py-0.5 rounded border border-purple-500/20 whitespace-nowrap">
                     3.00% Commission
                   </span>
                 </div>
@@ -412,12 +424,12 @@ export default function ReferralsPage() {
                 {level3.users?.length > 0 && (
                   <div className="pt-3 border-t border-[#182848] space-y-2">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-bold text-slate-300">Level 3 Members List (Recent 5)</h4>
+                      <h4 className="text-xs font-bold text-slate-300 font-sans">Members List</h4>
                       <Link
                         href="/referrals/members?level=3"
-                        className="text-[11px] font-bold text-purple-400 hover:underline inline-flex items-center gap-1 font-sans"
+                        className="text-[11px] font-bold text-purple-400 hover:underline inline-flex items-center gap-1 font-sans whitespace-nowrap"
                       >
-                        See All Level 3 Members ({level3.users.length}) →
+                        See All →
                       </Link>
                     </div>
                     <div className="overflow-x-auto">
@@ -425,6 +437,7 @@ export default function ReferralsPage() {
                         <thead>
                           <tr className="bg-[#08152e] text-slate-400 font-semibold uppercase">
                             <th className="py-2.5 px-3">Member</th>
+                            <th className="py-2.5 px-3">Level</th>
                             <th className="py-2.5 px-3">Joined Date</th>
                             <th className="py-2.5 px-3">Status</th>
                             <th className="py-2.5 px-3 text-right">Recharge</th>
@@ -434,23 +447,28 @@ export default function ReferralsPage() {
                         <tbody className="divide-y divide-[#182848]">
                           {level3.users.slice(0, 5).map((u) => (
                             <tr key={u.id} className="hover:bg-[#0c1a38]/50 text-slate-200">
-                              <td className="py-2.5 px-3 font-bold text-white">
+                              <td className="py-2.5 px-3 font-bold text-white whitespace-nowrap">
                                 {u.username || u.full_name || u.email}
+                              </td>
+                              <td className="py-2.5 px-3 whitespace-nowrap">
+                                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#142345] text-slate-300 border border-[#1e325c] whitespace-nowrap inline-block shrink-0">
+                                  Level 3
+                                </span>
                               </td>
                               <td className="py-2.5 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
                                 {new Date(u.created_at || Date.now()).toLocaleString()}
                               </td>
-                              <td className="py-2.5 px-3">
+                              <td className="py-2.5 px-3 whitespace-nowrap">
                                 <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap inline-flex items-center justify-center ${
                                   u.is_active ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-700 text-slate-400'
                                 }`}>
                                   {u.is_active ? 'Active' : 'Inactive'}
                                 </span>
                               </td>
-                              <td className="py-2.5 px-3 text-right font-semibold text-white">
+                              <td className="py-2.5 px-3 text-right font-semibold text-white whitespace-nowrap">
                                 ${parseFloat(u.totalRecharge || 0).toFixed(2)}
                               </td>
-                              <td className="py-2.5 px-3 text-right font-semibold text-emerald-400">
+                              <td className="py-2.5 px-3 text-right font-semibold text-emerald-400 whitespace-nowrap">
                                 ${parseFloat(u.totalStaked || 0).toFixed(2)}
                               </td>
                             </tr>

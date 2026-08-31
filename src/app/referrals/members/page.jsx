@@ -124,11 +124,11 @@ function ReferralMembersContent() {
           </div>
         </div>
 
-        {/* Level Tabs Navigation */}
-        <div className="flex flex-wrap items-center gap-2 p-1.5 bg-[#07132a] border border-[#142343] rounded-xl">
+        {/* Level Tabs Navigation (Single Line Horizontally Scrollable) */}
+        <div className="flex items-center gap-2 p-1.5 bg-[#07132a] border border-[#142343] rounded-xl overflow-x-auto scrollbar-none whitespace-nowrap flex-nowrap w-full">
           <button
             onClick={() => setActiveTab('level1')}
-            className={`px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 whitespace-nowrap ${
               activeTab === 'level1'
                 ? 'bg-gradient-to-r from-[#ff0044] to-[#fe780b] text-white shadow-lg shadow-red-500/20'
                 : 'text-slate-400 hover:text-white hover:bg-[#0c1a38]'
@@ -142,7 +142,7 @@ function ReferralMembersContent() {
 
           <button
             onClick={() => setActiveTab('level2')}
-            className={`px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 whitespace-nowrap ${
               activeTab === 'level2'
                 ? 'bg-gradient-to-r from-[#fe780b] to-amber-500 text-white shadow-lg shadow-amber-500/20'
                 : 'text-slate-400 hover:text-white hover:bg-[#0c1a38]'
@@ -156,7 +156,7 @@ function ReferralMembersContent() {
 
           <button
             onClick={() => setActiveTab('level3')}
-            className={`px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 whitespace-nowrap ${
               activeTab === 'level3'
                 ? 'bg-gradient-to-r from-purple-600 to-indigo-500 text-white shadow-lg shadow-purple-500/20'
                 : 'text-slate-400 hover:text-white hover:bg-[#0c1a38]'
@@ -170,7 +170,7 @@ function ReferralMembersContent() {
 
           <button
             onClick={() => setActiveTab('all')}
-            className={`px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shrink-0 whitespace-nowrap ${
               activeTab === 'all'
                 ? 'bg-[#182848] text-white shadow-lg'
                 : 'text-slate-400 hover:text-white hover:bg-[#0c1a38]'
@@ -206,20 +206,20 @@ function ReferralMembersContent() {
           </div>
         </div>
 
-        {/* Filter / Search Row */}
-        <div className="bg-[#07132a] border border-[#182848] rounded-xl p-4 flex items-center justify-between gap-4">
-          <div className="relative flex-1 max-w-md">
+        {/* Filter / Search Row (Full Width Input & Mobile Results Below) */}
+        <div className="bg-[#07132a] border border-[#182848] rounded-xl p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full">
+          <div className="relative w-full">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search member by username, name or email..."
-              className="w-full bg-[#060f22] border border-[#182848] rounded-lg pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#ff0044] transition-all"
+              className="w-full bg-[#060f22] border border-[#182848] rounded-lg pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#ff0044] transition-all font-sans"
             />
           </div>
 
-          <div className="text-xs text-slate-400 font-semibold font-mono">
+          <div className="text-xs text-slate-400 font-semibold font-mono w-full sm:w-auto text-left sm:text-right shrink-0">
             Showing {displayedUsers.length} member{displayedUsers.length === 1 ? '' : 's'}
           </div>
         </div>
@@ -259,13 +259,13 @@ function ReferralMembersContent() {
                 <tbody className="divide-y divide-[#142343]">
                   {paginatedMembers.map((u) => (
                     <tr key={u.id} className="hover:bg-[#0c1a38]/60 text-slate-200 transition-colors">
-                      <td className="py-4 px-4">
+                      <td className="py-4 px-4 whitespace-nowrap">
                         <div className="font-bold text-white text-xs">{u.username || u.full_name || u.email}</div>
                         {u.full_name && <div className="text-[11px] text-slate-400 font-normal">{u.full_name}</div>}
                       </td>
 
-                      <td className="py-4 px-4">
-                        <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#142345] text-slate-300 border border-[#1e325c]">
+                      <td className="py-4 px-4 whitespace-nowrap">
+                        <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#142345] text-slate-300 border border-[#1e325c] whitespace-nowrap inline-block shrink-0">
                           {u.levelName || 'Level 1'}
                         </span>
                       </td>
