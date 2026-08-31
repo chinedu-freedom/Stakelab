@@ -132,11 +132,17 @@ export default function CreateStakingPage() {
   const r = selectedPlan ? parseFloat(selectedPlan.daily_return_percent || 0) / 100 : 0;
   const days = selectedPlan ? parseInt(selectedPlan.duration_days || 1) : 1;
   const isCapitalReturn = selectedPlan ? selectedPlan.capital_return !== false : true;
+  const isCompounding = selectedPlan ? selectedPlan.is_compounding !== false : true;
 
-  const dailyProfit = P * r;
-  const totalProfit = dailyProfit * days;
-  const capitalBack = isCapitalReturn ? P : 0;
-  const estimatedTotalReturn = totalProfit + capitalBack;
+  let dailyProfit = P * r;
+  let totalProfit = dailyProfit * days;
+  let estimatedTotalReturn = totalProfit + (isCapitalReturn ? P : 0);
+
+  if (isCompounding && P > 0 && r > 0 && days > 0) {
+    const totalCompoundedValue = P * Math.pow(1 + r, days);
+    totalProfit = totalCompoundedValue - P;
+    estimatedTotalReturn = isCapitalReturn ? totalCompoundedValue : totalProfit;
+  }
 
   return (
     <UserSidebarLayout>
@@ -380,12 +386,12 @@ export default function CreateStakingPage() {
 
                   <div className="flex items-center justify-between text-slate-400">
                     <span>Daily Profit Payout:</span>
-                    <span className="text-emerald-400 font-bold font-mono">+${dailyProfit.toFixed(2)} / day</span>
+                    <span className="text-emerald-400 font-bold font-mono">+${(P * r).toFixed(2)} / day {isCompounding ? '(Initial)' : ''}</span>
                   </div>
 
                   <div className="flex items-center justify-between text-slate-400">
                     <span>Total Net Profit ({selectedPlan.duration_days} days):</span>
-                    <span className="text-emerald-400 font-bold font-mono">+${totalProfit.toFixed(2)}</span>
+                    <span className="text-emerald-400 font-bold font-mono">+${totalProfit.toFixed(2)} {isCompounding ? '(Compounded)' : ''}</span>
                   </div>
 
                   <div className="flex items-center justify-between text-slate-400 gap-2">
