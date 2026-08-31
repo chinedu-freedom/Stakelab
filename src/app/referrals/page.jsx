@@ -137,7 +137,7 @@ export default function ReferralsPage() {
                   <Award className="w-4 h-4" />
                 </div>
                 <div className="text-2xl font-extrabold text-white mt-2 font-sans">
-                  ${teamStats.teamCommission.toFixed(2)}
+                  ${parseFloat(teamStats.teamCommission || 0).toFixed(2)}
                 </div>
                 <div className="text-xs font-medium text-slate-400 font-sans">
                   Team Commission
@@ -207,28 +207,28 @@ export default function ReferralsPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {/* Total Headcount */}
                   <div className="bg-[#0c1a38] border border-[#18294d] rounded-lg p-3.5 text-center">
-                    <div className="text-lg font-bold text-white font-sans">{level1.totalHeadcount}</div>
+                    <div className="text-lg font-bold text-white font-sans">{level1.totalHeadcount || 0}</div>
                     <div className="text-[11px] font-medium text-slate-400 mt-0.5">Total Headcount</div>
                   </div>
                   {/* Number of Active */}
                   <div className="bg-[#0c1a38] border border-[#18294d] rounded-lg p-3.5 text-center">
-                    <div className="text-lg font-bold text-white font-sans">{level1.numberActive}</div>
+                    <div className="text-lg font-bold text-white font-sans">{level1.numberActive || 0}</div>
                     <div className="text-[11px] font-medium text-slate-400 mt-0.5">Number of Active</div>
                   </div>
                   {/* Total Recharge */}
                   <div className="bg-[#0c1a38] border border-[#18294d] rounded-lg p-3.5 text-center">
-                    <div className="text-lg font-bold text-white font-sans">${level1.totalRecharge.toFixed(2)}</div>
+                    <div className="text-lg font-bold text-white font-sans">${parseFloat(level1.totalRecharge || 0).toFixed(2)}</div>
                     <div className="text-[11px] font-medium text-slate-400 mt-0.5">Total Recharge</div>
                   </div>
                   {/* Commission */}
                   <div className="bg-[#0c1a38] border border-[#18294d] rounded-lg p-3.5 text-center">
-                    <div className="text-lg font-bold text-emerald-400 font-sans">${level1.commission.toFixed(2)}</div>
+                    <div className="text-lg font-bold text-emerald-400 font-sans">${parseFloat(level1.commission || 0).toFixed(2)}</div>
                     <div className="text-[11px] font-medium text-slate-400 mt-0.5">Commission</div>
                   </div>
                 </div>
 
                 {/* Level 1 Referred Users Table (Max 5) */}
-                {level1.users.length > 0 && (
+                {level1.users?.length > 0 && (
                   <div className="pt-3 border-t border-[#182848] space-y-2">
                     <div className="flex items-center justify-between">
                       <h4 className="text-xs font-bold text-slate-300">Level 1 Members List (Recent 5)</h4>
@@ -257,7 +257,7 @@ export default function ReferralsPage() {
                                 {u.username || u.full_name || u.email}
                               </td>
                               <td className="py-2.5 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
-                                {new Date(u.created_at).toLocaleString()}
+                                {new Date(u.created_at || Date.now()).toLocaleString()}
                               </td>
                               <td className="py-2.5 px-3">
                                 <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap inline-flex items-center justify-center ${
@@ -267,10 +267,10 @@ export default function ReferralsPage() {
                                 </span>
                               </td>
                               <td className="py-2.5 px-3 text-right font-semibold text-white">
-                                ${u.totalRecharge.toFixed(2)}
+                                ${parseFloat(u.totalRecharge || 0).toFixed(2)}
                               </td>
                               <td className="py-2.5 px-3 text-right font-semibold text-emerald-400">
-                                ${u.totalStaked.toFixed(2)}
+                                ${parseFloat(u.totalStaked || 0).toFixed(2)}
                               </td>
                             </tr>
                           ))}
@@ -297,28 +297,28 @@ export default function ReferralsPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {/* Total Headcount */}
                   <div className="bg-[#0c1a38] border border-[#18294d] rounded-lg p-3.5 text-center">
-                    <div className="text-lg font-bold text-white font-sans">{level2.totalHeadcount}</div>
+                    <div className="text-lg font-bold text-white font-sans">{level2.totalHeadcount || 0}</div>
                     <div className="text-[11px] font-medium text-slate-400 mt-0.5">Total Headcount</div>
                   </div>
                   {/* Number of Active */}
                   <div className="bg-[#0c1a38] border border-[#18294d] rounded-lg p-3.5 text-center">
-                    <div className="text-lg font-bold text-white font-sans">{level2.numberActive}</div>
+                    <div className="text-lg font-bold text-white font-sans">{level2.numberActive || 0}</div>
                     <div className="text-[11px] font-medium text-slate-400 mt-0.5">Number of Active</div>
                   </div>
                   {/* Total Recharge */}
                   <div className="bg-[#0c1a38] border border-[#18294d] rounded-lg p-3.5 text-center">
-                    <div className="text-lg font-bold text-white font-sans">${level2.totalRecharge.toFixed(2)}</div>
+                    <div className="text-lg font-bold text-white font-sans">${parseFloat(level2.totalRecharge || 0).toFixed(2)}</div>
                     <div className="text-[11px] font-medium text-slate-400 mt-0.5">Total Recharge</div>
                   </div>
                   {/* Commission */}
                   <div className="bg-[#0c1a38] border border-[#18294d] rounded-lg p-3.5 text-center">
-                    <div className="text-lg font-bold text-emerald-400 font-sans">${level2.commission.toFixed(2)}</div>
+                    <div className="text-lg font-bold text-emerald-400 font-sans">${parseFloat(level2.commission || 0).toFixed(2)}</div>
                     <div className="text-[11px] font-medium text-slate-400 mt-0.5">Commission</div>
                   </div>
                 </div>
 
                 {/* Level 2 Referred Users Table (Max 5) */}
-                {level2.users.length > 0 && (
+                {level2.users?.length > 0 && (
                   <div className="pt-3 border-t border-[#182848] space-y-2">
                     <div className="flex items-center justify-between">
                       <h4 className="text-xs font-bold text-slate-300">Level 2 Members List (Recent 5)</h4>
@@ -347,7 +347,7 @@ export default function ReferralsPage() {
                                 {u.username || u.full_name || u.email}
                               </td>
                               <td className="py-2.5 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
-                                {new Date(u.created_at).toLocaleString()}
+                                {new Date(u.created_at || Date.now()).toLocaleString()}
                               </td>
                               <td className="py-2.5 px-3">
                                 <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap inline-flex items-center justify-center ${
@@ -357,10 +357,10 @@ export default function ReferralsPage() {
                                 </span>
                               </td>
                               <td className="py-2.5 px-3 text-right font-semibold text-white">
-                                ${u.totalRecharge.toFixed(2)}
+                                ${parseFloat(u.totalRecharge || 0).toFixed(2)}
                               </td>
                               <td className="py-2.5 px-3 text-right font-semibold text-emerald-400">
-                                ${u.totalStaked.toFixed(2)}
+                                ${parseFloat(u.totalStaked || 0).toFixed(2)}
                               </td>
                             </tr>
                           ))}
@@ -387,28 +387,28 @@ export default function ReferralsPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {/* Total Headcount */}
                   <div className="bg-[#0c1a38] border border-[#18294d] rounded-lg p-3.5 text-center">
-                    <div className="text-lg font-bold text-white font-sans">{level3.totalHeadcount}</div>
+                    <div className="text-lg font-bold text-white font-sans">{level3.totalHeadcount || 0}</div>
                     <div className="text-[11px] font-medium text-slate-400 mt-0.5">Total Headcount</div>
                   </div>
                   {/* Number of Active */}
                   <div className="bg-[#0c1a38] border border-[#18294d] rounded-lg p-3.5 text-center">
-                    <div className="text-lg font-bold text-white font-sans">{level3.numberActive}</div>
+                    <div className="text-lg font-bold text-white font-sans">{level3.numberActive || 0}</div>
                     <div className="text-[11px] font-medium text-slate-400 mt-0.5">Number of Active</div>
                   </div>
                   {/* Total Recharge */}
                   <div className="bg-[#0c1a38] border border-[#18294d] rounded-lg p-3.5 text-center">
-                    <div className="text-lg font-bold text-white font-sans">${level3.totalRecharge.toFixed(2)}</div>
+                    <div className="text-lg font-bold text-white font-sans">${parseFloat(level3.totalRecharge || 0).toFixed(2)}</div>
                     <div className="text-[11px] font-medium text-slate-400 mt-0.5">Total Recharge</div>
                   </div>
                   {/* Commission */}
                   <div className="bg-[#0c1a38] border border-[#18294d] rounded-lg p-3.5 text-center">
-                    <div className="text-lg font-bold text-emerald-400 font-sans">${level3.commission.toFixed(2)}</div>
+                    <div className="text-lg font-bold text-emerald-400 font-sans">${parseFloat(level3.commission || 0).toFixed(2)}</div>
                     <div className="text-[11px] font-medium text-slate-400 mt-0.5">Commission</div>
                   </div>
                 </div>
 
                 {/* Level 3 Referred Users Table (Max 5) */}
-                {level3.users.length > 0 && (
+                {level3.users?.length > 0 && (
                   <div className="pt-3 border-t border-[#182848] space-y-2">
                     <div className="flex items-center justify-between">
                       <h4 className="text-xs font-bold text-slate-300">Level 3 Members List (Recent 5)</h4>
@@ -437,7 +437,7 @@ export default function ReferralsPage() {
                                 {u.username || u.full_name || u.email}
                               </td>
                               <td className="py-2.5 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
-                                {new Date(u.created_at).toLocaleString()}
+                                {new Date(u.created_at || Date.now()).toLocaleString()}
                               </td>
                               <td className="py-2.5 px-3">
                                 <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap inline-flex items-center justify-center ${
@@ -447,10 +447,10 @@ export default function ReferralsPage() {
                                 </span>
                               </td>
                               <td className="py-2.5 px-3 text-right font-semibold text-white">
-                                ${u.totalRecharge.toFixed(2)}
+                                ${parseFloat(u.totalRecharge || 0).toFixed(2)}
                               </td>
                               <td className="py-2.5 px-3 text-right font-semibold text-emerald-400">
-                                ${u.totalStaked.toFixed(2)}
+                                ${parseFloat(u.totalStaked || 0).toFixed(2)}
                               </td>
                             </tr>
                           ))}
