@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import UserSidebarLayout from '../../components/UserSidebarLayout';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../lib/api';

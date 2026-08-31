@@ -1,15 +1,17 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import UserSidebarLayout from '../../../components/UserSidebarLayout';
 import { useAuth } from '../../../context/AuthContext';
 import api from '../../../lib/api';
 import { Users, Search, ArrowLeft, Loader2 } from 'lucide-react';
 
-export default function ReferralMembersPage({ searchParams }) {
-  const resolvedSearchParams = typeof searchParams?.then === 'function' ? use(searchParams) : (searchParams || {});
-  const initialLevel = resolvedSearchParams?.level ? `level${resolvedSearchParams.level}` : 'level1';
+function ReferralMembersContent() {
+  const searchParams = useSearchParams();
+  const levelParam = searchParams.get('level');
+  const initialLevel = levelParam ? `level${levelParam}` : 'level1';
 
   const [activeTab, setActiveTab] = useState(initialLevel); // 'level1' | 'level2' | 'level3' | 'all'
   const [searchQuery, setSearchQuery] = useState('');
@@ -328,5 +330,21 @@ export default function ReferralMembersPage({ searchParams }) {
         )}
       </div>
     </UserSidebarLayout>
+  );
+}
+
+export default function ReferralMembersPage() {
+  return (
+    <Suspense
+      fallback={
+        <UserSidebarLayout>
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <Loader2 className="w-8 h-8 animate-spin text-[#ff0044]" />
+          </div>
+        </UserSidebarLayout>
+      }
+    >
+      <ReferralMembersContent />
+    </Suspense>
   );
 }
