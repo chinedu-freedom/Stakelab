@@ -576,6 +576,8 @@ export default function TicketDetailsPage({ params }) {
               </div>
             </div>
           </div>
+        )}
+
         {/* Close Support Ticket Confirmation Modal */}
         {closeModalOpen && (
           <div
