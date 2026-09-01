@@ -623,6 +623,8 @@ export default function TicketDetailsPage({ params }) {
               </div>
             </div>
           </div>
+        )}
+
         {/* Reopen Support Ticket Confirmation Modal */}
         {reopenModalOpen && (
           <div
