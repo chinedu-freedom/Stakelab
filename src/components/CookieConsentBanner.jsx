@@ -63,10 +63,16 @@ export default function CookieConsentBanner() {
             </button>
           </div>
 
-          <p className="text-xs text-slate-300 leading-relaxed font-sans">
-            {cookiePolicy.shortDescription ||
-              'We use cookies to enhance your experience, analyze site traffic, and assist in our marketing efforts.'}
-          </p>
+          {cookiePolicy.shortDescription ? (
+            <div
+              className="text-xs text-slate-300 leading-relaxed font-sans [&_p]:m-0 [&_span]:inline"
+              dangerouslySetInnerHTML={{ __html: cookiePolicy.shortDescription }}
+            />
+          ) : (
+            <p className="text-xs text-slate-300 leading-relaxed font-sans">
+              We use cookies to enhance your experience, analyze site traffic, and assist in our marketing efforts.
+            </p>
+          )}
 
           <div className="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-white/10">
             <button
@@ -111,9 +117,16 @@ export default function CookieConsentBanner() {
               </button>
             </div>
 
-            <div className="p-5 overflow-y-auto space-y-4 text-xs text-slate-300 leading-relaxed font-sans whitespace-pre-line no-scrollbar">
-              {cookiePolicy.fullDescription}
-            </div>
+            {cookiePolicy.fullDescription ? (
+              <div
+                className="p-5 overflow-y-auto space-y-4 text-xs text-slate-300 leading-relaxed font-sans no-scrollbar"
+                dangerouslySetInnerHTML={{ __html: cookiePolicy.fullDescription }}
+              />
+            ) : (
+              <div className="p-5 text-xs text-slate-300 font-sans">
+                No cookie policy details provided.
+              </div>
+            )}
 
             <div className="p-4 border-t border-white/10 flex justify-end">
               <button

@@ -31,6 +31,25 @@ import {
 import PageLoader from './PageLoader';
 import api from '../lib/api';
 
+let cachedUserBrandInfo = null;
+
+const renderFormattedBrandName = (name) => {
+  if (!name) return null;
+  const str = String(name);
+  if (str.toLowerCase() === 'everstake') {
+    return (
+      <span className="text-xl font-extrabold text-white font-righteous tracking-wide">
+        Ever<span className="text-gradient-stakelab">Stake</span>
+      </span>
+    );
+  }
+  return (
+    <span className="text-xl font-extrabold text-white font-righteous tracking-wide">
+      {str}
+    </span>
+  );
+};
+
 export default function UserSidebarLayout({ children }) {
   const pathname = usePathname();
   const { user, loading, logout } = useAuth();
@@ -75,20 +94,39 @@ export default function UserSidebarLayout({ children }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const [customLogo, setCustomLogo] = useState(null);
+  const [brandInfo, setBrandInfo] = useState(() => {
+    return cachedUserBrandInfo || { logoUrl: null, siteName: 'EverStake', loaded: !!cachedUserBrandInfo };
+  });
 
   useEffect(() => {
+    if (cachedUserBrandInfo) {
+      setBrandInfo(cachedUserBrandInfo);
+      return;
+    }
+
     api
       .get('/public/logo-favicon')
       .then((res) => {
-        if (res.data.success && res.data.settings?.logoUrl) {
-          setCustomLogo(res.data.settings.logoUrl);
+        if (res.data && res.data.success && res.data.settings) {
+          const info = {
+            logoUrl: res.data.settings.logoUrl || null,
+            siteName: res.data.settings.siteName || res.data.settings.siteTitle || 'EverStake',
+            loaded: true,
+          };
+          cachedUserBrandInfo = info;
+          setBrandInfo(info);
+        } else {
+          setBrandInfo((prev) => ({ ...prev, loaded: true }));
         }
       })
-      .catch(() => null);
+      .catch(() => setBrandInfo((prev) => ({ ...prev, loaded: true })));
 
     const handleLogoUpdate = (e) => {
-      if (e.detail) setCustomLogo(e.detail);
+      if (e.detail) {
+        const info = { ...brandInfo, logoUrl: e.detail, loaded: true };
+        cachedUserBrandInfo = info;
+        setBrandInfo(info);
+      }
     };
     window.addEventListener('site-logo-updated', handleLogoUpdate);
     return () => window.removeEventListener('site-logo-updated', handleLogoUpdate);
@@ -137,10 +175,11 @@ export default function UserSidebarLayout({ children }) {
       matchPath: '/withdraw',
       submenu: [
         { label: 'Withdraw', path: '/withdraw' },
-        { label: 'Add Wallet', path: '/withdraw/wallet' },
         { label: 'Withdraw history', path: '/withdraw/history' },
       ],
     },
+    { label: 'Link Withdrawal Wallet', path: '/withdraw/wallet', icon: Wallet },
+    { label: 'Set Withdrawal PIN', path: '/withdraw?openPin=true', icon: Key },
     { label: 'Transaction', path: '/transactions', icon: History },
     { label: 'Account Data', path: '/account', icon: Key },
     { label: 'Security & Password', path: '/change-password', icon: ShieldCheck },
@@ -198,18 +237,18 @@ export default function UserSidebarLayout({ children }) {
         }`}
       >
         {/* Top Sidebar Brand Logo - FIXED (Does NOT scroll) */}
-        <div className="h-16 px-6 flex items-center border-b border-[#142343] shrink-0">
+        <div className="h-16 px-6 flex items-center border-b border-[#142343] shrink-0 min-h-[64px]">
           <Link href="/dashboard" className="flex items-center space-x-2.5">
-            {customLogo ? (
-              <img src={customLogo} alt="EverStake Logo" className="h-9 max-w-[170px] object-contain" />
-            ) : (
+            {brandInfo.loaded && (
               <>
-                <div className="w-8 h-8 rounded bg-gradient-to-r from-[#ff0044] to-[#fe780b] flex items-center justify-center font-righteous text-white font-bold text-lg shadow-md shadow-red-500/20">
-                  E
-                </div>
-                <span className="text-xl font-extrabold text-white font-righteous tracking-wide">
-                  Ever<span className="text-gradient-stakelab">Stake</span>
-                </span>
+                {brandInfo.logoUrl && (
+                  <img
+                    src={brandInfo.logoUrl}
+                    alt={brandInfo.siteName || 'Logo'}
+                    className="h-9 max-w-[170px] object-contain rounded"
+                  />
+                )}
+                {brandInfo.siteName && renderFormattedBrandName(brandInfo.siteName)}
               </>
             )}
           </Link>
@@ -241,11 +280,11 @@ export default function UserSidebarLayout({ children }) {
                 <h4 className="text-sm font-bold text-white mb-2 tracking-wide font-sans text-center">
                   {user?.full_name?.trim() || user?.username || user?.email}
                 </h4>
-                {/* Stacked Staking Balance Layout */}
+                {/* Stacked Total Assets (Staking Balance + Profits Balance) */}
                 <div className="space-y-0.5">
-                  <div className="text-xs font-semibold text-slate-200 text-center">Staking Balance</div>
+                  <div className="text-xs font-semibold text-slate-200 text-center">Total Assets</div>
                   <div className="text-base font-extrabold text-white text-center font-sans tracking-tight">
-                    ${(user?.staked_balance !== undefined && user?.staked_balance !== null) ? Number(user.staked_balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+                    ${(Number(user?.staked_balance || 0) + Number(user?.balance || 0)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
               </div>
@@ -391,16 +430,16 @@ export default function UserSidebarLayout({ children }) {
 
             {/* Site Name & Logo on Small Screens */}
             <Link href="/dashboard" className="lg:hidden flex items-center space-x-2">
-              {customLogo ? (
-                <img src={customLogo} alt="EverStake Logo" className="h-8 max-w-[140px] object-contain" />
-              ) : (
+              {brandInfo.loaded && (
                 <>
-                  <div className="w-7 h-7 rounded bg-gradient-to-r from-[#ff0044] to-[#fe780b] flex items-center justify-center font-righteous text-white font-bold text-sm shadow-md shadow-red-500/20">
-                    E
-                  </div>
-                  <span className="text-lg font-extrabold text-white font-righteous tracking-wide">
-                    Ever<span className="text-gradient-stakelab">Stake</span>
-                  </span>
+                  {brandInfo.logoUrl && (
+                    <img
+                      src={brandInfo.logoUrl}
+                      alt={brandInfo.siteName || 'Logo'}
+                      className="h-8 max-w-[140px] object-contain rounded"
+                    />
+                  )}
+                  {brandInfo.siteName && renderFormattedBrandName(brandInfo.siteName)}
                 </>
               )}
             </Link>

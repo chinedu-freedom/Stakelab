@@ -111,7 +111,7 @@ export default function DashboardPage() {
               <div className="w-10 h-10 rounded-xl bg-[#0f2d29] border border-[#1b4d45] flex items-center justify-center text-emerald-400 shrink-0 shadow-inner">
                 <Coins className="w-5 h-5 text-emerald-400" />
               </div>
-              <span className="text-xs text-slate-400 font-medium">Staking Balance</span>
+              <span className="text-xs text-slate-400 font-medium">Staking Wallet</span>
             </div>
 
             <div className="flex items-center justify-between gap-2 pt-1">
@@ -139,13 +139,13 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Stat Card 2: Earning Balance */}
+          {/* Stat Card 2: Profits Wallet */}
           <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-5 flex flex-col justify-between space-y-4 shadow-xl hover:border-amber-500/30 transition-all">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-xl bg-[#242114] border border-[#4d4220] flex items-center justify-center text-amber-400 shrink-0 shadow-inner">
                 <TrendingUp className="w-5 h-5 text-amber-400" />
               </div>
-              <span className="text-xs text-slate-400 font-medium">Earning Balance</span>
+              <span className="text-xs text-slate-400 font-medium">Profits Wallet</span>
             </div>
 
             <div className="flex items-center justify-between gap-2 pt-1">
@@ -354,15 +354,26 @@ export default function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#182848]">
-                  {transactions.slice(0, 10).map((tx) => (
-                    <tr key={tx.id} className="hover:bg-[#0e1d3e]/50 text-slate-200">
-                      <td className="py-4 px-2 font-mono text-[11px] text-slate-400">{tx.id.substring(0, 8)}...</td>
-                      <td className="py-4 px-2 font-bold text-white whitespace-nowrap">{tx.type}</td>
-                      <td className="py-4 px-2 font-righteous text-emerald-400 whitespace-nowrap">${parseFloat(tx.amount).toFixed(2)}</td>
-                      <td className="py-4 px-2 font-righteous text-white whitespace-nowrap">${parseFloat(tx.balance_after).toFixed(2)}</td>
-                      <td className="py-4 px-2 text-slate-400 font-mono text-[11px] whitespace-nowrap">{new Date(tx.created_at).toLocaleString()}</td>
-                    </tr>
-                  ))}
+                  {transactions.slice(0, 10).map((tx) => {
+                    const typeLabel =
+                      tx.type === 'ADMIN_CREDIT'
+                        ? 'Deposit credited'
+                        : tx.type === 'ADMIN_DEBIT'
+                        ? 'Deposit debited'
+                        : tx.type === 'DEPOSIT'
+                        ? 'Deposit successful'
+                        : tx.type;
+
+                    return (
+                      <tr key={tx.id} className="hover:bg-[#0e1d3e]/50 text-slate-200">
+                        <td className="py-4 px-2 font-mono text-[11px] text-slate-400">{tx.id.substring(0, 8)}...</td>
+                        <td className="py-4 px-2 font-bold text-white whitespace-nowrap">{typeLabel}</td>
+                        <td className="py-4 px-2 font-righteous text-emerald-400 whitespace-nowrap">${parseFloat(tx.amount).toFixed(2)}</td>
+                        <td className="py-4 px-2 font-righteous text-white whitespace-nowrap">${parseFloat(tx.balance_after).toFixed(2)}</td>
+                        <td className="py-4 px-2 text-slate-400 font-mono text-[11px] whitespace-nowrap">{new Date(tx.created_at).toLocaleString()}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

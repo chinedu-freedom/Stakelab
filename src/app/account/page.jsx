@@ -150,7 +150,7 @@ export default function AccountSettingsPage() {
               <div className="w-9 h-9 rounded-xl bg-[#0f2d29] border border-[#1b4d45] flex items-center justify-center text-emerald-400 shrink-0 shadow-inner">
                 <Coins className="w-4 h-4 text-emerald-400" />
               </div>
-              <span className="text-xs text-slate-400 font-medium">Staking Balance</span>
+              <span className="text-xs text-slate-400 font-medium">Staking Wallet</span>
             </div>
 
             <div className="flex items-center justify-between gap-2 pt-1">
@@ -170,7 +170,7 @@ export default function AccountSettingsPage() {
 
                 <Link
                   href="/deposit"
-                  className="bg-white hover:bg-slate-100 text-slate-950 font-black px-3 py-1 text-xs rounded-full shadow-lg border border-white transition-all transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center tracking-wide"
+                  className="bg-white hover:bg-slate-100 text-[#07193b] font-black px-3 py-1 text-xs rounded-full shadow-lg border border-white transition-all transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center tracking-wide"
                 >
                   Deposit
                 </Link>
@@ -178,13 +178,13 @@ export default function AccountSettingsPage() {
             </div>
           </div>
 
-          {/* 2. Earning Balance Card */}
+          {/* 2. Profits Wallet Card */}
           <div className="bg-[#0a1835] border border-[#182848] rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow-xl hover:border-amber-500/30 transition-all">
             <div className="flex items-center space-x-2.5">
               <div className="w-9 h-9 rounded-xl bg-[#242114] border border-[#4d4220] flex items-center justify-center text-amber-400 shrink-0 shadow-inner">
                 <TrendingUp className="w-4 h-4 text-amber-400" />
               </div>
-              <span className="text-xs text-slate-400 font-medium">Earning Balance</span>
+              <span className="text-xs text-slate-400 font-medium">Profits Wallet</span>
             </div>
 
             <div className="flex items-center justify-between gap-2 pt-1">

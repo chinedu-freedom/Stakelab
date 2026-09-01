@@ -56,6 +56,7 @@ export default function CreateStakingPage() {
     setSelectedWallet('main');
     const minVal = parseFloat(plan.min_amount || 30);
     setStakeAmount(minVal.toString());
+    if (refreshUser) refreshUser();
   };
 
   const handleConfirmStake = async (e) => {
@@ -82,16 +83,16 @@ export default function CreateStakingPage() {
       return;
     }
 
-    const mainBal = parseFloat(user?.balance || 0);
-    const profitBal = parseFloat(user?.total_earned || 0);
+    const mainBal = Number(user?.balance || 0);
+    const profitBal = Number(user?.total_earned || 0);
 
     if (selectedWallet === 'main' && amountNum > mainBal) {
-      toast.error(`Insufficient balance in Main Wallet ($${mainBal.toFixed(2)})`);
+      toast.error(`Insufficient balance in Staking Wallet ($${mainBal.toFixed(2)})`);
       return;
     }
 
     if (selectedWallet === 'profit' && amountNum > profitBal) {
-      toast.error(`Insufficient balance in Profit Wallet ($${profitBal.toFixed(2)})`);
+      toast.error(`Insufficient balance in Profits Wallet ($${profitBal.toFixed(2)})`);
       return;
     }
 
@@ -119,6 +120,8 @@ export default function CreateStakingPage() {
   };
 
   const displayPlans = plans.filter((p) => {
+    const isUnavailable = p.is_active === false || p.status === 'UNAVAILABLE' || p.status === 'INACTIVE' || p.badge === 'UNAVAILABLE' || p.badge === 'INACTIVE';
+    if (isUnavailable) return false;
     const planTier = (p.tier || '').trim().toLowerCase();
     const currentTier = activeTier.trim().toLowerCase();
     if (currentTier.includes('dynamic')) {
@@ -192,16 +195,22 @@ export default function CreateStakingPage() {
               const minAmt = parseFloat(plan.min_amount || 0);
               const maxAmt = parseFloat(plan.max_amount || 0);
               const dailyReturn = parseFloat(plan.daily_return_percent || 0);
-              const isUnavailable = plan.is_active === false || plan.status === 'UNAVAILABLE' || plan.status === 'INACTIVE' || plan.badge === 'UNAVAILABLE' || plan.badge === 'INACTIVE';
+              const rawSt = (plan.status || plan.badge || '').toUpperCase();
+              const isComingSoon = rawSt === 'COMING_SOON' || rawSt === 'COMING SOON';
+              const isUnavailable = plan.is_active === false || rawSt === 'UNAVAILABLE' || rawSt === 'INACTIVE';
 
               return (
                 <div key={plan.id} className="relative group flex flex-col max-w-sm sm:max-w-none mx-auto w-full">
-                  {/* Unavailable Pill Badge */}
-                  {isUnavailable && (
+                  {/* Pill Badge */}
+                  {isComingSoon ? (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-righteous font-bold text-[11px] px-3.5 py-1 rounded-full uppercase tracking-wider shadow-lg">
+                      Coming Soon
+                    </div>
+                  ) : isUnavailable ? (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-slate-700 text-slate-200 border border-slate-500 font-righteous font-bold text-[11px] px-3.5 py-1 rounded-full uppercase tracking-wider shadow-lg">
                       Unavailable
                     </div>
-                  )}
+                  ) : null}
 
                   {/* Outer Shield Border Wrap */}
                   <div
@@ -209,7 +218,9 @@ export default function CreateStakingPage() {
                       clipPath: 'polygon(0 0, 100% 0, 100% 92%, 50% 100%, 0 92%)',
                     }}
                     className={`p-[2px] rounded-t-3xl flex-1 flex flex-col drop-shadow-2xl transition-transform duration-300 ${
-                      isUnavailable
+                      isComingSoon
+                        ? 'bg-gradient-to-b from-amber-500/80 via-yellow-500 to-amber-600'
+                        : isUnavailable
                         ? 'bg-slate-700 opacity-80'
                         : 'bg-gradient-to-b from-slate-800 via-[#ff0044] to-[#fe780b] hover:scale-[1.02]'
                     }`}
@@ -230,7 +241,11 @@ export default function CreateStakingPage() {
                         {/* Ribbon Banner */}
                         <div className="relative my-4 sm:my-6 -mx-4 sm:-mx-8">
                           <div className={`font-righteous text-xs sm:text-base font-bold py-2 sm:py-3 text-center shadow-lg tracking-wide uppercase ${
-                            isUnavailable ? 'bg-slate-800 text-slate-400' : 'bg-gradient-to-r from-[#fe500b] via-[#ff0044] to-[#fe880b] text-white'
+                            isComingSoon
+                              ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950'
+                              : isUnavailable
+                              ? 'bg-slate-800 text-slate-400'
+                              : 'bg-gradient-to-r from-[#fe500b] via-[#ff0044] to-[#fe880b] text-white'
                           }`}>
                             Stake for {days} Days
                           </div>
@@ -273,7 +288,15 @@ export default function CreateStakingPage() {
 
                       {/* Stake Button */}
                       <div className="pt-2 text-center">
-                        {isUnavailable ? (
+                        {isComingSoon ? (
+                          <button
+                            type="button"
+                            disabled
+                            className="w-full py-2.5 sm:py-3.5 bg-[#142345] text-amber-400 border border-amber-500/40 font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl cursor-not-allowed font-righteous shadow-md"
+                          >
+                            Coming Soon
+                          </button>
+                        ) : isUnavailable ? (
                           <button
                             type="button"
                             disabled
@@ -336,18 +359,18 @@ export default function CreateStakingPage() {
                     <SelectTrigger className="w-full bg-[#071020] border-[#1b2b4d] text-white rounded-xl h-11 text-xs focus:ring-1 focus:ring-[#ff0044]">
                       <SelectValue placeholder="Select Source">
                         {selectedWallet === 'main'
-                          ? `Main Wallet ($${parseFloat(user?.balance || 0).toFixed(2)})`
+                          ? `Staking Wallet ($${Number(user?.balance || 0).toFixed(2)})`
                           : selectedWallet === 'profit'
-                          ? `Profit Wallet ($${parseFloat(user?.total_earned || 0).toFixed(2)})`
+                          ? `Profits Wallet ($${Number(user?.total_earned || 0).toFixed(2)})`
                           : 'Select Source'}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent className="bg-[#0b162c] border-[#1c2e54] text-white" searchable={false}>
                       <SelectItem value="main" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">
-                        Main Wallet (${parseFloat(user?.balance || 0).toFixed(2)})
+                        Staking Wallet (${Number(user?.balance || 0).toFixed(2)})
                       </SelectItem>
                       <SelectItem value="profit" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">
-                        Profit Wallet (${parseFloat(user?.total_earned || 0).toFixed(2)})
+                        Profits Wallet (${Number(user?.total_earned || 0).toFixed(2)})
                       </SelectItem>
                     </SelectContent>
                   </Select>

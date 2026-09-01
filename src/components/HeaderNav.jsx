@@ -7,6 +7,25 @@ import { Layers, User, ChevronDown, Menu, X, TrendingUp, Check } from 'lucide-re
 import { useAuth } from '../context/AuthContext';
 import api from '../lib/api';
 
+let cachedHeaderBrandInfo = null;
+
+const renderFormattedBrandName = (name) => {
+  if (!name) return null;
+  const str = String(name);
+  if (str.toLowerCase() === 'everstake') {
+    return (
+      <span className="text-2xl font-extrabold tracking-tight text-white font-righteous">
+        Ever<span className="text-[#ff0044]">Stake</span>
+      </span>
+    );
+  }
+  return (
+    <span className="text-2xl font-extrabold tracking-tight text-white font-righteous">
+      {str}
+    </span>
+  );
+};
+
 export default function HeaderNav() {
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,7 +35,9 @@ export default function HeaderNav() {
 
   const langRef = useRef(null);
 
-  const [customLogo, setCustomLogo] = useState(null);
+  const [brandInfo, setBrandInfo] = useState(() => {
+    return cachedHeaderBrandInfo || { logoUrl: null, siteName: 'EverStake', loaded: !!cachedHeaderBrandInfo };
+  });
 
   useEffect(() => {
     api
@@ -28,17 +49,34 @@ export default function HeaderNav() {
       })
       .catch(() => null);
 
+    if (cachedHeaderBrandInfo) {
+      setBrandInfo(cachedHeaderBrandInfo);
+      return;
+    }
+
     api
       .get('/public/logo-favicon')
       .then((res) => {
-        if (res.data.success && res.data.settings?.logoUrl) {
-          setCustomLogo(res.data.settings.logoUrl);
+        if (res.data && res.data.success && res.data.settings) {
+          const info = {
+            logoUrl: res.data.settings.logoUrl || null,
+            siteName: res.data.settings.siteName || res.data.settings.siteTitle || 'EverStake',
+            loaded: true,
+          };
+          cachedHeaderBrandInfo = info;
+          setBrandInfo(info);
+        } else {
+          setBrandInfo((prev) => ({ ...prev, loaded: true }));
         }
       })
-      .catch(() => null);
+      .catch(() => setBrandInfo((prev) => ({ ...prev, loaded: true })));
 
     const handleLogoUpdate = (e) => {
-      if (e.detail) setCustomLogo(e.detail);
+      if (e.detail) {
+        const info = { ...brandInfo, logoUrl: e.detail, loaded: true };
+        cachedHeaderBrandInfo = info;
+        setBrandInfo(info);
+      }
     };
     window.addEventListener('site-logo-updated', handleLogoUpdate);
     return () => window.removeEventListener('site-logo-updated', handleLogoUpdate);
@@ -134,17 +172,17 @@ export default function HeaderNav() {
     <header className="border-b border-white/10 bg-transparent relative z-50">
       <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 h-20 flex items-center justify-between">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          {customLogo ? (
-            <img src={customLogo} alt="EverStake Logo" className="h-10 max-w-[180px] object-contain" />
-          ) : (
+        <Link href="/" className="flex items-center space-x-2.5">
+          {brandInfo.loaded && (
             <>
-              <div className="w-9 h-9 rounded-md bg-brand-gradient flex items-center justify-center text-white shadow-lg shadow-red-500/20">
-                <TrendingUp className="w-5 h-5 text-white stroke-[2.5]" />
-              </div>
-              <span className="text-2xl font-extrabold tracking-tight text-white">
-                Ever<span className="text-[#ff0044]">Stake</span>
-              </span>
+              {brandInfo.logoUrl && (
+                <img
+                  src={brandInfo.logoUrl}
+                  alt={brandInfo.siteName || 'Logo'}
+                  className="h-10 max-w-[180px] object-contain rounded"
+                />
+              )}
+              {brandInfo.siteName && renderFormattedBrandName(brandInfo.siteName)}
             </>
           )}
         </Link>

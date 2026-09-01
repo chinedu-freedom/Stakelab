@@ -18,6 +18,7 @@ export default function WithdrawPage() {
     { id: '4', name: 'Ethereum (ERC20)', code: 'ETH', badge: 'ETH', symbol: 'ETH', network: 'ERC20' },
   ]);
 
+  const [walletSource, setWalletSource] = useState('main'); // 'main' (Staking Wallet) or 'profit' (Profits Wallet)
   const [selectedGateway, setSelectedGateway] = useState(gateways[0]);
   const [userWallets, setUserWallets] = useState([]);
   const [amount, setAmount] = useState('');
@@ -38,6 +39,15 @@ export default function WithdrawPage() {
     maxPayout: 50000,
     payoutCharge: 1,
   });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('openPin') === 'true') {
+        setShowPinModal(true);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     api.get('/public/deposit-withdrawal-settings').then((res) => {
@@ -95,6 +105,12 @@ export default function WithdrawPage() {
   const maxLimit = selectedGateway?.max ?? globalSettings.maxPayout;
   const feePercent = selectedGateway?.feePercent ?? globalSettings.payoutCharge;
 
+  const availableBalance = walletSource === 'profit'
+    ? parseFloat(user?.total_earned || 0)
+    : parseFloat(user?.balance || 0);
+
+  const walletLabel = walletSource === 'profit' ? 'Profits Wallet' : 'Staking Wallet';
+
   const amountNum = parseFloat(amount || 0);
   const fee = (amountNum * feePercent) / 100;
   const netPayout = Math.max(0, amountNum - fee);
@@ -114,8 +130,8 @@ export default function WithdrawPage() {
       return;
     }
 
-    if (amountNum > parseFloat(user?.balance || 0)) {
-      toast.error('Insufficient withdrawable balance');
+    if (amountNum > availableBalance) {
+      toast.error(`Insufficient withdrawable balance in ${walletLabel}`);
       return;
     }
 
@@ -126,6 +142,7 @@ export default function WithdrawPage() {
         withdrawal_method: selectedGateway.code || selectedGateway.name,
         wallet_address: walletAddress,
         withdrawal_pin: pin,
+        wallet_type: walletSource,
       });
 
       if (res.data.success) {
@@ -158,10 +175,18 @@ export default function WithdrawPage() {
           <div className="lg:col-span-7 space-y-6">
             {/* Balance Card Container */}
             <div className="bg-[#0b1739] border border-[#1a2b57] rounded-xl p-5 shadow-2xl space-y-3">
-              <div>
-                <div className="text-xs text-slate-400 font-medium">Available Withdrawable Balance</div>
-                <div className="text-2xl font-extrabold text-white font-righteous mt-1">
-                  ${parseFloat(user?.balance || 0).toFixed(2)}
+              <div className="grid grid-cols-2 gap-4 divide-x divide-[#1a2b57]">
+                <div>
+                  <div className="text-xs text-slate-400 font-medium">Staking Wallet Balance</div>
+                  <div className="text-xl font-extrabold text-white font-righteous mt-1">
+                    ${parseFloat(user?.balance || 0).toFixed(2)}
+                  </div>
+                </div>
+                <div className="pl-4">
+                  <div className="text-xs text-slate-400 font-medium">Profits Wallet Balance</div>
+                  <div className="text-xl font-extrabold text-emerald-400 font-righteous mt-1">
+                    ${parseFloat(user?.total_earned || 0).toFixed(2)}
+                  </div>
                 </div>
               </div>
               <div className="pt-3 border-t border-[#1a2b57]/60 flex items-center justify-between text-xs text-slate-400 font-medium">
@@ -229,24 +254,56 @@ export default function WithdrawPage() {
           <div className="lg:col-span-5 bg-[#0b1739] border border-[#1a2b57] rounded-xl p-6 shadow-2xl space-y-5">
             <form onSubmit={handleSubmit} className="space-y-5">
               
-              {/* Amount Input */}
+              {/* Select Wallet Source Dropdown (Image 1) */}
               <div className="space-y-2">
                 <label className="block text-xs font-semibold text-slate-300 font-sans">
-                  Withdrawal Amount ($)
+                  Wallet
                 </label>
-                <div className="flex items-center bg-[#06102b] border border-[#1a2b57] rounded-lg overflow-hidden focus-within:ring-1 focus-within:ring-[#ff0044] transition-all">
+                <Select value={walletSource} onValueChange={setWalletSource}>
+                  <SelectTrigger className="h-11 bg-[#06102b] border-[#1a2b57] text-white rounded-lg min-w-0 overflow-hidden font-righteous">
+                    <SelectValue placeholder="Select Wallet" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#081226] border-[#ff0044]/30 text-white shadow-2xl">
+                    <SelectItem value="main" className="focus:bg-[#12234e] focus:text-white cursor-pointer py-2 text-xs">
+                      Staking Wallet (${parseFloat(user?.balance || 0).toFixed(2)})
+                    </SelectItem>
+                    <SelectItem value="profit" className="focus:bg-[#12234e] focus:text-white cursor-pointer py-2 text-xs">
+                      Profits Wallet (${parseFloat(user?.total_earned || 0).toFixed(2)})
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Amount Input with MAX Button (Image 2) */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label className="block text-xs font-semibold text-slate-300 font-sans">
+                    Withdrawal Amount ($)
+                  </label>
+                  <span className="text-[11px] text-slate-400 font-sans">
+                    Available: <strong className="text-white">${availableBalance.toFixed(2)}</strong>
+                  </span>
+                </div>
+                <div className="flex items-center bg-[#06102b] border border-[#1a2b57] rounded-lg overflow-hidden focus-within:ring-1 focus-within:ring-[#ff0044] transition-all pr-1.5">
                   <span className="pl-3.5 text-xs font-bold text-slate-400 select-none">$</span>
                   <input
                     type="number"
                     step="any"
                     required
                     min={minLimit}
-                    max={parseFloat(user?.balance || 0)}
+                    max={availableBalance}
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="Enter amount"
                     className="w-full h-11 bg-transparent border-0 outline-none px-2 text-white font-righteous font-bold text-sm"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setAmount(availableBalance > 0 ? availableBalance.toString() : '')}
+                    className="bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-90 text-white font-righteous text-xs px-3 py-1.5 rounded-md uppercase font-bold tracking-wider transition-all cursor-pointer shrink-0"
+                  >
+                    MAX
+                  </button>
                 </div>
               </div>
 

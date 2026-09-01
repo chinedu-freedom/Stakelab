@@ -142,40 +142,49 @@ export default function StakingPage() {
         ) : (
           /* Active Subscriptions Grid */
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {activeStakes.map((stake) => (
-              <div key={stake.id} className="bg-[#0a1835] border border-[#182848] p-5 rounded-xl space-y-4 shadow-xl">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                      {stake.plan.badge || 'ACTIVE POOL'}
-                    </span>
-                    <h3 className="text-base font-bold text-white mt-1 font-righteous">{stake.plan.title}</h3>
+            {activeStakes.map((stake) => {
+              const isPlanUnavailable = stake.plan?.is_active === false || stake.plan?.status === 'UNAVAILABLE' || stake.plan?.status === 'INACTIVE' || stake.plan?.badge === 'UNAVAILABLE' || stake.plan?.badge === 'INACTIVE';
+              return (
+                <div key={stake.id} className="bg-[#0a1835] border border-[#182848] p-5 rounded-xl space-y-4 shadow-xl">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      {isPlanUnavailable ? (
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 uppercase tracking-wider">
+                          UNAVAILABLE
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                          {stake.plan?.badge || 'ACTIVE POOL'}
+                        </span>
+                      )}
+                      <h3 className="text-base font-bold text-white mt-1 font-righteous">{stake.plan?.title}</h3>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-black text-white font-righteous">${parseFloat(stake.amount).toFixed(2)}</div>
+                      <div className="text-xs text-slate-400">Amount Staked</div>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-lg font-black text-white font-righteous">${parseFloat(stake.amount).toFixed(2)}</div>
-                    <div className="text-xs text-slate-400">Amount Staked</div>
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs bg-[#060f22] p-3 rounded-lg border border-[#182848]">
-                  <div>
-                    <span className="text-slate-400">Daily Return:</span>
-                    <span className="text-emerald-400 font-bold ml-1">${parseFloat(stake.daily_profit).toFixed(2)}</span>
+                  <div className="grid grid-cols-2 gap-2 text-xs bg-[#060f22] p-3 rounded-lg border border-[#182848]">
+                    <div>
+                      <span className="text-slate-400">Daily Return:</span>
+                      <span className="text-emerald-400 font-bold ml-1">${parseFloat(stake.daily_profit).toFixed(2)}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400">Total Claimed:</span>
+                      <span className="text-white font-bold ml-1">${parseFloat(stake.total_earned).toFixed(2)}</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-slate-400">Total Claimed:</span>
-                    <span className="text-white font-bold ml-1">${parseFloat(stake.total_earned).toFixed(2)}</span>
-                  </div>
-                </div>
 
-                <button
-                  onClick={() => handleClaim(stake.id)}
-                  className="w-full py-2.5 rounded-lg bg-[#142345] text-[#ff0044] hover:bg-[#ff0044] hover:text-white font-bold text-xs border border-[#ff0044]/30 transition-all flex items-center justify-center gap-2"
-                >
-                  Claim Profit (${parseFloat(stake.daily_profit).toFixed(2)})
-                </button>
-              </div>
-            ))}
+                  <button
+                    onClick={() => handleClaim(stake.id)}
+                    className="w-full py-2.5 rounded-lg bg-[#142345] text-[#ff0044] hover:bg-[#ff0044] hover:text-white font-bold text-xs border border-[#ff0044]/30 transition-all flex items-center justify-center gap-2"
+                  >
+                    Claim Profit (${parseFloat(stake.daily_profit).toFixed(2)})
+                  </button>
+                </div>
+              );
+            })}
           </div>
         )}
 
@@ -208,7 +217,9 @@ export default function StakingPage() {
                   Select Staking Plan
                 </label>
                 <div className="grid grid-cols-2 gap-2">
-                  {plans.map((p) => (
+                  {plans
+                    .filter((p) => p.is_active !== false && p.status !== 'UNAVAILABLE' && p.status !== 'INACTIVE' && p.badge !== 'UNAVAILABLE' && p.badge !== 'INACTIVE')
+                    .map((p) => (
                     <button
                       key={p.id}
                       type="button"

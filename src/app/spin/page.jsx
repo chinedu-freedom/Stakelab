@@ -11,8 +11,8 @@ import HowToPlayModal from '../../components/HowToPlayModal';
 export default function LuckySpinPage() {
   const { refreshUser } = useAuth();
   const [spinData, setSpinData] = useState({
-    freeSpins: 2,
-    costPerSpin: 5,
+    freeSpins: 0,
+    costPerSpin: 0,
     prizes: [],
     recentWins: [],
   });
@@ -217,6 +217,10 @@ export default function LuckySpinPage() {
   const prizesList = spinData.prizes && spinData.prizes.length > 0 ? spinData.prizes : defaultPrizes;
 
   const handleSpin = async () => {
+    if (!featureEnabled) {
+      toast.error('Lucky Spin Wheel is currently disabled by the administration.');
+      return;
+    }
     if (spinning) return;
 
     try {

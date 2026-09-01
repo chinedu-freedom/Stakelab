@@ -102,6 +102,8 @@ export default function LandingPage() {
   }, []);
 
   const displayPlans = dbPlans.filter((p) => {
+    const isUnavailable = p.is_active === false || p.status === 'UNAVAILABLE' || p.status === 'INACTIVE' || p.badge === 'UNAVAILABLE' || p.badge === 'INACTIVE';
+    if (isUnavailable) return false;
     const planTier = (p.tier || '').trim().toLowerCase();
     const currentTier = activeTier.trim().toLowerCase();
     if (currentTier.includes('dynamic')) {
@@ -1303,9 +1305,11 @@ Important: Always verify that the destination wallet address and selected networ
                 name: 'Bybit',
                 color: '#F7A600',
                 logo: (
-                  <svg className="w-8 h-8 shrink-0" viewBox="0 0 24 24" fill="none">
-                    <rect width="24" height="24" rx="6" fill="#17181E" />
-                    <path d="M6 7H13.5C15.5 7 17 8.5 17 10.5C17 12 16 13.2 14.6 13.7C16.3 14.2 17.5 15.6 17.5 17.3C17.5 19.4 15.8 21 13.6 21H6V7Z" fill="#F7A600" />
+                  <svg className="w-12 h-12 shrink-0" viewBox="0 0 80 80" fill="none">
+                    <rect width="80" height="80" rx="16" fill="#0A0B0E" />
+                    <text x="8" y="47" fill="#FFFFFF" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" fontSize="18" letterSpacing="0.5">BYB</text>
+                    <rect x="52" y="30" width="4.5" height="19" rx="1" fill="#F7A600" />
+                    <text x="59" y="47" fill="#FFFFFF" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" fontSize="18" letterSpacing="0.5">T</text>
                   </svg>
                 ),
               },

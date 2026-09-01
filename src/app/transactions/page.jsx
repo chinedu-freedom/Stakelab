@@ -202,6 +202,24 @@ export default function TransactionsPage() {
                     const isMinus = ['WITHDRAWAL', 'STAKE', 'ADMIN_DEBIT'].includes(tx.type);
                     const amountVal = parseFloat(tx.amount || 0);
 
+                    const typeLabel =
+                      tx.type === 'ADMIN_CREDIT'
+                        ? 'Deposit credited'
+                        : tx.type === 'ADMIN_DEBIT'
+                        ? 'Deposit debited'
+                        : tx.type === 'DEPOSIT'
+                        ? 'Deposit successful'
+                        : tx.type;
+
+                    const detailsLabel =
+                      tx.type === 'ADMIN_CREDIT'
+                        ? 'Deposit credited'
+                        : tx.type === 'ADMIN_DEBIT'
+                        ? 'Deposit debited'
+                        : tx.type === 'DEPOSIT'
+                        ? 'Deposit successful'
+                        : tx.description || tx.remark || 'Transaction Completed';
+
                     return (
                       <tr key={tx.id} className="hover:bg-[#0e1d3e]/80 text-slate-200 transition-colors">
                         <td className="py-4 px-3 font-mono text-slate-300 font-bold">
@@ -215,7 +233,7 @@ export default function TransactionsPage() {
                                 : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                             }`}
                           >
-                            {tx.type}
+                            {typeLabel}
                           </span>
                         </td>
                         <td
@@ -229,7 +247,7 @@ export default function TransactionsPage() {
                           ${parseFloat(tx.balance_after || 0).toFixed(2)}
                         </td>
                         <td className="py-4 px-3 text-slate-300 text-[11px] max-w-xs truncate">
-                          {tx.description || tx.remark || 'Transaction Completed'}
+                          {detailsLabel}
                         </td>
                         <td className="py-4 px-3 text-slate-400 text-right whitespace-nowrap font-mono text-[11px]">
                           {new Date(tx.created_at).toLocaleString()}
