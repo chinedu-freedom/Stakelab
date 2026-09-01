@@ -373,36 +373,31 @@ export default function CreateStakingPage() {
                 </div>
 
                 {/* Staking Summary Cards */}
-                <div className="bg-[#071020] border border-[#182848] rounded-xl p-3.5 space-y-2 text-xs">
+                <div className="bg-[#071020] border border-[#182848] rounded-xl p-3.5 space-y-2.5 text-xs">
                   <div className="flex items-center justify-between text-slate-400">
-                    <span>Staking Lockup:</span>
+                    <span>Staking Duration:</span>
                     <span className="text-white font-bold font-mono">{selectedPlan.duration_days} Days</span>
                   </div>
 
                   <div className="flex items-center justify-between text-slate-400">
-                    <span>Daily Profit Rate:</span>
-                    <span className="text-emerald-400 font-bold font-mono">+{parseFloat(selectedPlan.daily_return_percent || 0).toFixed(1)}% / day</span>
+                    <span>Daily Profits Amount:</span>
+                    <span className="text-emerald-400 font-bold font-mono">+${(P * r).toFixed(2)}</span>
                   </div>
 
                   <div className="flex items-center justify-between text-slate-400">
-                    <span>Daily Profit Payout:</span>
-                    <span className="text-emerald-400 font-bold font-mono">+${(P * r).toFixed(2)} / day {isCompounding ? '(Initial)' : ''}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-slate-400">
-                    <span>Total Net Profit ({selectedPlan.duration_days} days):</span>
-                    <span className="text-emerald-400 font-bold font-mono">+${totalProfit.toFixed(2)} {isCompounding ? '(Compounded)' : ''}</span>
+                    <span>Compounded Returns:</span>
+                    <span className="text-emerald-400 font-bold font-mono">+${totalProfit.toFixed(2)}</span>
                   </div>
 
                   <div className="flex items-center justify-between text-slate-400 gap-2">
-                    <span className="shrink-0">Capital Return at Maturity:</span>
-                    <span className={`font-bold font-mono text-right whitespace-nowrap ${isCapitalReturn ? 'text-blue-400' : 'text-slate-500'}`}>
-                      {isCapitalReturn ? '100% Refundable' : 'Non-Refundable'}
+                    <span className="shrink-0">Capital Return:</span>
+                    <span className={`font-bold font-mono text-right whitespace-nowrap ${isCapitalReturn ? 'text-emerald-400' : 'text-slate-500'}`}>
+                      {isCapitalReturn ? 'YES' : 'NO'}
                     </span>
                   </div>
 
                   <div className="pt-2 border-t border-[#182848] flex items-center justify-between font-bold gap-2">
-                    <span className="text-white text-xs uppercase tracking-wider font-righteous shrink-0">Estimated Total Return:</span>
+                    <span className="text-white text-xs uppercase tracking-wider font-righteous shrink-0">Estimated Earnings:</span>
                     <span className="text-base text-gradient-stakelab font-righteous tracking-wide font-black text-right whitespace-nowrap">
                       ${estimatedTotalReturn.toFixed(2)} USD
                     </span>

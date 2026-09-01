@@ -184,9 +184,10 @@ export default function DepositPage() {
                 <h3 className="text-xs font-bold text-white font-righteous flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" /> Official Deposit Rules & Security Policy
                 </h3>
-                <div className="text-xs text-slate-300 whitespace-pre-line leading-relaxed font-sans bg-[#06102b] p-3.5 rounded-lg border border-[#1a2b57]">
-                  {rechargeNotice}
-                </div>
+                <div
+                  className="text-xs text-slate-300 leading-relaxed font-sans bg-[#06102b] p-3.5 rounded-lg border border-[#1a2b57] prose prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{ __html: rechargeNotice }}
+                />
               </div>
             )}
           </div>

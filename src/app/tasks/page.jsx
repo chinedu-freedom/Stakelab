@@ -102,8 +102,18 @@ export default function UserTasksPage() {
     }
   };
 
+  const [featureEnabled, setFeatureEnabled] = useState(true);
+
   useEffect(() => {
     fetchTasks();
+    api
+      .get('/public/system-features')
+      .then((res) => {
+        if (res.data && res.data.success && res.data.features && res.data.features.tasks === false) {
+          setFeatureEnabled(false);
+        }
+      })
+      .catch(() => null);
   }, []);
 
   const handleClaim = async (taskId) => {
@@ -143,7 +153,15 @@ export default function UserTasksPage() {
           </p>
         </div>
 
-        {/* Overview Stats Bar */}
+        {!featureEnabled ? (
+          <div className="bg-[#0a1835] border border-[#1e3463] rounded-3xl p-12 text-center text-slate-400 text-sm font-semibold space-y-2">
+            <div className="text-3xl">🔒</div>
+            <div className="text-white font-bold text-base">Invitation Tasks Module Disabled</div>
+            <p className="text-xs text-slate-400">This feature is currently turned off by the platform administrator.</p>
+          </div>
+        ) : (
+          <>
+            {/* Overview Stats Bar */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="bg-[#0a1835] border border-[#1e3463] rounded-2xl p-4 text-center shadow-md space-y-1">
             <div className="text-2xl font-extrabold text-white font-righteous">{totalTasks}</div>
@@ -260,6 +278,8 @@ export default function UserTasksPage() {
             })
           )}
         </div>
+          </>
+        )}
       </div>
 
       {/* Confetti Animation Canvas */}

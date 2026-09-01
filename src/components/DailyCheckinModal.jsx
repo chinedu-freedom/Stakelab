@@ -110,7 +110,15 @@ export default function DailyCheckinModal() {
   useEffect(() => {
     fetchStatus();
 
-    const handleOpen = () => {
+    const handleOpen = async () => {
+      try {
+        const featRes = await api.get('/public/system-features');
+        if (featRes.data && featRes.data.success && featRes.data.features && featRes.data.features.dailyCheckin === false) {
+          toast.info('Daily Check-in module is currently disabled by administrator.');
+          return;
+        }
+      } catch (e) {}
+
       fetchStatus();
       setIsOpen(true);
     };

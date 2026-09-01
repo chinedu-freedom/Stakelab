@@ -12,8 +12,7 @@ export default function TransactionsPage() {
 
   // Live filter states
   const [typeFilter, setTypeFilter] = useState('All');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [selectedDateFilter, setSelectedDateFilter] = useState('All');
 
   const fetchTransactions = async () => {
     try {
@@ -50,15 +49,39 @@ export default function TransactionsPage() {
       }
     }
     // 2. Date range filter
-    if (startDate) {
+    if (selectedDateFilter !== 'All') {
       const txDate = new Date(tx.created_at);
-      const start = new Date(startDate);
-      if (txDate < start) return false;
-    }
-    if (endDate) {
-      const txDate = new Date(tx.created_at);
-      const end = new Date(endDate + 'T23:59:59');
-      if (txDate > end) return false;
+      const now = new Date();
+      if (selectedDateFilter === 'Today') {
+        if (txDate.toDateString() !== now.toDateString()) return false;
+      } else if (selectedDateFilter === 'Yesterday') {
+        const yest = new Date(now);
+        yest.setDate(yest.getDate() - 1);
+        if (txDate.toDateString() !== yest.toDateString()) return false;
+      } else if (selectedDateFilter === 'Last 7 Days') {
+        const days7 = new Date(now);
+        days7.setDate(days7.getDate() - 7);
+        if (txDate < days7) return false;
+      } else if (selectedDateFilter === 'Last 15 Days') {
+        const days15 = new Date(now);
+        days15.setDate(days15.getDate() - 15);
+        if (txDate < days15) return false;
+      } else if (selectedDateFilter === 'Last 30 Days') {
+        const days30 = new Date(now);
+        days30.setDate(days30.getDate() - 30);
+        if (txDate < days30) return false;
+      } else if (selectedDateFilter === 'This Month') {
+        if (txDate.getMonth() !== now.getMonth() || txDate.getFullYear() !== now.getFullYear()) return false;
+      } else if (selectedDateFilter === 'Last Month') {
+        const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        if (txDate.getMonth() !== lastMonthDate.getMonth() || txDate.getFullYear() !== lastMonthDate.getFullYear()) return false;
+      } else if (selectedDateFilter === 'Last 6 Months') {
+        const months6 = new Date(now);
+        months6.setMonth(months6.getMonth() - 6);
+        if (txDate < months6) return false;
+      } else if (selectedDateFilter === 'This Year') {
+        if (txDate.getFullYear() !== now.getFullYear()) return false;
+      }
     }
     return true;
   });
@@ -68,7 +91,7 @@ export default function TransactionsPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [typeFilter, startDate, endDate]);
+  }, [typeFilter, selectedDateFilter]);
 
   const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage) || 1;
   const paginatedTransactions = filteredTransactions.slice(
@@ -117,63 +140,28 @@ export default function TransactionsPage() {
               </Select>
             </div>
 
-            {/* FILTER BY DATE Range Picker */}
+            {/* Date Range Dropdown Filter */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider font-sans">
-                  Filter by Date Range
-                </label>
-                {(startDate || endDate) && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStartDate('');
-                      setEndDate('');
-                    }}
-                    className="text-[10px] font-bold text-[#ff0044] hover:underline flex items-center gap-1 cursor-pointer"
-                  >
-                    Clear Dates
-                  </button>
-                )}
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div
-                  onClick={(e) => {
-                    const inp = e.currentTarget.querySelector('input');
-                    if (inp && inp.showPicker) try { inp.showPicker(); } catch (err) {}
-                  }}
-                  className="flex items-center bg-[#060f22] border border-[#182848] rounded-xl h-11 px-3 focus-within:ring-1 focus-within:ring-[#ff0044] cursor-pointer hover:border-[#283d66] transition-all"
-                >
-                  <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0 mr-1.5" />
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    style={{ colorScheme: 'dark' }}
-                    className="bg-transparent border-0 outline-none text-[11px] text-white font-sans cursor-pointer w-full"
-                    title="Start Date"
-                  />
-                </div>
-
-                <div
-                  onClick={(e) => {
-                    const inp = e.currentTarget.querySelector('input');
-                    if (inp && inp.showPicker) try { inp.showPicker(); } catch (err) {}
-                  }}
-                  className="flex items-center bg-[#060f22] border border-[#182848] rounded-xl h-11 px-3 focus-within:ring-1 focus-within:ring-[#ff0044] cursor-pointer hover:border-[#283d66] transition-all"
-                >
-                  <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0 mr-1.5" />
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    style={{ colorScheme: 'dark' }}
-                    className="bg-transparent border-0 outline-none text-[11px] text-white font-sans cursor-pointer w-full"
-                    title="End Date"
-                  />
-                </div>
-              </div>
+              <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider font-sans">
+                Date
+              </label>
+              <Select value={selectedDateFilter} onValueChange={setSelectedDateFilter}>
+                <SelectTrigger className="w-full bg-[#060f22] border-[#182848] text-white rounded-xl h-11 text-xs focus:ring-1 focus:ring-[#ff0044]">
+                  <SelectValue placeholder="All" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#0b162c] border-[#1c2e54] text-white">
+                  <SelectItem value="All" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">All</SelectItem>
+                  <SelectItem value="Today" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Today</SelectItem>
+                  <SelectItem value="Yesterday" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Yesterday</SelectItem>
+                  <SelectItem value="Last 7 Days" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Last 7 Days</SelectItem>
+                  <SelectItem value="Last 15 Days" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Last 15 Days</SelectItem>
+                  <SelectItem value="Last 30 Days" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Last 30 Days</SelectItem>
+                  <SelectItem value="This Month" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">This Month</SelectItem>
+                  <SelectItem value="Last Month" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Last Month</SelectItem>
+                  <SelectItem value="Last 6 Months" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">Last 6 Months</SelectItem>
+                  <SelectItem value="This Year" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">This Year</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>

@@ -189,8 +189,18 @@ export default function LuckySpinPage() {
     }
   };
 
+  const [featureEnabled, setFeatureEnabled] = useState(true);
+
   useEffect(() => {
     fetchSpinInfo();
+    api
+      .get('/public/system-features')
+      .then((res) => {
+        if (res.data && res.data.success && res.data.features && res.data.features.spinWheel === false) {
+          setFeatureEnabled(false);
+        }
+      })
+      .catch(() => null);
   }, []);
 
   const defaultPrizes = [
@@ -306,6 +316,14 @@ export default function LuckySpinPage() {
           </div>
         </div>
 
+        {!featureEnabled ? (
+          <div className="bg-[#0a1835] border border-[#1e3463] rounded-3xl p-12 text-center text-slate-400 text-sm font-semibold space-y-2">
+            <div className="text-3xl">🔒</div>
+            <div className="text-white font-bold text-base">Lucky Spin Module Disabled</div>
+            <p className="text-xs text-slate-400">This feature is currently turned off by the platform administrator.</p>
+          </div>
+        ) : (
+          <>
         {/* Spin Wheel Interactive Container */}
         <div className="bg-[#0a1835] border border-[#1e3463] rounded-3xl p-6 sm:p-10 shadow-2xl flex flex-col items-center justify-center relative">
           <div className="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center">
@@ -422,6 +440,8 @@ export default function LuckySpinPage() {
         </button>
 
         <HowToPlayModal isOpen={isHowToPlayOpen} setIsOpen={setIsHowToPlayOpen} />
+          </>
+        )}
 
         {/* Result Modal Dialog */}
         {resultModal && (
@@ -466,14 +486,13 @@ export default function LuckySpinPage() {
             </div>
           </div>
         )}
+        {/* Confetti Animation Canvas */}
+        <canvas
+          ref={confettiCanvasRef}
+          className="pointer-events-none fixed inset-0 z-[100] w-full h-full"
+          style={{ display: 'none' }}
+        />
       </div>
-
-      {/* Confetti Animation Canvas */}
-      <canvas
-        ref={confettiCanvasRef}
-        className="pointer-events-none fixed inset-0 z-[100] w-full h-full"
-        style={{ display: 'none' }}
-      />
     </UserSidebarLayout>
   );
 }

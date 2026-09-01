@@ -55,15 +55,29 @@ export default function MaintenanceGuard({ children }) {
           </div>
 
           {/* Maintenance Headline */}
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#ff0044] uppercase tracking-wide">
-            {maintenance.headline || 'THE SITE IS UNDER MAINTENANCE'}
-          </h1>
+          {maintenance.headline ? (
+            <div
+              className="text-2xl sm:text-3xl font-extrabold uppercase tracking-wide max-w-lg mx-auto"
+              dangerouslySetInnerHTML={{ __html: maintenance.headline }}
+            />
+          ) : (
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#ff0044] uppercase tracking-wide">
+              THE SITE IS UNDER MAINTENANCE
+            </h1>
+          )}
 
           {/* Maintenance Description */}
-          <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line max-w-lg mx-auto">
-            {maintenance.descriptionText ||
-              "We're currently performing scheduled system upgrades to serve you better.\nPlease check back shortly."}
-          </p>
+          {maintenance.descriptionText ? (
+            <div
+              className="text-slate-300 text-sm leading-relaxed max-w-lg mx-auto overflow-hidden font-sans space-y-2"
+              dangerouslySetInnerHTML={{ __html: maintenance.descriptionText }}
+            />
+          ) : (
+            <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line max-w-lg mx-auto">
+              We're currently performing scheduled system upgrades to serve you better.
+              Please check back shortly.
+            </p>
+          )}
 
           <div className="pt-4 border-t border-white/10 text-slate-500 text-xs font-semibold">
             © {new Date().getFullYear()} EverStake. All rights reserved.

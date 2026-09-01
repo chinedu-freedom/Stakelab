@@ -569,7 +569,7 @@ export default function UserSidebarLayout({ children }) {
                     className="px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-[#112349] hover:text-white flex items-center gap-3 transition-colors"
                   >
                     <ShieldCheck className="w-4 h-4 text-slate-300" />
-                    <span>KYC Data</span>
+                    <span>User Data</span>
                   </Link>
 
                   <Link

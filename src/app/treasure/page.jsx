@@ -33,8 +33,21 @@ export default function LuckyTreasurePage() {
     }
   };
 
+  const [featureEnabled, setFeatureEnabled] = useState(true);
+
   useEffect(() => {
     fetchClaims();
+
+    api
+      .get('/public/system-features')
+      .then((res) => {
+        if (res.data && res.data.success && res.data.features) {
+          if (res.data.features.giftBonus === false) {
+            setFeatureEnabled(false);
+          }
+        }
+      })
+      .catch(() => null);
 
     // Fetch dynamic Telegram support/channel URL
     api
@@ -94,7 +107,15 @@ export default function LuckyTreasurePage() {
           </p>
         </div>
 
-        {/* Claim Gift Code Card */}
+        {!featureEnabled ? (
+          <div className="bg-[#0a1835] border border-[#1e3463] rounded-3xl p-12 text-center text-slate-400 text-sm font-semibold space-y-2">
+            <div className="text-3xl">🔒</div>
+            <div className="text-white font-bold text-base">Gift Bonus Module Disabled</div>
+            <p className="text-xs text-slate-400">This feature is currently turned off by the platform administrator.</p>
+          </div>
+        ) : (
+          <>
+            {/* Claim Gift Code Card */}
         <div className="bg-[#0a1835] border border-[#1e3463] rounded-2xl p-6 shadow-xl space-y-4">
           <div className="flex items-center space-x-2.5">
             <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
@@ -234,56 +255,58 @@ export default function LuckyTreasurePage() {
             )}
           </div>
         </div>
-      </div>
+        </>
+        )}
 
-      <TelegramModal isOpen={isTelegramModalOpen} setIsOpen={setIsTelegramModalOpen} />
+        <TelegramModal isOpen={isTelegramModalOpen} setIsOpen={setIsTelegramModalOpen} />
 
-      {/* Celebratory Gift Code Claim Success Modal (Matching Reference Image) */}
-      {claimedModalData && (
-        <div
-          onClick={() => setClaimedModalData(null)}
-          className="fixed inset-0 z-[100] w-full h-full min-h-screen bg-black/80 backdrop-blur-md flex items-center justify-center p-4 cursor-pointer animate-in fade-in duration-200 overflow-y-auto"
-        >
+        {/* Celebratory Gift Code Claim Success Modal (Matching Reference Image) */}
+        {claimedModalData && (
           <div
-            onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-sm bg-[#09152e] border border-[#1d335f] rounded-3xl p-6 sm:p-8 shadow-2xl text-center font-sans space-y-5 animate-in zoom-in-95 duration-200 cursor-default"
+            onClick={() => setClaimedModalData(null)}
+            className="fixed inset-0 z-[100] w-full h-full min-h-screen bg-black/80 backdrop-blur-md flex items-center justify-center p-4 cursor-pointer animate-in fade-in duration-200 overflow-y-auto"
           >
-            {/* Close Button (X) */}
-            <button
-              type="button"
-              onClick={() => setClaimedModalData(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1.5 rounded-full bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-sm bg-[#09152e] border border-[#1d335f] rounded-3xl p-6 sm:p-8 shadow-2xl text-center font-sans space-y-5 animate-in zoom-in-95 duration-200 cursor-default"
             >
-              <X className="w-5 h-5" />
-            </button>
+              {/* Close Button (X) */}
+              <button
+                type="button"
+                onClick={() => setClaimedModalData(null)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white p-1.5 rounded-full bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
 
-            {/* Glowing Icon Circle with Celebratory Gift Popper */}
-            <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center shadow-[0_0_35px_rgba(56,189,248,0.5)] text-3xl transform hover:scale-105 transition-transform">
-              🎁
-            </div>
+              {/* Glowing Icon Circle with Celebratory Gift Popper */}
+              <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center shadow-[0_0_35px_rgba(56,189,248,0.5)] text-3xl transform hover:scale-105 transition-transform">
+                🎁
+              </div>
 
-            {/* Title & Subtitle */}
-            <div className="space-y-1.5">
-              <h2 className="text-xl sm:text-2xl font-extrabold text-white font-righteous tracking-wide flex items-center justify-center gap-2">
-                🎉 Gift Code Claimed!
-              </h2>
-              <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                Congratulations! Your bonus has been claimed.
-              </p>
-            </div>
+              {/* Title & Subtitle */}
+              <div className="space-y-1.5">
+                <h2 className="text-xl sm:text-2xl font-extrabold text-white font-righteous tracking-wide flex items-center justify-center gap-2">
+                  🎉 Gift Code Claimed!
+                </h2>
+                <p className="text-xs text-slate-300 leading-relaxed font-sans">
+                  Congratulations! Your bonus has been claimed.
+                </p>
+              </div>
 
-            {/* Bonus Credit Added Container (Exact Match to Screenshot) */}
-            <div className="bg-[#050e24] border border-[#1d335f] rounded-2xl p-4 sm:p-5 text-center space-y-1 shadow-inner">
-              <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest block font-sans">
-                BONUS CREDIT ADDED
-              </span>
-              <div className="text-2xl sm:text-3xl font-black font-righteous text-sky-400 tracking-tight">
-                + ${parseFloat(claimedModalData.amount || 0).toFixed(2)}
+              {/* Bonus Credit Added Container (Exact Match to Screenshot) */}
+              <div className="bg-[#050e24] border border-[#1d335f] rounded-2xl p-4 sm:p-5 text-center space-y-1 shadow-inner">
+                <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest block font-sans">
+                  BONUS CREDIT ADDED
+                </span>
+                <div className="text-2xl sm:text-3xl font-black font-righteous text-sky-400 tracking-tight">
+                  + ${parseFloat(claimedModalData.amount || 0).toFixed(2)}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </UserSidebarLayout>
   );
 }

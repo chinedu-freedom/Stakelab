@@ -59,8 +59,36 @@ export default function AccountSettingsPage() {
   // --- About Us Modal State ---
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
 
+  const [systemFeatures, setSystemFeatures] = useState({
+    giftBonus: true,
+    tasks: true,
+    dailyCheckin: true,
+    spinWheel: true,
+  });
+
+  const [whatsappGroupUrl, setWhatsappGroupUrl] = useState('https://chat.whatsapp.com');
+
   useEffect(() => {
     refreshUser();
+    api
+      .get('/public/system-features')
+      .then((res) => {
+        if (res.data && res.data.success && res.data.features) {
+          setSystemFeatures(res.data.features);
+        }
+      })
+      .catch(() => null);
+
+    api
+      .get('/public/contact-links')
+      .then((res) => {
+        if (res.data && res.data.success && res.data.contactLinks) {
+          const links = res.data.contactLinks;
+          if (links.whatsappGroupModal) setWhatsappGroupUrl(links.whatsappGroupModal);
+          else if (links.whatsappSupport) setWhatsappGroupUrl(links.whatsappSupport);
+        }
+      })
+      .catch(() => null);
   }, []);
 
   // --- Change Password Handler ---
@@ -227,24 +255,28 @@ export default function AccountSettingsPage() {
                 link: '/deposit',
                 bgColor: 'bg-gradient-to-tr from-amber-500 to-yellow-400 shadow-amber-500/20',
                 icon: ArrowDown,
+                enabled: true,
               },
               {
                 label: 'Withdrawal',
                 link: '/withdraw',
                 bgColor: 'bg-gradient-to-tr from-blue-600 to-indigo-500 shadow-blue-500/20',
                 icon: ArrowUp,
+                enabled: true,
               },
               {
                 label: 'Stake',
                 link: '/staking/create',
                 bgColor: 'bg-gradient-to-tr from-[#ff0044] to-[#fe780b] shadow-red-500/20',
                 icon: Layers,
+                enabled: true,
               },
               {
                 label: 'My Staking',
                 link: '/staking',
                 bgColor: 'bg-gradient-to-tr from-emerald-600 to-teal-500 shadow-emerald-500/20',
                 icon: DollarSign,
+                enabled: true,
               },
               {
                 label: 'Daily Check-in',
@@ -255,36 +287,47 @@ export default function AccountSettingsPage() {
                 },
                 bgColor: 'bg-gradient-to-tr from-blue-500 to-sky-400 shadow-blue-500/20',
                 icon: CalendarCheck,
+                enabled: Boolean(systemFeatures.dailyCheckin),
               },
               {
                 label: 'Tasks',
                 link: '/tasks',
                 bgColor: 'bg-gradient-to-tr from-emerald-500 to-green-400 shadow-emerald-500/20',
                 icon: ClipboardList,
+                enabled: Boolean(systemFeatures.tasks),
               },
               {
                 label: 'Lucky Spin',
                 link: '/spin',
                 bgColor: 'bg-gradient-to-tr from-purple-600 to-indigo-500 shadow-purple-500/20',
                 icon: Disc,
+                enabled: Boolean(systemFeatures.spinWheel),
               },
               {
                 label: 'Transaction Log',
                 link: '/transactions',
                 bgColor: 'bg-gradient-to-tr from-amber-600 to-orange-500 shadow-orange-500/20',
                 icon: FileText,
+                enabled: true,
               },
               {
                 label: 'Bonus Code',
                 link: '/treasure',
                 bgColor: 'bg-gradient-to-tr from-red-600 to-rose-500 shadow-red-500/20',
                 icon: Gift,
+                enabled: Boolean(systemFeatures.giftBonus),
               },
               {
                 label: 'Download App',
                 onClick: async () => {
                   try {
                     const response = await api.get('/app-download', { responseType: 'blob' });
+                    if (response.data && response.data.type === 'application/json') {
+                      const text = await response.data.text();
+                      const json = JSON.parse(text);
+                      toast.error(json.message || 'Mobile App APK file has not been uploaded yet by the administrator.');
+                      return;
+                    }
                     const blob = new Blob([response.data], { type: 'application/vnd.android.package-archive' });
                     const url = window.URL.createObjectURL(blob);
                     const link = document.createElement('a');
@@ -296,7 +339,7 @@ export default function AccountSettingsPage() {
                     window.URL.revokeObjectURL(url);
                     toast.success('EverStake Mobile App downloaded successfully!');
                   } catch (err) {
-                    toast.error(err.response?.data?.message || 'Failed to download app file.');
+                    toast.error('Mobile App APK file has not been uploaded yet by the administrator.');
                   }
                 },
                 bgColor: 'bg-gradient-to-tr from-cyan-600 to-blue-500 shadow-cyan-500/20',
@@ -310,12 +353,12 @@ export default function AccountSettingsPage() {
               },
               {
                 label: 'WhatsApp Group',
-                link: 'https://chat.whatsapp.com',
+                link: whatsappGroupUrl,
                 isExternal: true,
                 bgColor: 'bg-gradient-to-tr from-emerald-500 to-green-500 shadow-emerald-500/20',
                 icon: MessageCircle,
               },
-            ].map((action, idx) => {
+            ].filter((action) => action.enabled !== false).map((action, idx) => {
               const Icon = action.icon;
               const content = (
                 <div className="flex flex-col items-center group cursor-pointer">
