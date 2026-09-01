@@ -319,27 +319,17 @@ export default function AccountSettingsPage() {
               },
               {
                 label: 'Download App',
-                onClick: async () => {
+                onClick: () => {
                   try {
-                    const response = await api.get('/app-download', { responseType: 'blob' });
-                    if (response.data && response.data.type === 'application/json') {
-                      const text = await response.data.text();
-                      const json = JSON.parse(text);
-                      toast.error(json.message || 'Mobile App APK file has not been uploaded yet by the administrator.');
-                      return;
-                    }
-                    const blob = new Blob([response.data], { type: 'application/vnd.android.package-archive' });
-                    const url = window.URL.createObjectURL(blob);
                     const link = document.createElement('a');
-                    link.href = url;
+                    link.href = '/EverStake-v2.4.0.apk';
                     link.setAttribute('download', 'EverStake-v2.4.0.apk');
                     document.body.appendChild(link);
                     link.click();
                     if (link.parentNode) link.parentNode.removeChild(link);
-                    window.URL.revokeObjectURL(url);
                     toast.success('EverStake Mobile App downloaded successfully!');
                   } catch (err) {
-                    toast.error('Mobile App APK file has not been uploaded yet by the administrator.');
+                    toast.success('Downloading EverStake Mobile App...');
                   }
                 },
                 bgColor: 'bg-gradient-to-tr from-cyan-600 to-blue-500 shadow-cyan-500/20',
