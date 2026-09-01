@@ -320,16 +320,8 @@ export default function AccountSettingsPage() {
               {
                 label: 'Download App',
                 onClick: () => {
-                  try {
-                    const link = document.createElement('a');
-                    link.href = '/EverStake-v2.4.0.apk';
-                    link.setAttribute('download', 'EverStake-v2.4.0.apk');
-                    document.body.appendChild(link);
-                    link.click();
-                    if (link.parentNode) link.parentNode.removeChild(link);
-                    toast.success('EverStake Mobile App downloaded successfully!');
-                  } catch (err) {
-                    toast.success('Downloading EverStake Mobile App...');
+                  if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('open-pwa-install'));
                   }
                 },
                 bgColor: 'bg-gradient-to-tr from-cyan-600 to-blue-500 shadow-cyan-500/20',

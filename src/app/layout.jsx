@@ -31,11 +31,19 @@ import MaintenanceGuard from '../components/MaintenanceGuard';
 import CookieConsentBanner from '../components/CookieConsentBanner';
 import DailyCheckinModal from '../components/DailyCheckinModal';
 import FaviconGuard from '../components/FaviconGuard';
+import PwaInstallHandler from '../components/PwaInstallHandler';
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable} ${righteous.variable}`}>
       <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="EverStake" />
+        <meta name="theme-color" content="#07193b" />
+        <link rel="apple-touch-icon" href="/logo.jpeg" />
         <Script src="https://www.google.com/recaptcha/api.js?render=explicit" strategy="afterInteractive" />
         <Script
           id="google-translate-script"
@@ -62,6 +70,7 @@ export default function RootLayout({ children }) {
           </MaintenanceGuard>
           <DailyCheckinModal />
           <CookieConsentBanner />
+          <PwaInstallHandler />
           <Toaster position="top-right" closeButton />
         </AuthProvider>
       </body>

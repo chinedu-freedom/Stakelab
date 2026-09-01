@@ -1,0 +1,22 @@
+{
+  "name": "EverStake Mobile App",
+  "short_name": "EverStake",
+  "description": "Premier Crypto Staking & Yield Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07193b",
+  "theme_color": "#ff0044",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/logo.jpeg",
+      "sizes": "192x192 512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
