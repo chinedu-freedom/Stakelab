@@ -276,57 +276,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Active Staking Pools (If Active) */}
-        {dashboardData?.activeStakes?.length > 0 && (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-extrabold text-white font-righteous flex items-center gap-2">
-                <Coins className="w-5 h-5 text-[#ff0044]" /> Active Staking Subscriptions
-              </h2>
-              <Link href="/staking" className="text-xs font-semibold text-[#ff0044] hover:underline flex items-center gap-1">
-                Explore Pools <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {dashboardData?.activeStakes?.map((stake) => (
-                <div key={stake.id} className="bg-[#0a1835] border border-[#182848] p-5 rounded-xl space-y-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                        {stake.plan.badge || 'ACTIVE POOL'}
-                      </span>
-                      <h3 className="text-base font-bold text-white mt-1 font-righteous">{stake.plan.title}</h3>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg font-black text-white font-righteous">${parseFloat(stake.amount).toFixed(2)}</div>
-                      <div className="text-xs text-slate-400">Amount Staked</div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 text-xs bg-[#060f22] p-3 rounded-lg border border-[#182848]">
-                    <div>
-                      <span className="text-slate-400">Daily Return:</span>
-                      <span className="text-emerald-400 font-bold ml-1">${parseFloat(stake.daily_profit).toFixed(2)}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">Total Yield Earned:</span>
-                      <span className="text-white font-bold ml-1">${parseFloat(stake.total_earned).toFixed(2)}</span>
-                    </div>
-                  </div>
-
-                  <div className="w-full py-2 px-3 rounded-lg bg-[#060f22] text-slate-300 font-medium text-[11px] border border-[#182848] flex items-center justify-between">
-                    <span className="text-emerald-400 font-bold flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      Auto-Credited Daily
-                    </span>
-                    <span className="text-slate-400 text-[10px]">Credited to Profits Wallet every 24h</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
 
 
