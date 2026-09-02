@@ -58,7 +58,7 @@ export default function UserSidebarLayout({ children }) {
   const [whatsappLink, setWhatsappLink] = useState('https://wa.me/1234567890');
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
-  const [notifications, setNotifications] = useState({ unreadCount: 0, tickets: [], deposits: [], withdrawals: [] });
+  const [notifications, setNotifications] = useState({ unreadCount: 0, tickets: [], deposits: [], withdrawals: [], stakes: [], transactions: [] });
   const [features, setFeatures] = useState({
     giftBonus: true,
     tasks: true,
@@ -491,10 +491,36 @@ export default function UserSidebarLayout({ children }) {
                               onClick={() => setNotifDropdownOpen(false)}
                               className="block p-2 rounded-lg bg-[#061127] hover:bg-[#0f2249] border border-[#1d335f] transition-all"
                             >
-                              <div className="font-bold text-white truncate">#{t.ticket_code} - {t.subject}</div>
+                              <div className="font-bold text-white truncate">#{t.ticket_id || t.id.substring(0,6)} - {t.subject}</div>
                               <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
                                 <span>{new Date(t.updated_at).toLocaleString()}</span>
-                                <span className="text-emerald-400 font-semibold uppercase">Replied</span>
+                                <span className="text-emerald-400 font-semibold uppercase">{t.status}</span>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Staking Yield / Investment Updates */}
+                    {notifications.stakes?.length > 0 && (
+                      <div className="p-3">
+                        <div className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                          <span>📈 Staking Investments ({notifications.stakes.length})</span>
+                          <Link href="/staking" onClick={() => setNotifDropdownOpen(false)} className="text-indigo-400 hover:underline">View Stakes →</Link>
+                        </div>
+                        <div className="space-y-1.5">
+                          {notifications.stakes.map((s) => (
+                            <Link
+                              key={s.id}
+                              href="/staking"
+                              onClick={() => setNotifDropdownOpen(false)}
+                              className="block p-2 rounded-lg bg-[#061127] hover:bg-[#0f2249] border border-[#1d335f] transition-all"
+                            >
+                              <div className="font-bold text-indigo-300">${parseFloat(s.amount).toFixed(2)} in {s.plan?.title || 'Staking'}</div>
+                              <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
+                                <span>{new Date(s.created_at).toLocaleString()}</span>
+                                <span className="text-emerald-400 font-semibold uppercase">ACTIVE</span>
                               </div>
                             </Link>
                           ))}
@@ -558,8 +584,32 @@ export default function UserSidebarLayout({ children }) {
                       </div>
                     )}
 
+                    {/* Recent Transactions & Bonuses */}
+                    {notifications.transactions?.length > 0 && (
+                      <div className="p-3">
+                        <div className="text-[10px] font-bold text-purple-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                          <span>🎁 Balance & Bonus Credits ({notifications.transactions.length})</span>
+                          <Link href="/account" onClick={() => setNotifDropdownOpen(false)} className="text-purple-400 hover:underline">Account →</Link>
+                        </div>
+                        <div className="space-y-1.5">
+                          {notifications.transactions.map((tx) => (
+                            <div
+                              key={tx.id}
+                              className="p-2 rounded-lg bg-[#061127] border border-[#1d335f]"
+                            >
+                              <div className="font-bold text-white text-xs">{tx.description}</div>
+                              <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
+                                <span>{new Date(tx.created_at).toLocaleString()}</span>
+                                <span className="text-emerald-400 font-bold">+${parseFloat(tx.amount).toFixed(2)}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Empty State */}
-                    {notifications.unreadCount === 0 && notifications.tickets?.length === 0 && (
+                    {notifications.unreadCount === 0 && (!notifications.tickets || notifications.tickets.length === 0) && (
                       <div className="p-6 text-center text-slate-400 text-xs font-semibold">
                         🎉 No unread notifications right now!
                       </div>
