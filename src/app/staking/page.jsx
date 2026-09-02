@@ -23,6 +23,8 @@ export default function StakingPage() {
   const [stakeAmount, setStakeAmount] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  const [unstakingId, setUnstakingId] = useState(null);
+
   const fetchStakingData = async () => {
     try {
       setLoading(true);
@@ -41,6 +43,22 @@ export default function StakingPage() {
       console.error('Failed to load staking data:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUnstake = async (stakeId) => {
+    try {
+      setUnstakingId(stakeId);
+      const res = await api.post('/staking/unstake', { stake_id: stakeId });
+      if (res.data.success) {
+        toast.success(res.data.message || 'Unstaked successfully!');
+        fetchStakingData();
+        refreshUser();
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to unstake package');
+    } finally {
+      setUnstakingId(null);
     }
   };
 
@@ -227,21 +245,25 @@ export default function StakingPage() {
           /* Subscriptions Horizontally Scrollable Table */
           <div className="bg-[#0a1835] border border-[#182848] rounded-xl overflow-hidden shadow-2xl">
             <div className="overflow-x-auto w-full">
-              <table className="w-full text-left text-xs font-sans min-w-[700px]">
+              <table className="w-full text-left text-xs font-sans min-w-[850px]">
                 <thead>
                   <tr className="bg-[#0f2249] text-slate-300 border-b border-[#182848] font-righteous uppercase tracking-wider text-[11px]">
                     <th className="py-4 px-5">Plan Name</th>
+                    <th className="py-4 px-5">Locking Type</th>
                     <th className="py-4 px-5">Invested Date & Time</th>
                     <th className="py-4 px-5">Status</th>
                     <th className="py-4 px-5">Amount Invested</th>
                     <th className="py-4 px-5">Expected Return</th>
                     <th className="py-4 px-5">End Date & Time</th>
+                    <th className="py-4 px-5 text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#182848]/60 text-slate-200">
                   {displayedStakes.map((stake) => {
                     const isPlanUnavailable = stake.plan?.is_active === false || stake.plan?.status === 'UNAVAILABLE' || stake.plan?.status === 'INACTIVE' || stake.plan?.badge === 'UNAVAILABLE' || stake.plan?.badge === 'INACTIVE';
                     const isCompleted = stake.status === 'COMPLETED';
+                    const isUnstaked = stake.status === 'UNSTAKED';
+                    const isFixedDeposit = stake.plan?.is_fixed_deposit !== false;
 
                     const planName = stake.plan?.title || stake.plan?.name || 'Staking Plan';
                     const amount = parseFloat(stake.amount || 0);
@@ -262,6 +284,19 @@ export default function StakingPage() {
                           <div className="text-[10px] text-slate-400 font-medium">#{stake.id.substring(0, 8)}</div>
                         </td>
 
+                        {/* Locking Type */}
+                        <td className="py-4 px-5 whitespace-nowrap">
+                          {isFixedDeposit ? (
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider inline-flex items-center gap-1">
+                              <span>🔒 Fixed Deposit</span>
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider inline-flex items-center gap-1">
+                              <span>⚡ Flexible (Early Exit)</span>
+                            </span>
+                          )}
+                        </td>
+
                         {/* Invested Date & Time */}
                         <td className="py-4 px-5">
                           <div className="font-medium text-slate-200">{startDateStr}</div>
@@ -272,6 +307,10 @@ export default function StakingPage() {
                           {isCompleted ? (
                             <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider">
                               COMPLETED
+                            </span>
+                          ) : isUnstaked ? (
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-500/15 text-red-400 border border-red-500/30 uppercase tracking-wider">
+                              UNSTAKED
                             </span>
                           ) : isPlanUnavailable ? (
                             <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 uppercase tracking-wider">
@@ -302,6 +341,24 @@ export default function StakingPage() {
                         {/* Investment End Date & Time */}
                         <td className="py-4 px-5 font-medium text-slate-200">
                           {endDateStr}
+                        </td>
+
+                        {/* Action Column */}
+                        <td className="py-4 px-5 text-right whitespace-nowrap">
+                          {stake.status === 'ACTIVE' && !isFixedDeposit ? (
+                            <button
+                              type="button"
+                              disabled={unstakingId === stake.id}
+                              onClick={() => handleUnstake(stake.id)}
+                              className="px-3 py-1.5 rounded bg-red-600/20 text-red-400 border border-red-500/30 font-bold hover:bg-red-600 hover:text-white transition-all text-xs cursor-pointer disabled:opacity-50"
+                            >
+                              {unstakingId === stake.id ? 'Unstaking...' : 'Unstake'}
+                            </button>
+                          ) : (
+                            <span className="text-[11px] text-slate-500 font-semibold font-mono">
+                              {isFixedDeposit ? 'Locked' : '-'}
+                            </span>
+                          )}
                         </td>
                       </tr>
                     );
