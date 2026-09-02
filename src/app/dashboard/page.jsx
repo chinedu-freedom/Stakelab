@@ -350,26 +350,71 @@ export default function DashboardPage() {
                     <th className="py-4 px-2">Type</th>
                     <th className="py-4 px-2">Amount</th>
                     <th className="py-4 px-2">Balance After</th>
+                    <th className="py-4 px-2">Status</th>
                     <th className="py-4 px-2">Date</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#182848]">
                   {transactions.slice(0, 10).map((tx) => {
-                    const typeLabel =
-                      tx.type === 'ADMIN_CREDIT'
-                        ? 'Deposit credited'
-                        : tx.type === 'ADMIN_DEBIT'
-                        ? 'Deposit debited'
-                        : tx.type === 'DEPOSIT'
-                        ? 'Deposit successful'
-                        : tx.type;
+                    const rawType = (tx.type || '').toUpperCase();
+                    const isMinus = ['WITHDRAWAL', 'ADMIN_DEBIT', 'STAKE', 'DEBIT'].includes(rawType);
+                    
+                    let typeLabel = 'Transaction';
+                    if (['DEPOSIT', 'ADMIN_CREDIT', 'WELCOME_BONUS', 'DEPOSIT_BONUS'].includes(rawType) || rawType.includes('DEPOSIT') || rawType.includes('CREDIT')) {
+                      typeLabel = 'Deposit';
+                    } else if (['WITHDRAWAL', 'ADMIN_DEBIT', 'WITHDRAW'].includes(rawType) || rawType.includes('WITHDRAW') || rawType.includes('DEBIT')) {
+                      typeLabel = 'Withdrawal';
+                    } else if (rawType === 'STAKE_PROFIT' || rawType === 'STAKING_YIELD') {
+                      typeLabel = 'Staking Yield';
+                    } else if (rawType === 'DAILY_CHECKIN') {
+                      typeLabel = 'Daily Checkin';
+                    } else if (rawType === 'SPIN_WIN' || rawType === 'LUCKY_SPIN') {
+                      typeLabel = 'Lucky Spin';
+                    } else if (rawType === 'TASK_REWARD') {
+                      typeLabel = 'Task Reward';
+                    } else if (rawType === 'GIFT_BONUS') {
+                      typeLabel = 'Gift Bonus';
+                    } else if (rawType === 'REFERRAL_COMMISSION') {
+                      typeLabel = 'Referral Bonus';
+                    } else {
+                      typeLabel = tx.type || 'Transaction';
+                    }
+
+                    const rawStatus = (tx.status || 'COMPLETED').toUpperCase();
+                    const isCompleted = ['COMPLETED', 'APPROVED', 'SUCCESSFUL', 'SUCCESS'].includes(rawStatus);
+                    const isPending = ['PENDING', 'PROCESSING'].includes(rawStatus);
 
                     return (
                       <tr key={tx.id} className="hover:bg-[#0e1d3e]/50 text-slate-200">
                         <td className="py-4 px-2 font-mono text-[11px] text-slate-400">{tx.id.substring(0, 8)}...</td>
-                        <td className="py-4 px-2 font-bold text-white whitespace-nowrap">{typeLabel}</td>
+                        <td className="py-4 px-2 whitespace-nowrap">
+                          <span
+                            className={`text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-full uppercase border whitespace-nowrap inline-flex items-center justify-center ${
+                              isMinus
+                                ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                            }`}
+                          >
+                            {typeLabel}
+                          </span>
+                        </td>
                         <td className="py-4 px-2 font-righteous text-emerald-400 whitespace-nowrap">${parseFloat(tx.amount).toFixed(2)}</td>
                         <td className="py-4 px-2 font-righteous text-white whitespace-nowrap">${parseFloat(tx.balance_after).toFixed(2)}</td>
+                        <td className="py-4 px-2 whitespace-nowrap">
+                          {isCompleted ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 uppercase">
+                              Completed
+                            </span>
+                          ) : isPending ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 uppercase">
+                              Pending
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/15 text-red-400 border border-red-500/30 uppercase">
+                              Rejected
+                            </span>
+                          )}
+                        </td>
                         <td className="py-4 px-2 text-slate-400 font-mono text-[11px] whitespace-nowrap">{new Date(tx.created_at).toLocaleString()}</td>
                       </tr>
                     );
