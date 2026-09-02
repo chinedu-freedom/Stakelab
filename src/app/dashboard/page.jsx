@@ -310,17 +310,18 @@ export default function DashboardPage() {
                       <span className="text-emerald-400 font-bold ml-1">${parseFloat(stake.daily_profit).toFixed(2)}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400">Total Claimed:</span>
+                      <span className="text-slate-400">Total Yield Earned:</span>
                       <span className="text-white font-bold ml-1">${parseFloat(stake.total_earned).toFixed(2)}</span>
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => handleClaim(stake.id)}
-                    className="w-full py-2.5 rounded-lg bg-[#142345] text-[#ff0044] hover:bg-[#ff0044] hover:text-white font-bold text-xs border border-[#ff0044]/30 transition-all flex items-center justify-center gap-2"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" /> Claim Daily Return (${parseFloat(stake.daily_profit).toFixed(2)})
-                  </button>
+                  <div className="w-full py-2 px-3 rounded-lg bg-[#060f22] text-slate-300 font-medium text-[11px] border border-[#182848] flex items-center justify-between">
+                    <span className="text-emerald-400 font-bold flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      Auto-Credited Daily
+                    </span>
+                    <span className="text-slate-400 text-[10px]">Credited to Profits Wallet every 24h</span>
+                  </div>
                 </div>
               ))}
             </div>
