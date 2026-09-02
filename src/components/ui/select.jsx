@@ -5,6 +5,40 @@ import { ChevronDown, Check, Search, X } from 'lucide-react';
 
 const SelectContext = createContext(null);
 
+const extractTextFromReactNode = (node) => {
+  if (node === null || node === undefined) return '';
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(extractTextFromReactNode).join('');
+  if (React.isValidElement(node)) {
+    if (node.props && node.props.children) {
+      return extractTextFromReactNode(node.props.children);
+    }
+  }
+  return '';
+};
+
+const findLabelInChildren = (node, targetValue) => {
+  if (!node || targetValue === undefined || targetValue === null) return '';
+  if (Array.isArray(node)) {
+    for (const child of node) {
+      const found = findLabelInChildren(child, targetValue);
+      if (found) return found;
+    }
+    return '';
+  }
+  if (React.isValidElement(node)) {
+    if (node.props && node.props.value !== undefined && String(node.props.value) === String(targetValue)) {
+      if (node.props.children) {
+        return extractTextFromReactNode(node.props.children);
+      }
+    }
+    if (node.props && node.props.children) {
+      return findLabelInChildren(node.props.children, targetValue);
+    }
+  }
+  return '';
+};
+
 export function Select({ value, onValueChange, defaultValue, children }) {
   const [selectedValue, setSelectedValue] = useState(value !== undefined ? value : defaultValue || '');
   const [selectedLabel, setSelectedLabel] = useState('');
@@ -16,6 +50,14 @@ export function Select({ value, onValueChange, defaultValue, children }) {
       setSelectedValue(value);
     }
   }, [value]);
+
+  useEffect(() => {
+    const currentVal = value !== undefined ? value : selectedValue;
+    const computedLabel = findLabelInChildren(children, currentVal);
+    if (computedLabel) {
+      setSelectedLabel(computedLabel);
+    }
+  }, [value, selectedValue, children]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {

@@ -12,6 +12,9 @@ export default function SupportTicketsPage() {
   const { user } = useAuth();
   const [tickets, setTickets] = useState([]);
   const [whatsappLink, setWhatsappLink] = useState('https://wa.me/1234567890');
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     api
@@ -29,25 +32,29 @@ export default function SupportTicketsPage() {
     toast.success('Opening WhatsApp Direct Support...');
   };
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = JSON.parse(localStorage.getItem('stakelab_tickets') || '[]');
-      if (stored.length === 0) {
-        const defaultTicket = {
-          id: '847725',
-          subject: 'Hi',
-          message: 'Are you there',
-          status: 'Customer Reply',
-          priority: 'High',
-          lastReply: '6 seconds ago',
-          created_at: new Date().toISOString(),
-        };
-        setTickets([defaultTicket]);
-      } else {
-        setTickets(stored);
+  const fetchTickets = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/support/tickets');
+      if (res.data.success && res.data.tickets) {
+        setTickets(res.data.tickets);
       }
+    } catch (err) {
+      console.error('Fetch support tickets error:', err);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchTickets();
   }, []);
+
+  const totalPages = Math.ceil(tickets.length / itemsPerPage) || 1;
+  const paginatedTickets = tickets.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <UserSidebarLayout>

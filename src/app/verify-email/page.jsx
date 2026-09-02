@@ -48,7 +48,7 @@ export default function VerifyEmailPage() {
     e.preventDefault();
     const cleanCode = code.trim();
     if (!cleanCode || cleanCode.length < 4) {
-      toast.error('Please enter a valid 6-digit verification code');
+      toast.error('Please enter a valid verification code');
       return;
     }
 
@@ -103,7 +103,7 @@ export default function VerifyEmailPage() {
           </h1>
 
           <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
-            We sent a 6-digit verification code to{' '}
+            We sent a verification code to{' '}
             <span className="text-white font-bold">{user?.email || 'your email'}</span>. Please enter it below to activate full account capabilities.
           </p>
         </div>
@@ -112,7 +112,7 @@ export default function VerifyEmailPage() {
         <form onSubmit={handleVerify} className="space-y-5">
           <div>
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2 text-center">
-              6-Digit Verification Code
+              Verification Code
             </label>
             <input
               type="text"

@@ -403,7 +403,8 @@ export default function TicketDetailsPage({ params }) {
           </div>
         )}
 
-        {/* Reply Form (Inside the Same Card) */}
+        {/* Reply Form (Shown ONLY when ticket is OPEN) */}
+        {!isClosed && (
           <form onSubmit={handleReplySubmit} className="space-y-4 pt-2 border-t border-[#182848]">
             {/* Active Replying Target Banner */}
             {replyTo && (
@@ -512,6 +513,7 @@ export default function TicketDetailsPage({ params }) {
               </button>
             </div>
           </form>
+        )}
         </div>
 
         {/* Attachment Lightbox Modal */}

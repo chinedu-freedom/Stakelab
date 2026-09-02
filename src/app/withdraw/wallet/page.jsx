@@ -333,7 +333,7 @@ export default function AddWithdrawalWalletPage() {
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed font-sans">
-              To request or set a new 4-digit Security PIN, click <strong className="text-amber-400">Send Verification Code</strong> below to receive a 6-digit OTP code in your registered email.
+              To request or set a new 4-digit Security PIN, click <strong className="text-amber-400">Send Verification Code</strong> below to receive a verification code in your registered email.
             </p>
 
             <form
@@ -375,7 +375,7 @@ export default function AddWithdrawalWalletPage() {
                       setSendingOtp(true);
                       const res = await api.post('/user/send-security-pin-otp');
                       if (res.data.success) {
-                        toast.success('6-digit OTP code sent to your email!');
+                        toast.success('Verification code sent to your email!');
                       }
                     } catch (err) {
                       toast.error(err.response?.data?.message || 'Failed to send OTP code');
