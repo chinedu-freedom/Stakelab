@@ -71,8 +71,8 @@ export default function DashboardPage() {
     );
   }
 
-  const stakingBalance = dashboardData?.user?.staked_balance !== undefined ? dashboardData.user.staked_balance : (user?.staked_balance || 0);
-  const earningBalance = dashboardData?.user?.balance !== undefined ? dashboardData.user.balance : (user?.balance || 0);
+  const stakingBalance = dashboardData?.user?.balance !== undefined ? dashboardData.user.balance : (user?.balance || 0);
+  const earningBalance = dashboardData?.user?.staked_balance !== undefined ? dashboardData.user.staked_balance : (user?.staked_balance || 0);
   const totalDeposit = dashboardData?.user?.total_deposit !== undefined ? dashboardData.user.total_deposit : (user?.total_deposit || 0);
   const totalWithdraw = dashboardData?.user?.total_withdraw !== undefined ? dashboardData.user.total_withdraw : (user?.total_withdraw || 0);
   const referralEarning = dashboardData?.user?.referral_earning !== undefined ? dashboardData.user.referral_earning : (user?.referral_earning || 0);

@@ -71,15 +71,15 @@ export default function StakingPage() {
 
     const amountNum = parseFloat(stakeAmount);
     const mainBal = parseFloat(user?.balance || 0);
-    const profitBal = parseFloat(user?.total_earned || 0);
+    const profitBal = parseFloat(user?.staked_balance || 0);
 
     if (selectedWallet === 'main' && amountNum > mainBal) {
-      toast.error(`Insufficient balance in Main Wallet ($${mainBal.toFixed(2)})`);
+      toast.error(`Insufficient balance in Staking Wallet ($${mainBal.toFixed(2)})`);
       return;
     }
 
     if (selectedWallet === 'profit' && amountNum > profitBal) {
-      toast.error(`Insufficient balance in Profit Wallet ($${profitBal.toFixed(2)})`);
+      toast.error(`Insufficient balance in Profits Wallet ($${profitBal.toFixed(2)})`);
       return;
     }
 
@@ -256,10 +256,10 @@ export default function StakingPage() {
                       </SelectTrigger>
                       <SelectContent searchPlaceholder="Search source...">
                         <SelectItem value="main">
-                          Main Wallet (${parseFloat(user?.balance || 0).toFixed(2)})
+                          Staking Wallet (${parseFloat(user?.balance || 0).toFixed(2)})
                         </SelectItem>
                         <SelectItem value="profit">
-                          Profit Wallet (${parseFloat(user?.total_earned || 0).toFixed(2)})
+                          Profits Wallet (${parseFloat(user?.staked_balance || 0).toFixed(2)})
                         </SelectItem>
                       </SelectContent>
                     </Select>

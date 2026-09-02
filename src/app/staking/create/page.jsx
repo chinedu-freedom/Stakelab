@@ -84,7 +84,7 @@ export default function CreateStakingPage() {
     }
 
     const mainBal = Number(user?.balance || 0);
-    const profitBal = Number(user?.total_earned || 0);
+    const profitBal = Number(user?.staked_balance || 0);
 
     if (selectedWallet === 'main' && amountNum > mainBal) {
       toast.error(`Insufficient balance in Staking Wallet ($${mainBal.toFixed(2)})`);
@@ -361,7 +361,7 @@ export default function CreateStakingPage() {
                         {selectedWallet === 'main'
                           ? `Staking Wallet ($${Number(user?.balance || 0).toFixed(2)})`
                           : selectedWallet === 'profit'
-                          ? `Profits Wallet ($${Number(user?.total_earned || 0).toFixed(2)})`
+                          ? `Profits Wallet ($${Number(user?.staked_balance || 0).toFixed(2)})`
                           : 'Select Source'}
                       </SelectValue>
                     </SelectTrigger>
@@ -370,7 +370,7 @@ export default function CreateStakingPage() {
                         Staking Wallet (${Number(user?.balance || 0).toFixed(2)})
                       </SelectItem>
                       <SelectItem value="profit" className="focus:bg-[#142548] focus:text-white cursor-pointer text-xs py-2">
-                        Profits Wallet (${Number(user?.total_earned || 0).toFixed(2)})
+                        Profits Wallet (${Number(user?.staked_balance || 0).toFixed(2)})
                       </SelectItem>
                     </SelectContent>
                   </Select>

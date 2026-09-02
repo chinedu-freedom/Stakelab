@@ -12,16 +12,27 @@ export default function DepositHistoryPage() {
   const [deposits, setDeposits] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchDeposits = async () => {
+    try {
+      setLoading(true);
+      let res;
+      try {
+        res = await api.get('/user/deposits');
+      } catch (e) {
+        res = await api.get('/deposits');
+      }
+      if (res?.data?.success) {
+        setDeposits(res.data.deposits || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch deposit history:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    setLoading(true);
-    api.get('/user/deposits')
-      .then((res) => {
-        if (res.data.success) {
-          setDeposits(res.data.deposits || []);
-        }
-      })
-      .catch(() => null)
-      .finally(() => setLoading(false));
+    fetchDeposits();
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);

@@ -155,7 +155,7 @@ export default function AccountSettingsPage() {
 
             <div className="flex items-center justify-between gap-2 pt-1">
               <div className="text-base sm:text-lg lg:text-xl font-extrabold text-white font-righteous tracking-tight">
-                {showStakingBalance ? `$${parseFloat(user?.staked_balance || 0).toFixed(2)}` : '••••••'}
+                {showStakingBalance ? `$${parseFloat(user?.balance || 0).toFixed(2)}` : '••••••'}
               </div>
 
               <div className="flex items-center gap-1.5 shrink-0">
@@ -189,7 +189,7 @@ export default function AccountSettingsPage() {
 
             <div className="flex items-center justify-between gap-2 pt-1">
               <div className="text-base sm:text-lg lg:text-xl font-extrabold text-white font-righteous tracking-tight">
-                {showEarningBalance ? `$${parseFloat(user?.balance || 0).toFixed(2)}` : '••••••'}
+                {showEarningBalance ? `$${parseFloat(user?.staked_balance || 0).toFixed(2)}` : '••••••'}
               </div>
 
               <div className="flex items-center gap-1.5 shrink-0">

@@ -375,7 +375,7 @@ export default function AddWithdrawalWalletPage() {
                       setSendingOtp(true);
                       const res = await api.post('/user/send-security-pin-otp');
                       if (res.data.success) {
-                        toast.success('OTP code sent to your email!');
+                        toast.success('6-digit OTP code sent to your email!');
                       }
                     } catch (err) {
                       toast.error(err.response?.data?.message || 'Failed to send OTP code');

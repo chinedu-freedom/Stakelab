@@ -106,7 +106,7 @@ export default function WithdrawPage() {
   const feePercent = selectedGateway?.feePercent ?? globalSettings.payoutCharge;
 
   const availableBalance = walletSource === 'profit'
-    ? parseFloat(user?.total_earned || 0)
+    ? parseFloat(user?.staked_balance || 0)
     : parseFloat(user?.balance || 0);
 
   const walletLabel = walletSource === 'profit' ? 'Profits Wallet' : 'Staking Wallet';
@@ -185,7 +185,7 @@ export default function WithdrawPage() {
                 <div className="pl-4">
                   <div className="text-xs text-slate-400 font-medium">Profits Wallet Balance</div>
                   <div className="text-xl font-extrabold text-emerald-400 font-righteous mt-1">
-                    ${parseFloat(user?.total_earned || 0).toFixed(2)}
+                    ${parseFloat(user?.staked_balance || 0).toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -268,7 +268,7 @@ export default function WithdrawPage() {
                       Staking Wallet (${parseFloat(user?.balance || 0).toFixed(2)})
                     </SelectItem>
                     <SelectItem value="profit" className="focus:bg-[#12234e] focus:text-white cursor-pointer py-2 text-xs">
-                      Profits Wallet (${parseFloat(user?.total_earned || 0).toFixed(2)})
+                      Profits Wallet (${parseFloat(user?.staked_balance || 0).toFixed(2)})
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -503,7 +503,7 @@ export default function WithdrawPage() {
                       setSendingOtp(true);
                       const res = await api.post('/user/send-security-pin-otp');
                       if (res.data.success) {
-                        toast.success('OTP code sent to your email!');
+                        toast.success('6-digit OTP code sent to your email!');
                       }
                     } catch (err) {
                       toast.error(err.response?.data?.message || 'Failed to send OTP code');

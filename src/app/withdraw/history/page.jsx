@@ -15,8 +15,13 @@ export default function WithdrawHistoryPage() {
   const fetchWithdrawals = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/withdrawals');
-      if (res.data.success) {
+      let res;
+      try {
+        res = await api.get('/user/withdrawals');
+      } catch (e) {
+        res = await api.get('/withdrawals');
+      }
+      if (res?.data?.success) {
         setWithdrawals(res.data.withdrawals || []);
       }
     } catch (err) {
