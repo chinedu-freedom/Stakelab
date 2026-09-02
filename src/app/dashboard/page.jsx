@@ -359,30 +359,68 @@ export default function DashboardPage() {
                     const rawType = (tx.type || '').toUpperCase();
                     const isMinus = ['WITHDRAWAL', 'ADMIN_DEBIT', 'STAKE', 'DEBIT'].includes(rawType);
                     
-                    let typeLabel = 'Transaction';
+                    let typeLabel = 'TRANSACTION';
                     if (['DEPOSIT', 'ADMIN_CREDIT', 'WELCOME_BONUS', 'DEPOSIT_BONUS'].includes(rawType) || rawType.includes('DEPOSIT') || rawType.includes('CREDIT')) {
-                      typeLabel = 'Deposit';
+                      typeLabel = 'DEPOSIT';
                     } else if (['WITHDRAWAL', 'ADMIN_DEBIT', 'WITHDRAW'].includes(rawType) || rawType.includes('WITHDRAW') || rawType.includes('DEBIT')) {
-                      typeLabel = 'Withdrawal';
+                      typeLabel = 'WITHDRAWAL';
                     } else if (rawType === 'STAKE_PROFIT' || rawType === 'STAKING_YIELD') {
-                      typeLabel = 'Staking Yield';
+                      typeLabel = 'STAKING YIELD';
+                    } else if (rawType === 'STAKE' || rawType === 'STAKE_BUY') {
+                      typeLabel = 'STAKING PURCHASE';
                     } else if (rawType === 'DAILY_CHECKIN') {
-                      typeLabel = 'Daily Checkin';
+                      typeLabel = 'DAILY CHECKIN';
                     } else if (rawType === 'SPIN_WIN' || rawType === 'LUCKY_SPIN') {
-                      typeLabel = 'Lucky Spin';
+                      typeLabel = 'LUCKY SPIN';
                     } else if (rawType === 'TASK_REWARD') {
-                      typeLabel = 'Task Reward';
+                      typeLabel = 'TASK REWARD';
                     } else if (rawType === 'GIFT_BONUS') {
-                      typeLabel = 'Gift Bonus';
+                      typeLabel = 'GIFT BONUS';
                     } else if (rawType === 'REFERRAL_COMMISSION') {
-                      typeLabel = 'Referral Bonus';
+                      typeLabel = 'REFERRAL BONUS';
                     } else {
-                      typeLabel = tx.type || 'Transaction';
+                      typeLabel = rawType || 'TRANSACTION';
                     }
 
                     const rawStatus = (tx.status || 'COMPLETED').toUpperCase();
                     const isCompleted = ['COMPLETED', 'APPROVED', 'SUCCESSFUL', 'SUCCESS'].includes(rawStatus);
                     const isPending = ['PENDING', 'PROCESSING'].includes(rawStatus);
+
+                    let statusText = 'Completed';
+                    let statusColor = 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+
+                    if (rawType === 'ADMIN_CREDIT') {
+                      statusText = 'Deposit credited';
+                      statusColor = 'bg-blue-500/15 text-blue-400 border-blue-500/30';
+                    } else if (rawType === 'ADMIN_DEBIT') {
+                      statusText = 'Deposit debited';
+                      statusColor = 'bg-red-500/15 text-red-400 border-red-500/30';
+                    } else if (rawType === 'DEPOSIT') {
+                      statusText = 'Deposit successful';
+                      statusColor = 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+                    } else if (rawType === 'WITHDRAWAL' || rawType === 'WITHDRAW') {
+                      if (isCompleted) {
+                        statusText = 'Withdrawal successful';
+                        statusColor = 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+                      } else if (isPending) {
+                        statusText = 'Pending';
+                        statusColor = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+                      } else {
+                        statusText = 'Rejected';
+                        statusColor = 'bg-red-500/15 text-red-400 border-red-500/30';
+                      }
+                    } else {
+                      if (isCompleted) {
+                        statusText = 'Completed';
+                        statusColor = 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+                      } else if (isPending) {
+                        statusText = 'Pending';
+                        statusColor = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+                      } else {
+                        statusText = 'Rejected';
+                        statusColor = 'bg-red-500/15 text-red-400 border-red-500/30';
+                      }
+                    }
 
                     return (
                       <tr key={tx.id} className="hover:bg-[#0e1d3e]/50 text-slate-200">
@@ -401,19 +439,9 @@ export default function DashboardPage() {
                         <td className="py-4 px-2 font-righteous text-emerald-400 whitespace-nowrap">${parseFloat(tx.amount).toFixed(2)}</td>
                         <td className="py-4 px-2 font-righteous text-white whitespace-nowrap">${parseFloat(tx.balance_after).toFixed(2)}</td>
                         <td className="py-4 px-2 whitespace-nowrap">
-                          {isCompleted ? (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 uppercase">
-                              Completed
-                            </span>
-                          ) : isPending ? (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 uppercase">
-                              Pending
-                            </span>
-                          ) : (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/15 text-red-400 border border-red-500/30 uppercase">
-                              Rejected
-                            </span>
-                          )}
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border uppercase inline-block ${statusColor}`}>
+                            {statusText}
+                          </span>
                         </td>
                         <td className="py-4 px-2 text-slate-400 font-mono text-[11px] whitespace-nowrap">{new Date(tx.created_at).toLocaleString()}</td>
                       </tr>

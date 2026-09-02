@@ -204,30 +204,68 @@ export default function TransactionsPage() {
                     const isMinus = ['WITHDRAWAL', 'ADMIN_DEBIT', 'STAKE', 'DEBIT'].includes(rawType);
                     const amountVal = parseFloat(tx.amount || 0);
 
-                    let typeLabel = 'Transaction';
+                    let typeLabel = 'TRANSACTION';
                     if (['DEPOSIT', 'ADMIN_CREDIT', 'WELCOME_BONUS', 'DEPOSIT_BONUS'].includes(rawType) || rawType.includes('DEPOSIT') || rawType.includes('CREDIT')) {
-                      typeLabel = 'Deposit';
+                      typeLabel = 'DEPOSIT';
                     } else if (['WITHDRAWAL', 'ADMIN_DEBIT', 'WITHDRAW'].includes(rawType) || rawType.includes('WITHDRAW') || rawType.includes('DEBIT')) {
-                      typeLabel = 'Withdrawal';
+                      typeLabel = 'WITHDRAWAL';
                     } else if (rawType === 'STAKE_PROFIT' || rawType === 'STAKING_YIELD') {
-                      typeLabel = 'Staking Yield';
+                      typeLabel = 'STAKING YIELD';
+                    } else if (rawType === 'STAKE' || rawType === 'STAKE_BUY') {
+                      typeLabel = 'STAKING PURCHASE';
                     } else if (rawType === 'DAILY_CHECKIN') {
-                      typeLabel = 'Daily Checkin';
+                      typeLabel = 'DAILY CHECKIN';
                     } else if (rawType === 'SPIN_WIN' || rawType === 'LUCKY_SPIN') {
-                      typeLabel = 'Lucky Spin';
+                      typeLabel = 'LUCKY SPIN';
                     } else if (rawType === 'TASK_REWARD') {
-                      typeLabel = 'Task Reward';
+                      typeLabel = 'TASK REWARD';
                     } else if (rawType === 'GIFT_BONUS') {
-                      typeLabel = 'Gift Bonus';
+                      typeLabel = 'GIFT BONUS';
                     } else if (rawType === 'REFERRAL_COMMISSION') {
-                      typeLabel = 'Referral Bonus';
+                      typeLabel = 'REFERRAL BONUS';
                     } else {
-                      typeLabel = tx.type || 'Transaction';
+                      typeLabel = rawType || 'TRANSACTION';
                     }
 
                     const rawStatus = (tx.status || 'COMPLETED').toUpperCase();
                     const isCompleted = ['COMPLETED', 'APPROVED', 'SUCCESSFUL', 'SUCCESS'].includes(rawStatus);
                     const isPending = ['PENDING', 'PROCESSING'].includes(rawStatus);
+
+                    let statusText = 'Completed';
+                    let statusColor = 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+
+                    if (rawType === 'ADMIN_CREDIT') {
+                      statusText = 'Deposit credited';
+                      statusColor = 'bg-blue-500/15 text-blue-400 border-blue-500/30';
+                    } else if (rawType === 'ADMIN_DEBIT') {
+                      statusText = 'Deposit debited';
+                      statusColor = 'bg-red-500/15 text-red-400 border-red-500/30';
+                    } else if (rawType === 'DEPOSIT') {
+                      statusText = 'Deposit successful';
+                      statusColor = 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+                    } else if (rawType === 'WITHDRAWAL' || rawType === 'WITHDRAW') {
+                      if (isCompleted) {
+                        statusText = 'Withdrawal successful';
+                        statusColor = 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+                      } else if (isPending) {
+                        statusText = 'Pending';
+                        statusColor = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+                      } else {
+                        statusText = 'Rejected';
+                        statusColor = 'bg-red-500/15 text-red-400 border-red-500/30';
+                      }
+                    } else {
+                      if (isCompleted) {
+                        statusText = 'Completed';
+                        statusColor = 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+                      } else if (isPending) {
+                        statusText = 'Pending';
+                        statusColor = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+                      } else {
+                        statusText = 'Rejected';
+                        statusColor = 'bg-red-500/15 text-red-400 border-red-500/30';
+                      }
+                    }
 
                     const detailsLabel = tx.description || tx.remark || `${typeLabel} processed successfully`;
 
@@ -258,19 +296,9 @@ export default function TransactionsPage() {
                           ${parseFloat(tx.balance_after || 0).toFixed(2)}
                         </td>
                         <td className="py-4 px-3 whitespace-nowrap">
-                          {isCompleted ? (
-                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 uppercase">
-                              Completed
-                            </span>
-                          ) : isPending ? (
-                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 uppercase">
-                              Pending
-                            </span>
-                          ) : (
-                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-500/15 text-red-400 border border-red-500/30 uppercase">
-                              Rejected
-                            </span>
-                          )}
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border uppercase inline-block ${statusColor}`}>
+                            {statusText}
+                          </span>
                         </td>
                         <td className="py-4 px-3 text-slate-300 text-[11px] max-w-xs truncate">
                           {detailsLabel}
