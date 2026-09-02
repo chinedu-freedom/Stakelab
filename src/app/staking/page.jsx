@@ -100,11 +100,27 @@ export default function StakingPage() {
   const activeCount = activeStakesList.length;
   const totalInvested = allStakes.reduce((acc, s) => acc + parseFloat(s.amount || 0), 0);
   const totalExpectedReturn = allStakes.reduce((acc, s) => {
+    if (s.expected_total_return !== undefined && s.expected_total_return !== null) {
+      return acc + parseFloat(s.expected_total_return || 0);
+    }
     const amt = parseFloat(s.amount || 0);
     const dailyPct = parseFloat(s.plan?.daily_return_percent || 0);
     const durationDays = s.plan?.duration_days || 30;
-    const dailyProfit = (amt * dailyPct) / 100;
-    return acc + (parseFloat(s.expected_total_return) || (amt + (dailyProfit * durationDays)));
+    const isCompounding = s.plan?.is_compounding !== false;
+    const capitalReturn = s.plan?.capital_return !== false;
+
+    let ret = amt;
+    if (isCompounding) {
+      ret = amt * Math.pow(1 + dailyPct / 100, durationDays);
+    } else {
+      ret = amt + (amt * (dailyPct / 100) * durationDays);
+    }
+
+    if (!capitalReturn) {
+      ret = Math.max(0, ret - amt);
+    }
+
+    return acc + ret;
   }, 0);
 
   const displayedStakes = activeTab === 'active' ? activeStakesList : completedStakesList;
