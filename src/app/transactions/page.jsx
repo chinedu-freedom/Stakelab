@@ -267,7 +267,8 @@ export default function TransactionsPage() {
                       }
                     }
 
-                    const detailsLabel = tx.description || tx.remark || `${typeLabel} processed successfully`;
+                    const rawDetails = tx.description || tx.remark || `${typeLabel} processed successfully`;
+                    const detailsLabel = rawDetails.replace(/OxaPay\s*/gi, '').trim();
 
                     return (
                       <tr key={tx.id} className="hover:bg-[#0e1d3e]/80 text-slate-200 transition-colors">
