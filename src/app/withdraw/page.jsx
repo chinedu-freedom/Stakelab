@@ -503,27 +503,32 @@ export default function WithdrawPage() {
                       setSendingOtp(true);
                       const res = await api.post('/user/send-security-pin-otp');
                       if (res.data.success) {
-                        toast.success('6-digit OTP code sent to your email!');
+                        toast.success('OTP code sent to your email!');
                       }
-                  disabled={sendingCode}
-                  onClick={handleSendPinCode}
-                  className="bg-[#122b64] hover:bg-[#1a387d] text-amber-400 border border-amber-400/30 text-xs font-bold font-sans px-4 py-2.5 rounded-lg whitespace-nowrap transition-all cursor-pointer flex items-center justify-center min-w-[100px]"
+                    } catch (err) {
+                      toast.error(err.response?.data?.message || 'Failed to send OTP code');
+                    } finally {
+                      setSendingOtp(false);
+                    }
+                  }}
+                  className="bg-[#1a2b57] hover:bg-[#253b75] text-amber-400 font-bold px-3 py-1.5 rounded text-xs transition-all disabled:opacity-50 cursor-pointer"
                 >
-                  {sendingCode ? <Loader2 className="w-4 h-4 animate-spin text-amber-400" /> : 'Send OTP'}
+                  {sendingOtp ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Send OTP'}
                 </button>
               </div>
 
-              {/* OTP Code */}
+              {/* OTP Code Input */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-slate-300 font-sans">
                   Email Verification Code (OTP)
                 </label>
                 <input
                   type="text"
+                  required
                   value={pinOtp}
                   onChange={(e) => setPinOtp(e.target.value)}
-                  placeholder="Enter email code"
-                  className="w-full bg-[#06102b] border border-[#ff0044] focus:outline-none text-white text-sm font-sans rounded-lg px-3 py-2.5 placeholder-slate-500"
+                  placeholder="Enter 6-digit email code"
+                  className="w-full h-11 bg-[#06102b] border border-[#1a2b57] rounded-lg px-3 text-white text-xs font-mono focus:border-[#ff0044] focus:outline-none"
                 />
               </div>
 
