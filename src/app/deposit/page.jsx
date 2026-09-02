@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import UserSidebarLayout from '../../components/UserSidebarLayout';
 import api from '../../lib/api';
-import { Copy, Check, ChevronDown, ChevronUp, ShieldCheck, Info, Loader2 } from 'lucide-react';
+import { Copy, Check, ChevronDown, ChevronUp, ShieldCheck, Info, Loader2, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useAuth } from '../../context/AuthContext';
@@ -73,6 +74,7 @@ export default function DepositPage() {
   };
 
   const [dynamicInvoice, setDynamicInvoice] = useState(null);
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
 
   const minLimit = selectedGateway?.minLimit ?? globalSettings.minDeposit;
   const maxLimit = selectedGateway?.maxLimit ?? globalSettings.maxDeposit;
@@ -82,6 +84,34 @@ export default function DepositPage() {
   const fee = (amountNum * feePercent) / 100;
   const totalAmount = amountNum + fee;
   const inUSD = totalAmount * (selectedGateway?.rate || 1);
+
+  // Live polling for deposit status when dynamic invoice is active
+  useEffect(() => {
+    if (!dynamicInvoice || paymentConfirmed) return;
+
+    const pollId = dynamicInvoice.trackId || dynamicInvoice.depositId;
+    if (!pollId) return;
+
+    const checkStatus = async () => {
+      try {
+        const res = await api.get(`/deposits/status/${pollId}`);
+        if (res.data && res.data.success && res.data.isConfirmed) {
+          setPaymentConfirmed(true);
+          toast.success('🎉 Deposit confirmed and credited successfully!');
+          setTimeout(() => {
+            window.location.href = '/staking';
+          }, 3500);
+        }
+      } catch (err) {
+        console.error('Polling deposit status error:', err);
+      }
+    };
+
+    checkStatus();
+    const interval = setInterval(checkStatus, 3500);
+
+    return () => clearInterval(interval);
+  }, [dynamicInvoice, paymentConfirmed]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -100,8 +130,10 @@ export default function DepositPage() {
 
     try {
       setSubmitting(true);
+      setPaymentConfirmed(false);
+
       const res = await api.post('/deposits', {
-        amount: amountNum,
+        amount: totalAmount, // Pass total amount (deposit + processing fee)
         payment_method: selectedGateway.name,
         transaction_hash: txHash,
       });
@@ -110,8 +142,9 @@ export default function DepositPage() {
         if (res.data.dynamic && res.data.address) {
           setDynamicInvoice({
             address: res.data.address,
-            trackId: res.data.trackId,
-            amount: amountNum,
+            trackId: res.data.trackId || res.data.deposit?.track_id || res.data.deposit?.id,
+            depositId: res.data.deposit?.id || res.data.depositId,
+            amount: totalAmount.toFixed(2),
             method: selectedGateway.name,
           });
         } else {
@@ -290,7 +323,7 @@ export default function DepositPage() {
             >
               <div className="flex justify-between items-center pb-3 border-b border-[#16274a]">
                 <h3 className="text-sm font-bold text-white font-righteous">
-                  Automated Payment Address
+                  {paymentConfirmed ? 'Payment Confirmed' : 'Automated Payment Address'}
                 </h3>
                 <button
                   onClick={() => setDynamicInvoice(null)}
@@ -300,60 +333,115 @@ export default function DepositPage() {
                 </button>
               </div>
 
-              <div className="bg-[#06102b] p-4 rounded-xl border border-[#1a2b57] space-y-3">
-                <p className="text-xs text-slate-300">
-                  Send <span className="font-bold text-emerald-400 font-righteous">${dynamicInvoice.amount} USD</span> via{' '}
-                  <span className="font-bold text-white">{dynamicInvoice.method}</span> to the unique address below:
-                </p>
+              {paymentConfirmed ? (
+                /* Celebration Success Card on Confirmed Deposit */
+                <div className="space-y-5 py-2 animate-in zoom-in duration-300">
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-500 text-emerald-400 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
+                    <CheckCircle2 className="w-10 h-10 animate-bounce" />
+                  </div>
 
-                {/* QR Code */}
-                <div className="flex justify-center py-2">
-                  <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(dynamicInvoice.address)}`}
-                    alt="OxaPay QR Code"
-                    className="w-40 h-40 rounded-lg border-4 border-[#16274a] bg-white p-1"
-                  />
+                  <div className="space-y-1">
+                    <h3 className="text-lg font-extrabold text-white font-righteous">
+                      🎉 Deposit Confirmed & Credited!
+                    </h3>
+                    <p className="text-xs text-emerald-400 font-semibold font-sans">
+                      +${dynamicInvoice.amount} USDT has been credited to your Staking Wallet
+                    </p>
+                  </div>
+
+                  <div className="bg-[#06102b] p-4 rounded-xl border border-emerald-500/30 text-xs text-slate-300 space-y-2 font-sans">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Payment Status:</span>
+                      <span className="text-emerald-400 font-bold">COMPLETED</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Amount Credited:</span>
+                      <span className="text-white font-bold">${dynamicInvoice.amount} USDT</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Network:</span>
+                      <span className="text-slate-200 font-medium">{dynamicInvoice.method}</span>
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-slate-400 animate-pulse font-mono">
+                    Redirecting to Staking Plans...
+                  </p>
+
+                  <div className="flex gap-3">
+                    <Link
+                      href="/staking"
+                      className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg text-xs transition-all text-center font-righteous shadow-lg shadow-emerald-500/20"
+                    >
+                      Start Staking Now
+                    </Link>
+                    <Link
+                      href="/dashboard"
+                      className="flex-1 bg-[#12234e] hover:bg-[#16274a] text-slate-300 font-bold py-2.5 rounded-lg text-xs transition-all text-center font-righteous"
+                    >
+                      Dashboard
+                    </Link>
+                  </div>
                 </div>
+              ) : (
+                /* QR Code & Payment Address Waiting Box */
+                <>
+                  <div className="bg-[#06102b] p-4 rounded-xl border border-[#1a2b57] space-y-3">
+                    <p className="text-xs text-slate-300">
+                      Send <span className="font-bold text-emerald-400 font-righteous">${dynamicInvoice.amount} USD</span> via{' '}
+                      <span className="font-bold text-white">{dynamicInvoice.method}</span> to the unique address below:
+                    </p>
 
-                {/* Address Box */}
-                <div className="flex items-center gap-2 bg-[#0b1739] p-3 rounded-lg border border-[#1a2b57]">
-                  <input
-                    type="text"
-                    readOnly
-                    value={dynamicInvoice.address}
-                    className="bg-transparent text-xs font-mono text-emerald-400 w-full focus:outline-none"
-                  />
+                    {/* QR Code */}
+                    <div className="flex justify-center py-2">
+                      <img
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(dynamicInvoice.address)}`}
+                        alt="Deposit QR Code"
+                        className="w-40 h-40 rounded-lg border-4 border-[#16274a] bg-white p-1"
+                      />
+                    </div>
+
+                    {/* Address Box */}
+                    <div className="flex items-center gap-2 bg-[#0b1739] p-3 rounded-lg border border-[#1a2b57]">
+                      <input
+                        type="text"
+                        readOnly
+                        value={dynamicInvoice.address}
+                        className="bg-transparent text-xs font-mono text-emerald-400 w-full focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(dynamicInvoice.address);
+                          toast.success('Payment address copied!');
+                        }}
+                        className="p-1.5 rounded bg-[#16274a] text-[#ff0044] hover:bg-[#ff0044] hover:text-white transition-all shrink-0 cursor-pointer"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {dynamicInvoice.trackId && (
+                      <p className="text-[11px] text-slate-400 font-mono">
+                        Track ID: <span className="text-slate-200">{dynamicInvoice.trackId}</span>
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-center gap-2 text-xs text-amber-400 font-medium">
+                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                    Waiting for blockchain payment... (Auto-credits on completion)
+                  </div>
+
                   <button
                     type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText(dynamicInvoice.address);
-                      toast.success('Payment address copied!');
-                    }}
-                    className="p-1.5 rounded bg-[#16274a] text-[#ff0044] hover:bg-[#ff0044] hover:text-white transition-all shrink-0 cursor-pointer"
+                    onClick={() => setDynamicInvoice(null)}
+                    className="w-full bg-[#12234e] hover:bg-[#16274a] text-white font-bold py-2.5 rounded-lg text-xs transition-all cursor-pointer"
                   >
-                    <Copy className="w-4 h-4" />
+                    Close Window
                   </button>
-                </div>
-
-                {dynamicInvoice.trackId && (
-                  <p className="text-[11px] text-slate-400 font-mono">
-                    Track ID: <span className="text-slate-200">{dynamicInvoice.trackId}</span>
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center justify-center gap-2 text-xs text-amber-400 font-medium">
-                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-                Waiting for blockchain payment... (Auto-credits on completion)
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setDynamicInvoice(null)}
-                className="w-full bg-[#12234e] hover:bg-[#16274a] text-white font-bold py-2.5 rounded-lg text-xs transition-all cursor-pointer"
-              >
-                Close Window
-              </button>
+                </>
+              )}
             </div>
           </div>
         )}
