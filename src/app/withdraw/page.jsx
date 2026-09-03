@@ -18,7 +18,7 @@ export default function WithdrawPage() {
     { id: '4', name: 'Ethereum (ERC20)', code: 'ETH', badge: 'ETH', symbol: 'ETH', network: 'ERC20' },
   ]);
 
-  const [walletSource, setWalletSource] = useState('main'); // 'main' (Staking Wallet) or 'profit' (Profits Wallet)
+  const [walletSource, setWalletSource] = useState('profit'); // 'profit' (Profits Wallet) or 'main' (Staking Wallet)
   const [selectedGateway, setSelectedGateway] = useState(gateways[0]);
   const [userWallets, setUserWallets] = useState([]);
   const [amount, setAmount] = useState('');
