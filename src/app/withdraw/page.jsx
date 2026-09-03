@@ -264,11 +264,11 @@ export default function WithdrawPage() {
                     <SelectValue placeholder="Select Wallet" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#081226] border-[#ff0044]/30 text-white shadow-2xl">
-                    <SelectItem value="main" className="focus:bg-[#12234e] focus:text-white cursor-pointer py-2 text-xs">
-                      Staking Wallet (${parseFloat(user?.balance || 0).toFixed(2)})
-                    </SelectItem>
                     <SelectItem value="profit" className="focus:bg-[#12234e] focus:text-white cursor-pointer py-2 text-xs">
                       Profits Wallet (${parseFloat(user?.staked_balance || 0).toFixed(2)})
+                    </SelectItem>
+                    <SelectItem value="main" className="focus:bg-[#12234e] focus:text-white cursor-pointer py-2 text-xs">
+                      Staking Wallet (${parseFloat(user?.balance || 0).toFixed(2)})
                     </SelectItem>
                   </SelectContent>
                 </Select>
