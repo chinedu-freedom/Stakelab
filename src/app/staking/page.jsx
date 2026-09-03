@@ -393,10 +393,15 @@ export default function StakingPage() {
 
                   {/* Field 2: Amount * */}
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-2 font-sans">
-                      Amount <span className="text-[#ff0044]">*</span>
-                    </label>
-                    <div className="flex items-center bg-[#060f22] border border-[#182848] rounded-lg overflow-hidden focus-within:ring-1 focus-within:ring-[#ff0044] transition-all">
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="block text-xs font-semibold text-slate-300 font-sans">
+                        Enter Stake Amount (USD) <span className="text-[#ff0044]">*</span>
+                      </label>
+                      <span className="text-[11px] text-slate-400 font-sans">
+                        Limit: ${selectedPlan.min_amount} - ${selectedPlan.max_amount}
+                      </span>
+                    </div>
+                    <div className="flex items-center bg-[#060f22] border border-[#182848] rounded-lg overflow-hidden focus-within:ring-1 focus-within:ring-[#ff0044] transition-all pr-1.5">
                       <input
                         type="number"
                         step="any"
@@ -408,9 +413,20 @@ export default function StakingPage() {
                         placeholder={`Min: $${selectedPlan.min_amount}`}
                         className="w-full h-12 bg-transparent border-0 outline-none px-4 text-white font-bold text-sm"
                       />
-                      <div className="h-12 px-4 bg-gradient-to-r from-[#ff0044] to-[#fe780b] text-white font-bold text-xs uppercase flex items-center justify-center shrink-0">
-                        USDT
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const avail = selectedWallet === 'main'
+                            ? parseFloat(user?.balance || 0)
+                            : parseFloat(user?.staked_balance || 0);
+                          const planMax = parseFloat(selectedPlan.max_amount || 999999);
+                          const maxVal = Math.min(avail, planMax);
+                          setStakeAmount(maxVal > 0 ? maxVal.toString() : selectedPlan.min_amount.toString());
+                        }}
+                        className="bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-90 text-white font-righteous text-xs px-3 py-1.5 rounded-md uppercase font-bold tracking-wider transition-all cursor-pointer shrink-0"
+                      >
+                        MAX
+                      </button>
                     </div>
                   </div>
 
