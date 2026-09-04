@@ -242,7 +242,6 @@ export default function StakingPage() {
                 </thead>
                 <tbody className="divide-y divide-[#182848]/60 text-slate-200">
                   {displayedStakes.map((stake) => {
-                    const isPlanUnavailable = stake.plan?.is_active === false || stake.plan?.status === 'UNAVAILABLE' || stake.plan?.status === 'INACTIVE' || stake.plan?.badge === 'UNAVAILABLE' || stake.plan?.badge === 'INACTIVE';
                     const isCompleted = stake.status === 'COMPLETED';
 
                     const planName = stake.plan?.title || stake.plan?.name || 'Staking Plan';
@@ -274,10 +273,6 @@ export default function StakingPage() {
                           {isCompleted ? (
                             <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider">
                               COMPLETED
-                            </span>
-                          ) : isPlanUnavailable ? (
-                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 uppercase tracking-wider">
-                              UNAVAILABLE
                             </span>
                           ) : (
                             <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider">
