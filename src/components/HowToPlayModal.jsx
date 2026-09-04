@@ -42,8 +42,8 @@ export default function HowToPlayModal({ isOpen, setIsOpen }) {
               1
             </div>
             <div>
-              <p className="font-bold text-white">Free Spins</p>
-              <p className="text-slate-400 mt-0.5">Claim free daily spins or earn extra free spins when making new deposits.</p>
+              <p className="font-bold text-white font-righteous">Earn Free Spins</p>
+              <p className="text-slate-400 mt-0.5">Earn +1 Free Spin credit every time a new user registers using your referral link!</p>
             </div>
           </div>
 

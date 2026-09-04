@@ -12,7 +12,6 @@ export default function LuckySpinPage() {
   const { refreshUser } = useAuth();
   const [spinData, setSpinData] = useState({
     freeSpins: 0,
-    costPerSpin: 0,
     prizes: [],
     recentWins: [],
   });
@@ -176,8 +175,7 @@ export default function LuckySpinPage() {
       const res = await api.get('/user/spin-info');
       if (res.data && res.data.success) {
         setSpinData({
-          freeSpins: res.data.freeSpins ?? 2,
-          costPerSpin: res.data.costPerSpin ?? 5,
+          freeSpins: res.data.freeSpins ?? 0,
           prizes: res.data.prizes || [],
           recentWins: res.data.recentWins || [],
         });
@@ -314,8 +312,8 @@ export default function LuckySpinPage() {
             <span className="w-full sm:w-auto px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold whitespace-nowrap flex items-center justify-center shrink-0">
               🎉 {spinData.freeSpins} Free Spins Available
             </span>
-            <span className="w-full sm:w-auto px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold whitespace-nowrap flex items-center justify-center shrink-0">
-              💰 Spin Cost: ${spinData.costPerSpin}.00
+            <span className="w-full sm:w-auto px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-bold whitespace-nowrap flex items-center justify-center shrink-0">
+              🔗 +1 Free Spin per Referral Registration
             </span>
           </div>
         </div>
@@ -413,7 +411,7 @@ export default function LuckySpinPage() {
                       <div>
                         <h4 className="text-xs font-bold text-white">{win.prize?.name || 'Lucky Slice'}</h4>
                         <p className="text-[11px] text-slate-400 mt-0.5">
-                          {new Date(win.created_at).toLocaleString()} • {win.spin_type === 'free' ? 'Free Spin' : 'Paid Spin'}
+                          {new Date(win.created_at).toLocaleString()} • Free Spin
                         </p>
                       </div>
                     </div>

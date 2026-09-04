@@ -82,7 +82,7 @@ export default function ReferralsPage() {
               Free Spin Referral Bonus
             </h2>
             <p className="text-xs text-slate-300 leading-relaxed font-sans">
-              For every friend you invite who registers, completes a deposit, and invests in any staking plan, you will automatically earn <b className="text-amber-400">+1 Lucky Free Spin</b> to win instant crypto prizes!
+              For every friend you invite who registers using your referral link, you will automatically earn <b className="text-amber-400">+1 Lucky Free Spin</b> to win instant crypto prizes!
             </p>
           </div>
         </div>
