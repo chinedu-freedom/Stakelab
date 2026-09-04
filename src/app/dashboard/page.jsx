@@ -50,19 +50,6 @@ export default function DashboardPage() {
     fetchDashboard();
   }, []);
 
-  const handleClaim = async (stakeId) => {
-    try {
-      const res = await api.post('/staking/claim', { stake_id: stakeId });
-      if (res.data.success) {
-        toast.success(res.data.message);
-        fetchDashboard();
-        refreshUser();
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Claim failed');
-    }
-  };
-
   if (loading) {
     return (
       <UserSidebarLayout>
