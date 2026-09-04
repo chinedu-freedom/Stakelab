@@ -28,11 +28,11 @@ export default function VerifyEmailPage() {
     }
   }, [user, loading]);
 
-  // Automatically dispatch a fresh code when user arrives at /verify-email page
+  // Check or dispatch code when user arrives at /verify-email page
   useEffect(() => {
     if (!loading && user && !user.email_verified && !autoSent) {
       setAutoSent(true);
-      handleResendCode();
+      handleResendCode(false);
     }
   }, [user, loading, autoSent]);
 
@@ -69,14 +69,18 @@ export default function VerifyEmailPage() {
     }
   };
 
-  const handleResendCode = async () => {
-    if (countdown > 0 || resending) return;
+  const handleResendCode = async (isManualClick = true) => {
+    if (isManualClick && (countdown > 0 || resending)) return;
     setResending(true);
     try {
-      const res = await api.post('/auth/send-email-verification');
+      const res = await api.post('/auth/send-email-verification', { force: isManualClick });
       if (res.data && res.data.success) {
-        toast.success(res.data.message || 'Verification code sent to your email address!');
-        setCountdown(60);
+        if (res.data.code_already_active) {
+          toast.info(res.data.message || 'Your verification code is still valid. Please check your inbox or spam folder.');
+        } else {
+          toast.success(res.data.message || 'Verification code sent to your email address!');
+          setCountdown(60);
+        }
       } else {
         toast.error(res.data?.message || 'Failed to resend code');
       }
@@ -143,7 +147,7 @@ export default function VerifyEmailPage() {
 
           <button
             type="button"
-            onClick={handleResendCode}
+            onClick={() => handleResendCode(true)}
             disabled={countdown > 0 || resending}
             className="inline-flex items-center gap-1.5 text-xs font-bold text-[#fe780b] hover:text-[#ff0044] transition-colors cursor-pointer disabled:opacity-50"
           >
