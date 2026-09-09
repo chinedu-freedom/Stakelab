@@ -201,7 +201,7 @@ export default function ReferralsPage() {
                     <span className="w-2 h-2 rounded-full bg-[#ff0044]" /> Level 1<span className="hidden sm:inline"> (Direct Invites)</span>
                   </h3>
                   <span className="text-xs text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/20 whitespace-nowrap">
-                    10.00% Commission
+                    {level1.commissionRate || (level1.percent !== undefined ? `${level1.percent}%` : '10.00%')} Commission
                   </span>
                 </div>
 
@@ -297,7 +297,7 @@ export default function ReferralsPage() {
                     <span className="w-2 h-2 rounded-full bg-[#fe780b]" /> Level 2<span className="hidden sm:inline"> (Indirect Level 2)</span>
                   </h3>
                   <span className="text-xs text-amber-400 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/20 whitespace-nowrap">
-                    5.00% Commission
+                    {level2.commissionRate || (level2.percent !== undefined ? `${level2.percent}%` : '5.00%')} Commission
                   </span>
                 </div>
 
@@ -393,7 +393,7 @@ export default function ReferralsPage() {
                     <span className="w-2 h-2 rounded-full bg-purple-500" /> Level 3<span className="hidden sm:inline"> (Indirect Level 3)</span>
                   </h3>
                   <span className="text-xs text-purple-400 font-bold bg-purple-500/10 px-2.5 py-0.5 rounded border border-purple-500/20 whitespace-nowrap">
-                    3.00% Commission
+                    {level3.commissionRate || (level3.percent !== undefined ? `${level3.percent}%` : '3.00%')} Commission
                   </span>
                 </div>
 

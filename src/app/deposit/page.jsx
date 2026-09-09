@@ -133,7 +133,7 @@ export default function DepositPage() {
       setPaymentConfirmed(false);
 
       const res = await api.post('/deposits', {
-        amount: totalAmount, // Pass total amount (deposit + processing fee)
+        amount: amountNum,
         payment_method: selectedGateway.name,
         transaction_hash: txHash,
       });
@@ -144,7 +144,9 @@ export default function DepositPage() {
             address: res.data.address,
             trackId: res.data.trackId || res.data.deposit?.track_id || res.data.deposit?.id,
             depositId: res.data.deposit?.id || res.data.depositId,
-            amount: totalAmount.toFixed(2),
+            amount: (res.data.totalRequired !== undefined ? res.data.totalRequired : totalAmount).toFixed(2),
+            principalAmount: amountNum.toFixed(2),
+            charge: (res.data.charge !== undefined ? res.data.charge : fee).toFixed(2),
             method: selectedGateway.name,
           });
         } else {

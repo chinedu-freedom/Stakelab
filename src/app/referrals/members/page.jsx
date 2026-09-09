@@ -81,11 +81,11 @@ function ReferralMembersContent() {
 
   const currentLevelInfo =
     activeTab === 'level1'
-      ? { title: 'Level 1 Members', commissionRate: '10.00%', color: 'from-[#ff0044] to-[#fe780b]', stats: level1 }
+      ? { title: 'Level 1 Members', commissionRate: level1.commissionRate || (level1.percent !== undefined ? `${level1.percent}%` : '10.00%'), color: 'from-[#ff0044] to-[#fe780b]', stats: level1 }
       : activeTab === 'level2'
-      ? { title: 'Level 2 Members', commissionRate: '5.00%', color: 'from-[#fe780b] to-amber-500', stats: level2 }
+      ? { title: 'Level 2 Members', commissionRate: level2.commissionRate || (level2.percent !== undefined ? `${level2.percent}%` : '5.00%'), color: 'from-[#fe780b] to-amber-500', stats: level2 }
       : activeTab === 'level3'
-      ? { title: 'Level 3 Members', commissionRate: '3.00%', color: 'from-purple-600 to-indigo-500', stats: level3 }
+      ? { title: 'Level 3 Members', commissionRate: level3.commissionRate || (level3.percent !== undefined ? `${level3.percent}%` : '3.00%'), color: 'from-purple-600 to-indigo-500', stats: level3 }
       : { title: 'All Team Members', commissionRate: 'Multi-Level', color: 'from-blue-600 to-cyan-500', stats: { totalHeadcount: teamStats.totalTeamMembers, numberActive: level1.numberActive + level2.numberActive + level3.numberActive, totalRecharge: level1.totalRecharge + level2.totalRecharge + level3.totalRecharge, commission: teamStats.teamCommission } };
 
   const [currentPage, setCurrentPage] = useState(1);
