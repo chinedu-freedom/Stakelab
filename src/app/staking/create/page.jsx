@@ -400,14 +400,30 @@ export default function CreateStakingPage() {
                       Limit: ${parseFloat(selectedPlan.min_amount || 0).toLocaleString()} - ${parseFloat(selectedPlan.max_amount || 0).toLocaleString()}
                     </span>
                   </div>
-                  <input
-                    type="number"
-                    step="any"
-                    value={stakeAmount}
-                    onChange={(e) => setStakeAmount(e.target.value)}
-                    placeholder={`Min $${selectedPlan.min_amount}...`}
-                    className="w-full h-11 bg-[#071020] border border-[#1b2b4d] rounded-xl px-4 text-white text-xs font-mono placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-[#ff0044] transition-all"
-                  />
+                  <div className="flex items-center bg-[#071020] border border-[#1b2b4d] rounded-xl overflow-hidden focus-within:ring-1 focus-within:ring-[#ff0044] transition-all pr-1.5">
+                    <input
+                      type="number"
+                      step="any"
+                      value={stakeAmount}
+                      onChange={(e) => setStakeAmount(e.target.value)}
+                      placeholder={`Min $${selectedPlan.min_amount}...`}
+                      className="w-full h-11 bg-transparent border-0 outline-none px-4 text-white text-xs font-mono placeholder-slate-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const avail = selectedWallet === 'main'
+                          ? parseFloat(user?.balance || 0)
+                          : parseFloat(user?.staked_balance || 0);
+                        const planMax = parseFloat(selectedPlan.max_amount || 999999);
+                        const maxVal = Math.min(avail, planMax);
+                        setStakeAmount(maxVal > 0 ? maxVal.toString() : selectedPlan.min_amount.toString());
+                      }}
+                      className="bg-gradient-to-r from-[#ff0044] to-[#fe780b] hover:opacity-90 text-white font-righteous text-[11px] px-3 py-1.5 rounded-lg uppercase font-bold tracking-wider transition-all cursor-pointer shrink-0"
+                    >
+                      MAX
+                    </button>
+                  </div>
                 </div>
 
                 {/* Staking Summary Cards */}
