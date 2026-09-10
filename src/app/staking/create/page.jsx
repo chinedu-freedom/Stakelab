@@ -283,6 +283,13 @@ export default function CreateStakingPage() {
                               {plan.capital_return !== false ? 'Yes' : 'N/A'}
                             </span>
                           </div>
+
+                          <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
+                            <span className="text-slate-400 font-semibold">Investment Limit</span>
+                            <span className={`font-bold font-mono text-xs sm:text-sm ${plan.max_invest_limit > 0 ? 'text-amber-400' : 'text-slate-400'}`}>
+                              {plan.max_invest_limit > 0 ? `${plan.max_invest_limit} Max (${plan.user_stake_count || 0} Used)` : 'Unlimited'}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
@@ -303,6 +310,14 @@ export default function CreateStakingPage() {
                             className="w-full py-2.5 sm:py-3.5 bg-slate-800 text-slate-400 font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-none cursor-not-allowed font-righteous border border-slate-700"
                           >
                             Unavailable
+                          </button>
+                        ) : plan.max_invest_limit && plan.max_invest_limit > 0 && (plan.user_stake_count || 0) >= plan.max_invest_limit ? (
+                          <button
+                            type="button"
+                            disabled
+                            className="w-full py-2.5 sm:py-3.5 bg-slate-800/90 text-amber-400 border border-amber-500/40 font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-none cursor-not-allowed font-righteous"
+                          >
+                            Limit Reached ({plan.user_stake_count || 0}/{plan.max_invest_limit})
                           </button>
                         ) : (
                           <button

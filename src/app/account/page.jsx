@@ -290,7 +290,7 @@ export default function AccountSettingsPage() {
                 enabled: Boolean(systemFeatures.dailyCheckin),
               },
               {
-                label: 'Tasks',
+                label: 'Invitation Task',
                 link: '/tasks',
                 bgColor: 'bg-gradient-to-tr from-emerald-500 to-green-400 shadow-emerald-500/20',
                 icon: ClipboardList,
