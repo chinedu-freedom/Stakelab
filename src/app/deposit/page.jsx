@@ -235,13 +235,6 @@ export default function DepositPage() {
                   <strong>N/B:</strong> Funds are credited upon blockchain confirmation.
                 </div>
               </div>
-
-              {Boolean(rechargeNotice && rechargeNotice.trim() !== '') && (
-                <div
-                  className="text-xs text-slate-300 leading-relaxed font-sans bg-[#06102b] p-3.5 rounded-lg border border-[#1a2b57] whitespace-pre-line"
-                  dangerouslySetInnerHTML={{ __html: rechargeNotice }}
-                />
-              )}
             </div>
           </div>
 
