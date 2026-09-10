@@ -690,7 +690,7 @@ export default function UserSidebarLayout({ children }) {
         </header>
 
         {/* Unverified Email Warning Banner */}
-        {user && !user.email_verified && (
+        {user && user.email_verified === false && (
           <div className="bg-gradient-to-r from-amber-600/90 to-red-600/90 text-white px-4 py-2.5 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2 shadow-md shrink-0">
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 shrink-0 text-amber-200 animate-pulse" />

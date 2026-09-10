@@ -117,7 +117,7 @@ export default function DepositPage() {
     e.preventDefault();
     if (!amount || !selectedGateway) return;
 
-    if (user && !user.email_verified) {
+    if (user && user.email_verified === false) {
       toast.error('Please verify your email address to perform deposits.');
       window.location.href = '/verify-email';
       return;

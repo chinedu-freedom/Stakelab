@@ -706,7 +706,7 @@ Important: Always verify that the destination wallet address and selected networ
                           <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
                             <span className="text-slate-400 font-semibold">Capital Return</span>
                             <span className={`font-bold ${plan.capital_return !== false ? 'text-emerald-400' : 'text-slate-500'}`}>
-                              {plan.capital_return !== false ? 'Yes' : 'No'}
+                              {plan.capital_return !== false ? 'Yes' : 'N/A'}
                             </span>
                           </div>
                         </div>

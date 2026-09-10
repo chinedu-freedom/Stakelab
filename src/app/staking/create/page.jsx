@@ -63,7 +63,7 @@ export default function CreateStakingPage() {
     e.preventDefault();
     if (!selectedPlan || !stakeAmount) return;
 
-    if (user && !user.email_verified) {
+    if (user && user.email_verified === false) {
       toast.error('Please verify your email address to perform staking.');
       window.location.href = '/verify-email';
       return;
@@ -280,7 +280,7 @@ export default function CreateStakingPage() {
                           <div className="flex justify-between items-center text-xs sm:text-base border-b border-slate-800/80 pb-2 sm:pb-2.5">
                             <span className="text-slate-400 font-semibold">Capital Return</span>
                             <span className={`font-bold ${plan.capital_return !== false ? 'text-emerald-400' : 'text-slate-500'}`}>
-                              {plan.capital_return !== false ? 'Yes' : 'No'}
+                              {plan.capital_return !== false ? 'Yes' : 'N/A'}
                             </span>
                           </div>
                         </div>
@@ -415,7 +415,7 @@ export default function CreateStakingPage() {
                   <div className="flex items-center justify-between text-slate-400 gap-2 overflow-hidden">
                     <span className="shrink-0">Capital Return:</span>
                     <span className={`font-bold font-mono text-right truncate ${isCapitalReturn ? 'text-emerald-400' : 'text-slate-500'}`}>
-                      {isCapitalReturn ? 'YES' : 'NO'}
+                      {isCapitalReturn ? 'YES' : 'N/A'}
                     </span>
                   </div>
 

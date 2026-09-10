@@ -30,7 +30,7 @@ export default function VerifyEmailPage() {
 
   // Check or dispatch code when user arrives at /verify-email page
   useEffect(() => {
-    if (!loading && user && !user.email_verified && !autoSent) {
+    if (!loading && user && user.email_verified === false && !autoSent) {
       setAutoSent(true);
       handleResendCode(false);
     }
