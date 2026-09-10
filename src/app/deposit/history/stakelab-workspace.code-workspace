@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../../../.."
+		},
+		{
+			"path": "../../../../../stakelab-backend"
+		},
+		{
+			"path": "../../../../../stakelab-admin"
+		}
+	],
+	"settings": {}
+}

@@ -9,6 +9,7 @@ const inter = Inter({
   display: 'swap',
   fallback: ['system-ui', 'sans-serif'],
   adjustFontFallback: false,
+  preload: false,
 });
 
 const righteous = Righteous({
@@ -18,6 +19,7 @@ const righteous = Righteous({
   display: 'swap',
   fallback: ['system-ui', 'cursive'],
   adjustFontFallback: false,
+  preload: false,
 });
 
 import Script from 'next/script';
