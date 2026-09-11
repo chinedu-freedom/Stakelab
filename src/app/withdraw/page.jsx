@@ -240,23 +240,30 @@ export default function WithdrawPage() {
               <h3 className="text-xs font-bold text-white font-righteous flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" /> Official Withdrawal Rules & Security Policy
               </h3>
-              <div className="bg-[#06102b] p-4 rounded-lg border border-[#1a2b57] text-xs text-slate-300 font-sans space-y-2 leading-relaxed">
-                <div className="flex items-center gap-2">
-                  <span className="text-[#ff0044] font-bold">•</span>
-                  <span>Minimum Withdrawal: <strong className="text-white">${minLimit ? minLimit.toFixed(2) : '10.00'}</strong></span>
+              {Boolean(withdrawNotice && withdrawNotice.trim() !== '') ? (
+                <div
+                  className="bg-[#06102b] p-4 rounded-lg border border-[#1a2b57] text-xs text-slate-300 font-sans leading-relaxed whitespace-pre-line"
+                  dangerouslySetInnerHTML={{ __html: withdrawNotice }}
+                />
+              ) : (
+                <div className="bg-[#06102b] p-4 rounded-lg border border-[#1a2b57] text-xs text-slate-300 font-sans space-y-2 leading-relaxed">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#ff0044] font-bold">•</span>
+                    <span>Minimum Withdrawal: <strong className="text-white">${minLimit ? minLimit.toFixed(2) : '10.00'}</strong></span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#ff0044] font-bold">•</span>
+                    <span>Maximum Withdrawal: <strong className="text-white">${maxLimit ? maxLimit.toFixed(2) : '5000.00'}</strong></span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#ff0044] font-bold">•</span>
+                    <span>Gateway Charge: <strong className="text-white">{feePercent ? feePercent.toFixed(2) : '1.00'}%</strong></span>
+                  </div>
+                  <div className="pt-2 border-t border-[#1a2b57] text-amber-400 font-medium text-[11px]">
+                    <strong>N/B:</strong> Withdrawals are processed upon security verification.
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[#ff0044] font-bold">•</span>
-                  <span>Maximum Withdrawal: <strong className="text-white">${maxLimit ? maxLimit.toFixed(2) : '5000.00'}</strong></span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[#ff0044] font-bold">•</span>
-                  <span>Gateway Charge: <strong className="text-white">{feePercent ? feePercent.toFixed(2) : '1.00'}%</strong></span>
-                </div>
-                <div className="pt-2 border-t border-[#1a2b57] text-amber-400 font-medium text-[11px]">
-                  <strong>N/B:</strong> Withdrawals are processed upon security verification.
-                </div>
-              </div>
+              )}
             </div>
           </div>
 
