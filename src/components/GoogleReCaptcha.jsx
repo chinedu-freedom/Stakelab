@@ -9,7 +9,7 @@ export default function GoogleReCaptcha({
   const containerRef = useRef(null);
   const widgetIdRef = useRef(null);
 
-  const activeSiteKey = sitekey || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '';
+  const activeSiteKey = sitekey || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LffwZUtAAAAAAWEJC22zvGTTuoEa-EtlqKu5oqN';
 
   useEffect(() => {
     let checkInterval = null;
