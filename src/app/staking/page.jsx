@@ -100,8 +100,8 @@ export default function StakingPage() {
   const completedStakesList = allStakes.filter((s) => s.status === 'COMPLETED');
 
   const activeCount = activeStakesList.length;
-  const totalInvested = allStakes.reduce((acc, s) => acc + parseFloat(s.amount || 0), 0);
-  const totalExpectedReturn = allStakes.reduce((acc, s) => {
+  const totalInvested = activeStakesList.reduce((acc, s) => acc + parseFloat(s.amount || 0), 0);
+  const totalExpectedReturn = activeStakesList.reduce((acc, s) => {
     if (s.expected_total_return !== undefined && s.expected_total_return !== null) {
       return acc + parseFloat(s.expected_total_return || 0);
     }
