@@ -303,7 +303,7 @@ export default function DashboardPage() {
                     } else if (['WITHDRAWAL', 'ADMIN_DEBIT', 'WITHDRAW'].includes(rawType) || rawType.includes('WITHDRAW') || rawType.includes('DEBIT')) {
                       typeLabel = 'WITHDRAWAL';
                     } else if (rawType === 'STAKE_PROFIT' || rawType === 'STAKING_YIELD') {
-                      typeLabel = 'STAKING YIELD';
+                      typeLabel = 'STAKING PROFIT';
                     } else if (rawType === 'STAKE' || rawType === 'STAKE_BUY') {
                       typeLabel = 'STAKING PURCHASE';
                     } else if (rawType === 'DAILY_CHECKIN') {
