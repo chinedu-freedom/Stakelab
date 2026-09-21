@@ -381,7 +381,7 @@ export default function DashboardPage() {
                             {statusText}
                           </span>
                         </td>
-                        <td className="py-4 px-2 text-slate-400 font-mono text-[11px] whitespace-nowrap">{new Date(tx.created_at).toLocaleString()}</td>
+                        <td className="py-4 px-2 text-slate-400 font-mono text-[11px] whitespace-nowrap">{new Date(tx.created_at).toLocaleString('en-US', { hour12: true })}</td>
                       </tr>
                     );
                   })}

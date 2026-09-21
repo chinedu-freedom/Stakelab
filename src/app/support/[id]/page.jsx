@@ -275,7 +275,7 @@ export default function TicketDetailsPage({ params }) {
                 messages.map((msg) => {
                   const isUser = msg.sender_type === 'USER';
                   const formattedDate = msg.created_at
-                    ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) +
+                    ? new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) +
                       ' · ' +
                       new Date(msg.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
                     : '';

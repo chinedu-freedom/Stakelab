@@ -305,7 +305,7 @@ export default function TransactionsPage() {
                           {detailsLabel}
                         </td>
                         <td className="py-4 px-3 text-slate-400 text-right whitespace-nowrap font-mono text-[11px]">
-                          {new Date(tx.created_at).toLocaleString()}
+                          {new Date(tx.created_at).toLocaleString('en-US', { hour12: true })}
                         </td>
                       </tr>
                     );

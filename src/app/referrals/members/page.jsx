@@ -271,7 +271,7 @@ function ReferralMembersContent() {
                       </td>
 
                       <td className="py-4 px-4 text-slate-400 font-mono text-[11px] whitespace-nowrap">
-                        {new Date(u.created_at || Date.now()).toLocaleString()}
+                        {new Date(u.created_at || Date.now()).toLocaleString('en-US', { hour12: true })}
                       </td>
 
                       <td className="py-4 px-4">

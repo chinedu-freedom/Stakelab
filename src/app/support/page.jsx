@@ -110,11 +110,11 @@ export default function SupportTicketsPage() {
                   {paginatedTickets.map((t) => {
                     const ticketCode = t.ticket_id || `#${t.id.substring(0, 8)}`;
                     const lastReplyDate = t.messages && t.messages.length > 0 && t.messages[0].created_at
-                      ? new Date(t.messages[0].created_at).toLocaleString()
+                      ? new Date(t.messages[0].created_at).toLocaleString('en-US', { hour12: true })
                       : t.updated_at
-                      ? new Date(t.updated_at).toLocaleString()
+                      ? new Date(t.updated_at).toLocaleString('en-US', { hour12: true })
                       : t.created_at
-                      ? new Date(t.created_at).toLocaleString()
+                      ? new Date(t.created_at).toLocaleString('en-US', { hour12: true })
                       : 'Recently';
 
                     return (

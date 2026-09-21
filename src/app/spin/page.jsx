@@ -411,7 +411,7 @@ export default function LuckySpinPage() {
                       <div>
                         <h4 className="text-xs font-bold text-white">{win.prize?.name || 'Lucky Slice'}</h4>
                         <p className="text-[11px] text-slate-400 mt-0.5">
-                          {new Date(win.created_at).toLocaleString()} • Free Spin
+                          {new Date(win.created_at).toLocaleString('en-US', { hour12: true })} • Free Spin
                         </p>
                       </div>
                     </div>
@@ -421,7 +421,7 @@ export default function LuckySpinPage() {
                         +${parseFloat(win.reward_earned || 0).toFixed(2)}
                       </div>
                       <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full inline-block mt-1">
-                        WON
+                        CLAIMED
                       </span>
                     </div>
                   </div>

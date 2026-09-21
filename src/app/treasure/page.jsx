@@ -236,7 +236,7 @@ export default function LuckyTreasurePage() {
                       <div>
                         <h4 className="text-xs font-mono font-bold text-white">{claim.code}</h4>
                         <p className="text-[11px] text-slate-400 mt-0.5">
-                          {new Date(claim.claimed_at).toLocaleString()}
+                          {new Date(claim.claimed_at).toLocaleString('en-US', { hour12: true })}
                         </p>
                       </div>
                     </div>

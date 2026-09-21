@@ -118,7 +118,7 @@ export default function DepositHistoryPage() {
                         </span>
                       </td>
                       <td className="py-4 px-4 text-slate-400 border-r border-[#ff0044]/10 font-mono text-[11px] whitespace-nowrap">
-                        {new Date(dep.created_at).toLocaleString()}
+                        {new Date(dep.created_at).toLocaleString('en-US', { hour12: true })}
                       </td>
                       <td className="py-4 px-4 text-right font-mono text-[11px] text-slate-300">
                         {dep.tx_hash ? (

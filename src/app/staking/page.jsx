@@ -252,8 +252,8 @@ export default function StakingPage() {
                     const dailyProfit = (amount * dailyPercent) / 100;
                     const expectedTotal = stake.expected_total_return || (amount + (dailyProfit * durationDays));
 
-                    const startDateStr = stake.start_date || stake.created_at ? new Date(stake.start_date || stake.created_at).toLocaleString() : 'N/A';
-                    const endDateStr = stake.end_date ? new Date(stake.end_date).toLocaleString() : 'N/A';
+                    const startDateStr = stake.start_date || stake.created_at ? new Date(stake.start_date || stake.created_at).toLocaleString('en-US', { hour12: true }) : 'N/A';
+                    const endDateStr = stake.end_date ? new Date(stake.end_date).toLocaleString('en-US', { hour12: true }) : 'N/A';
 
                     return (
                       <tr key={stake.id} className="hover:bg-[#10234a]/60 transition-colors">

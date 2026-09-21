@@ -264,7 +264,7 @@ export default function ReferralsPage() {
                                 </span>
                               </td>
                               <td className="py-2.5 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
-                                {new Date(u.created_at || Date.now()).toLocaleString()}
+                                {new Date(u.created_at || Date.now()).toLocaleString('en-US', { hour12: true })}
                               </td>
                               <td className="py-2.5 px-3 whitespace-nowrap">
                                 <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap inline-flex items-center justify-center ${
@@ -360,7 +360,7 @@ export default function ReferralsPage() {
                                 </span>
                               </td>
                               <td className="py-2.5 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
-                                {new Date(u.created_at || Date.now()).toLocaleString()}
+                                {new Date(u.created_at || Date.now()).toLocaleString('en-US', { hour12: true })}
                               </td>
                               <td className="py-2.5 px-3 whitespace-nowrap">
                                 <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap inline-flex items-center justify-center ${
@@ -456,7 +456,7 @@ export default function ReferralsPage() {
                                 </span>
                               </td>
                               <td className="py-2.5 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">
-                                {new Date(u.created_at || Date.now()).toLocaleString()}
+                                {new Date(u.created_at || Date.now()).toLocaleString('en-US', { hour12: true })}
                               </td>
                               <td className="py-2.5 px-3 whitespace-nowrap">
                                 <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold whitespace-nowrap inline-flex items-center justify-center ${

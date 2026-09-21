@@ -493,7 +493,7 @@ export default function UserSidebarLayout({ children }) {
                             >
                               <div className="font-bold text-white truncate">#{t.ticket_id || t.id.substring(0,6)} - {t.subject}</div>
                               <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
-                                <span>{new Date(t.updated_at).toLocaleString()}</span>
+                                <span>{new Date(t.updated_at).toLocaleString('en-US', { hour12: true })}</span>
                                 <span className="text-emerald-400 font-semibold uppercase">{t.status}</span>
                               </div>
                             </Link>
@@ -519,7 +519,7 @@ export default function UserSidebarLayout({ children }) {
                             >
                               <div className="font-bold text-indigo-300">${parseFloat(s.amount).toFixed(2)} in {s.plan?.title || 'Staking'}</div>
                               <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
-                                <span>{new Date(s.created_at).toLocaleString()}</span>
+                                <span>{new Date(s.created_at).toLocaleString('en-US', { hour12: true })}</span>
                                 <span className="text-emerald-400 font-semibold uppercase">ACTIVE</span>
                               </div>
                             </Link>
@@ -545,7 +545,7 @@ export default function UserSidebarLayout({ children }) {
                             >
                               <div className="font-bold text-emerald-400">+${parseFloat(d.amount).toFixed(2)} USDT</div>
                               <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
-                                <span>{new Date(d.created_at).toLocaleString()}</span>
+                                <span>{new Date(d.created_at).toLocaleString('en-US', { hour12: true })}</span>
                                 <span className={`font-semibold uppercase ${d.status === 'APPROVED' ? 'text-emerald-400' : d.status === 'REJECTED' ? 'text-red-400' : 'text-amber-400'}`}>
                                   {d.status}
                                 </span>
@@ -573,7 +573,7 @@ export default function UserSidebarLayout({ children }) {
                             >
                               <div className="font-bold text-sky-400">-${parseFloat(w.amount).toFixed(2)} USDT</div>
                               <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
-                                <span>{new Date(w.created_at).toLocaleString()}</span>
+                                <span>{new Date(w.created_at).toLocaleString('en-US', { hour12: true })}</span>
                                 <span className={`font-semibold uppercase ${w.status === 'APPROVED' ? 'text-emerald-400' : w.status === 'REJECTED' ? 'text-red-400' : 'text-amber-400'}`}>
                                   {w.status}
                                 </span>
@@ -599,7 +599,7 @@ export default function UserSidebarLayout({ children }) {
                             >
                               <div className="font-bold text-white text-xs">{tx.description}</div>
                               <div className="text-[10px] text-slate-400 mt-0.5 flex justify-between">
-                                <span>{new Date(tx.created_at).toLocaleString()}</span>
+                                <span>{new Date(tx.created_at).toLocaleString('en-US', { hour12: true })}</span>
                                 <span className="text-emerald-400 font-bold">+${parseFloat(tx.amount).toFixed(2)}</span>
                               </div>
                             </div>
